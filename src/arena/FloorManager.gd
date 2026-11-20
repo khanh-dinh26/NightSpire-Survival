@@ -48,9 +48,7 @@ func _load_items_pool() -> void:
 		"res://src/data/items/weapons/dagger.tres",
 		"res://src/data/items/weapons/iron_sword.tres",
 		"res://src/data/items/weapons/iron_spear.tres",
-		"res://src/data/items/weapons/war_mace.tres",
 		"res://src/data/items/weapons/greatsword.tres",
-		"res://src/data/items/weapons/silver_rapier.tres",
 		"res://src/data/items/weapons/short_bow.tres",
 		"res://src/data/items/weapons/hunting_crossbow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
@@ -73,6 +71,7 @@ func _load_items_pool() -> void:
 		"res://src/data/items/buffs/golden_magnet.tres",
 		"res://src/data/items/buffs/lucky_clover.tres",
 		"res://src/data/items/buffs/hermes_wings.tres",
+		"res://src/data/items/buffs/blacksmith_talisman.tres",
 		"res://src/data/items/buffs/vampire_chalice.tres",
 		"res://src/data/items/buffs/frost_heart.tres",
 	]
@@ -194,9 +193,9 @@ func _on_floor_cleared(floor_index: int) -> void:
 
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	if cfg != null and cfg.floor_type == FloorConfig.FloorType.MINIBOSS:
-		# Open boss draft (pick 2 of 5 for free)
+		# Open boss draft (pick 2 of 5 for free) after 10s so player can collect all dropped gold
 		var tw: Tween = create_tween()
-		tw.tween_interval(1.2)
+		tw.tween_interval(10.0)
 		tw.tween_callback(func():
 			var draft_items: Array[ItemData] = ItemPool.get_boss_draft_items(5, all_items_pool)
 			if boss_draft_ui != null:
@@ -204,9 +203,9 @@ func _on_floor_cleared(floor_index: int) -> void:
 			EventBus.draft_opened.emit(draft_items)
 		)
 	elif cfg != null and cfg.floor_type == FloorConfig.FloorType.FINAL_BOSS:
-		# Tower Conquered! Show Endgame Victory Screen
+		# Tower Conquered! Show Endgame Victory Screen after 10s
 		var tw: Tween = create_tween()
-		tw.tween_interval(1.8)
+		tw.tween_interval(10.0)
 		tw.tween_callback(func():
 			EventBus.tower_conquered.emit()
 		)

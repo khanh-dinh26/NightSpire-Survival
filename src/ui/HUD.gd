@@ -2,9 +2,10 @@ class_name HUD
 extends CanvasLayer
 ## In-game HUD showing HP, Gold, Floor Progression, Wave Timer, and Boss Health Bar.
 
-@onready var hp_bar: TextureProgressBar = $MarginContainer/VBoxContainer/TopBar/HPContainer/HPBar
-@onready var hp_label: Label = $MarginContainer/VBoxContainer/TopBar/HPContainer/HPBar/HPLabel
-@onready var heart_icon: TextureRect = $MarginContainer/VBoxContainer/TopBar/HPContainer/HeartIcon
+@onready var hp_bar: TextureProgressBar = $MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer/HPBar
+@onready var hp_label: Label = $MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer/HPBar/HPLabel
+@onready var heart_icon: TextureRect = $MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer/HeartIcon
+@onready var buffs_container: HBoxContainer = $MarginContainer/VBoxContainer/TopBar/PlayerStatus/BuffsContainer
 @onready var gold_label: Label = $MarginContainer/VBoxContainer/TopBar/GoldLabel
 @onready var floor_label: Label = $MarginContainer/VBoxContainer/CenterBar/FloorLabel
 @onready var timer_label: Label = $MarginContainer/VBoxContainer/CenterBar/TimerLabel
@@ -43,9 +44,12 @@ func _ready() -> void:
 	EventBus.wave_ended.connect(_on_wave_ended)
 	EventBus.boss_killed.connect(_on_boss_killed)
 	EventBus.tower_conquered.connect(_on_tower_conquered)
+	EventBus.item_bought.connect(func(_id): _update_buffs_display())
+	EventBus.item_picked.connect(func(_id): _update_buffs_display())
 
 	_update_hp_display(GameManager.player_current_hp, GameManager.player_max_hp)
 	_on_gold_changed(GameManager.gold)
+	_update_buffs_display()
 
 
 func setup_spawner(p_spawner: Spawner) -> void:
@@ -95,6 +99,35 @@ func hide_boss_bar() -> void:
 
 func _on_boss_killed(_boss_id: String) -> void:
 	hide_boss_bar()
+	timer_label.text = "CHIẾN THẮNG TRÙM! HÃY NHẶT VÀNG TRƯỚC KHI CHỌN THƯỞNG..."
+	timer_label.visible = true
+
+
+func _update_buffs_display() -> void:
+	if buffs_container == null:
+		return
+	for child: Node in buffs_container.get_children():
+		child.queue_free()
+
+	for buff: ItemData in GameManager.passive_buffs:
+		if buff == null:
+			continue
+		var icon_rect: TextureRect = TextureRect.new()
+		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		icon_rect.custom_minimum_size = Vector2(16, 16)
+		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.tooltip_text = "%s: %s" % [buff.item_name, buff.description]
+
+		if not buff.custom_icon_path.is_empty() and ResourceLoader.exists(buff.custom_icon_path):
+			icon_rect.texture = load(buff.custom_icon_path)
+		else:
+			var atlas: AtlasTexture = AtlasTexture.new()
+			atlas.atlas = preload("res://assets/sprites/items.png")
+			atlas.region = buff.sprite_region
+			icon_rect.texture = atlas
+
+		buffs_container.add_child(icon_rect)
 
 
 func _on_gold_changed(new_gold: int) -> void:
