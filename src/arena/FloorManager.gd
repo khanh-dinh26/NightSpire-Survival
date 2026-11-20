@@ -48,6 +48,15 @@ func _load_items_pool() -> void:
 		"res://src/data/items/weapons/short_bow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
 		"res://src/data/items/weapons/crystal_staff.tres",
+		"res://src/data/items/weapons/vampire_dagger.tres",
+		"res://src/data/items/weapons/scythe_of_doom.tres",
+		"res://src/data/items/weapons/golden_repeater.tres",
+		"res://src/data/items/weapons/berserker_axe.tres",
+		# Spells
+		"res://src/data/items/spells/spell_fireball.tres",
+		"res://src/data/items/spells/spell_molten_spear.tres",
+		"res://src/data/items/spells/spell_tornado.tres",
+		"res://src/data/items/spells/spell_earth_spike.tres",
 		# Buffs
 		"res://src/data/items/buffs/ruby_ring.tres",
 		"res://src/data/items/buffs/leather_boots.tres",

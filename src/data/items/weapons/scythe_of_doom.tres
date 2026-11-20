@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "scythe_of_doom"
+item_name = "Lưỡi Hái Tuyệt Diệt"
+type = 0
+rarity = 3
+price = 70
+level = 1
+sprite_region = Rect2(96, 0, 32, 32)
+weapon_style = 0
+base_damage = 38
+attack_speed = 1.2
+attack_range = 95.0
+projectile_speed = 200.0
+knockback = 120.0
+special_effect = "radius_execute"
+special_effect_value = 150.0
+description = "Lưỡi hái tử thần: 10% cơ hội kích phát sóng xung kích kết liễu toàn bộ quái thường trong bán kính."

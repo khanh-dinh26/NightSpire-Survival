@@ -9,6 +9,7 @@ signal slot_clicked(slot_index: int, item: ItemData)
 @onready var frame_rect: TextureRect = $FrameRect
 @onready var icon_rect: TextureRect = $IconRect
 @onready var click_btn: Button = $ClickButton
+@onready var level_label: Label = $LevelLabel
 
 var current_item: ItemData = null
 var _slot_sheet: Texture2D = preload("res://assets/sprites/Sample-InventorySlotsSet.png")
@@ -36,7 +37,21 @@ func set_item(item: ItemData, idx: int) -> void:
 		item_atlas.region = item.sprite_region
 		icon_rect.texture = item_atlas
 		icon_rect.visible = true
-		click_btn.tooltip_text = "%s (Damage: %d)\nClick to DROP" % [item.item_name, item.base_damage]
+		
+		if level_label != null:
+			if item.level > 1:
+				level_label.text = "L%d" % item.level
+				level_label.visible = true
+			else:
+				level_label.visible = false
+
+		var effect_text: String = ""
+		if not item.special_effect.is_empty():
+			effect_text = "\nHiệu ứng: %s" % item.special_effect
+
+		click_btn.tooltip_text = "%s (Lv.%d | Damage: %d)%s\nClick to DROP" % [
+			item.item_name, item.level, item.base_damage, effect_text
+		]
 	else:
 		clear_slot()
 
@@ -45,6 +60,8 @@ func clear_slot() -> void:
 	current_item = null
 	icon_rect.texture = null
 	icon_rect.visible = false
+	if level_label != null:
+		level_label.visible = false
 	click_btn.tooltip_text = "Empty Slot"
 
 

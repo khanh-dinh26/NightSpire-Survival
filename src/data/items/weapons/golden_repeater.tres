@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "golden_repeater"
+item_name = "Nỏ Hoàng Kim"
+type = 0
+rarity = 1
+price = 35
+level = 1
+sprite_region = Rect2(160, 0, 32, 32)
+weapon_style = 1
+base_damage = 15
+attack_speed = 2.5
+attack_range = 140.0
+projectile_speed = 260.0
+knockback = 45.0
+special_effect = "greed_gold"
+special_effect_value = 1.0
+description = "Nỏ săn kho báu: Bắn tên liên hoàn và có 35% cơ hội rơi thêm vàng khi trúng đích."

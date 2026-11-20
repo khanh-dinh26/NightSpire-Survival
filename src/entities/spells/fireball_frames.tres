@@ -1,0 +1,47 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/001.png" id="1_76r1m"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/002.png" id="2_5k5k4"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/003.png" id="3_bsijk"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/004.png" id="4_7npk1"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/005.png" id="5_4ve6e"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/006.png" id="6_1315x"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/007.png" id="7_nvarc"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Fire_Ball/008.png" id="8_2jbr1"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_76r1m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_5k5k4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_bsijk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_7npk1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4ve6e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_1315x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_nvarc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_2jbr1")
+}],
+"loop": 1,
+"name": &"fly",
+"speed": 12.0
+}]

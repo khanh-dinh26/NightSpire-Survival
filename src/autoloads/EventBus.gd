@@ -21,6 +21,10 @@ signal item_picked(item_id: String)
 signal weapons_changed()
 signal weapon_dropped(item_id: String)
 
+# --- Spells ---
+signal spell_learned(spell_id: String, level: int)
+signal spell_cast_requested(spell_id: String, level: int, target_pos: Vector2)
+
 # --- UI ---
 signal shop_opened(card_list: Array)
 signal shop_closed()

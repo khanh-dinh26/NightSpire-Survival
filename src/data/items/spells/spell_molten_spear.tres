@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "spell_molten_spear"
+item_name = "Bí Kíp: Thương Dung Nham"
+type = 2
+rarity = 1
+price = 25
+level = 1
+custom_icon_path = "res://assets/effects/magic_effects/Icons/tile001.png"
+spell_id = "molten_spear"
+cooldown = 2.5
+description = "Học hoặc tăng cấp Thương Dung Nham: Phóng thương lửa xuyên qua hàng loạt mục tiêu với tốc độ xé gió."

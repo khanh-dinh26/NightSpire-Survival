@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://src/resources/TowerData.gd" id="1_script"]
 [ext_resource type="Resource" path="res://src/data/enemies/goblin.tres" id="2_gob"]
+[ext_resource type="Resource" path="res://src/data/enemies/dark_cultist.tres" id="2_cultist"]
 [ext_resource type="Resource" path="res://src/data/enemies/orc.tres" id="3_orc"]
 [ext_resource type="Resource" path="res://src/data/enemies/fire_imp.tres" id="4_imp"]
 [ext_resource type="Resource" path="res://src/data/enemies/bosses/orc_warchief.tres" id="5_mb1"]
@@ -17,7 +18,7 @@ floor_tile_atlas_coords = Array[Vector2i]([Vector2i(1, 11), Vector2i(2, 11), Vec
 wall_tile_atlas_coords = Array[Vector2i]([Vector2i(0, 3), Vector2i(1, 3)])
 tower_modifier = 3
 modifier_value = 0.25
-common_enemies = Array[Resource]([ExtResource("2_gob"), ExtResource("3_orc"), ExtResource("4_imp")])
+common_enemies = Array[Resource]([ExtResource("2_gob"), ExtResource("2_cultist"), ExtResource("3_orc"), ExtResource("4_imp")])
 miniboss_pool = Array[Resource]([ExtResource("5_mb1"), ExtResource("6_mb2")])
 final_boss = ExtResource("7_fb")
 ambient_color = Color(1, 0.75, 0.65, 1)

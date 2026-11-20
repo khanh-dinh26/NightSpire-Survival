@@ -1,20 +1,12 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c88tiugbw42gl"]
 
-[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://4ugdkgkky4p8" path="res://src/resources/ItemData.gd" id="1_item"]
 
 [resource]
 script = ExtResource("1_item")
 item_id = "starter_dagger"
 item_name = "Dao Găm Cũ"
-type = 0
-rarity = 0
 price = 0
-sprite_region = Rect2(0, 0, 32, 32)
-weapon_style = 0
-base_damage = 10
 attack_speed = 3.2
 attack_range = 75.0
-projectile_speed = 200.0
-knockback = 50.0
-stats_modifier = {}
 description = "Vũ khí cận chiến cơ bản đáng tin cậy."

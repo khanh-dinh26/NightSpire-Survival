@@ -1,0 +1,63 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/001.png" id="1_cvp5j"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/002.png" id="2_mr6r7"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/003.png" id="3_1dp1s"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/004.png" id="4_5s6rs"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/005.png" id="5_nif6q"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/006.png" id="6_q6ugb"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/007.png" id="7_rfjns"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/008.png" id="8_lpp55"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/009.png" id="9_uvyi5"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/010.png" id="10_331dp"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/011.png" id="11_k4rtw"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Molten_Spear/012.png" id="12_i4e23"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_cvp5j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_mr6r7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_1dp1s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_5s6rs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_nif6q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_q6ugb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_rfjns")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_lpp55")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_uvyi5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_331dp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_k4rtw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_i4e23")
+}],
+"loop": 1,
+"name": &"fly",
+"speed": 14.0
+}]

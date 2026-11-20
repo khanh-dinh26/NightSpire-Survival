@@ -5,6 +5,7 @@ extends Area2D
 var damage: int = 10
 var speed: float = 240.0
 var knockback_force: float = 50.0
+var item_data: ItemData = null
 
 var direction: Vector2 = Vector2.RIGHT:
 	set(val):
@@ -31,7 +32,33 @@ func _update_rotation() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemies") and body.has_method("take_damage"):
-		body.take_damage(damage)
+		var final_damage: int = damage
+
+		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+		var player_ref: Player = players[0] as Player if players.size() > 0 else null
+
+		if item_data != null:
+			if item_data.special_effect == "berserk_low_hp" and player_ref != null:
+				if float(player_ref.current_hp) / float(maxi(player_ref.max_hp, 1)) <= 0.35:
+					final_damage = roundi(final_damage * 1.5)
+
+			if item_data.special_effect == "lifesteal" and player_ref != null:
+				if randf() <= 0.25:
+					player_ref.heal(3)
+
+			if item_data.special_effect == "greed_gold":
+				if randf() <= 0.35:
+					GameManager.add_gold(1)
+
+			if item_data.special_effect == "radius_execute":
+				if randf() <= 0.10:
+					for enemy: Node in get_tree().get_nodes_in_group(&"enemies"):
+						var e: Node2D = enemy as Node2D
+						if e != null and is_instance_valid(e) and not e.is_in_group(&"boss"):
+							if global_position.distance_to(e.global_position) <= 150.0 and e.has_method("take_damage"):
+								e.take_damage(9999)
+
+		body.take_damage(final_damage)
 		if body.has_method("apply_knockback"):
 			var kb_dir: Vector2 = direction.normalized()
 			body.apply_knockback(kb_dir * knockback_force)

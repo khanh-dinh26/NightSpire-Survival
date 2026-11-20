@@ -47,8 +47,23 @@ func _load_all_items() -> void:
 		"res://src/data/items/weapons/short_bow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
 		"res://src/data/items/weapons/crystal_staff.tres",
+		"res://src/data/items/weapons/vampire_dagger.tres",
+		"res://src/data/items/weapons/scythe_of_doom.tres",
+		"res://src/data/items/weapons/golden_repeater.tres",
+		"res://src/data/items/weapons/berserker_axe.tres",
 	]
 	for path: String in weapon_files:
+		if ResourceLoader.exists(path):
+			_all_items_pool.append(load(path) as ItemData)
+
+	# Spells
+	var spell_files: Array[String] = [
+		"res://src/data/items/spells/spell_fireball.tres",
+		"res://src/data/items/spells/spell_molten_spear.tres",
+		"res://src/data/items/spells/spell_tornado.tres",
+		"res://src/data/items/spells/spell_earth_spike.tres",
+	]
+	for path: String in spell_files:
 		if ResourceLoader.exists(path):
 			_all_items_pool.append(load(path) as ItemData)
 

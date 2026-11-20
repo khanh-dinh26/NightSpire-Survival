@@ -12,6 +12,8 @@ var defense: int = 0
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var weapon_orbit: WeaponOrbit = $WeaponOrbit
 
+var _spell_scene: PackedScene = preload("res://src/entities/spells/SpellEntity.tscn")
+
 # ── Procedural animation timers ────────────────────────────────────────
 var _walk_phase: float = 0.0
 var _idle_phase: float = 0.0
@@ -21,6 +23,7 @@ var _is_hit_animating: bool = false
 
 func _ready() -> void:
 	add_to_group(&"player")
+	EventBus.spell_cast_requested.connect(_on_spell_cast_requested)
 	if GameManager.chosen_class != null:
 		setup_from_class(GameManager.chosen_class)
 	else:
@@ -189,3 +192,92 @@ func _hit_flash() -> void:
 	tw.tween_property(sprite, ^"scale", Vector2(1.0, 1.0), 0.1).set_delay(0.05)
 
 	tw.chain().tween_callback(func(): _is_hit_animating = false)
+
+
+# ── Active Spell Casting ────────────────────────────────────────────────
+func _on_spell_cast_requested(spell_id: String, p_level: int, target_pos: Vector2) -> void:
+	var aim_dir: Vector2 = (target_pos - global_position).normalized()
+	if aim_dir == Vector2.ZERO:
+		aim_dir = Vector2.RIGHT if _facing_right else Vector2.LEFT
+
+	match spell_id:
+		"fireball":
+			_cast_fireball(p_level, aim_dir)
+		"molten_spear":
+			_cast_molten_spear(p_level, aim_dir)
+		"tornado":
+			_cast_tornado(p_level, aim_dir)
+		"earth_spike":
+			_cast_earth_spike(p_level, target_pos)
+
+
+func _cast_fireball(lvl: int, base_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = lvl
+	var spread_angle: float = 0.22 # ~12.5 degrees
+
+	for i: int in range(count):
+		var angle_offset: float = 0.0
+		if count > 1:
+			angle_offset = (float(i) - float(count - 1) / 2.0) * spread_angle
+
+		var fire_dir: Vector2 = base_dir.rotated(angle_offset)
+		var spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
+		spell.spell_type = SpellEntity.SpellType.FIREBALL
+		spell.level = lvl
+		spell.damage = 25 + (lvl - 1) * 12
+		spell.direction = fire_dir
+		spell.global_position = global_position
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_molten_spear(lvl: int, base_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = lvl
+	for i: int in range(count):
+		var offset_perp: Vector2 = base_dir.orthogonal() * ((float(i) - float(count - 1) / 2.0) * 14.0)
+		var spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
+		spell.spell_type = SpellEntity.SpellType.MOLTEN_SPEAR
+		spell.level = lvl
+		spell.damage = 35 + (lvl - 1) * 18
+		spell.direction = base_dir
+		spell.global_position = global_position + offset_perp
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_tornado(lvl: int, base_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = mini(lvl, 3)
+	for i: int in range(count):
+		var angle_offset: float = 0.0
+		if count > 1:
+			angle_offset = (float(i) - float(count - 1) / 2.0) * 0.35
+
+		var spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
+		spell.spell_type = SpellEntity.SpellType.TORNADO
+		spell.level = lvl
+		spell.damage = 18 + (lvl - 1) * 8
+		spell.direction = base_dir.rotated(angle_offset)
+		spell.global_position = global_position
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = 1 + (lvl - 1) * 2
+	var offsets: Array[Vector2] = [Vector2.ZERO]
+
+	if count >= 3:
+		offsets.append(Vector2(24, 0))
+		offsets.append(Vector2(-24, 0))
+	if count >= 5:
+		offsets.append(Vector2(0, 24))
+		offsets.append(Vector2(0, -24))
+
+	for offset: Vector2 in offsets:
+		var spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
+		spell.spell_type = SpellEntity.SpellType.EARTH_SPIKE
+		spell.level = lvl
+		spell.damage = 40 + (lvl - 1) * 20
+		spell.global_position = target_pos + offset
+		get_tree().current_scene.add_child(spell)

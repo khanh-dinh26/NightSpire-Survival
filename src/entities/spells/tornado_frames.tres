@@ -1,0 +1,51 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/001.png" id="1_r24aw"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/002.png" id="2_ayde7"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/003.png" id="3_5yqgv"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/004.png" id="4_28jkp"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/005.png" id="5_aay6r"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/006.png" id="6_0uc42"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/007.png" id="7_bkxos"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/008.png" id="8_e7ofm"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Tornado/009.png" id="9_auw7t"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_r24aw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ayde7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_5yqgv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_28jkp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_aay6r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_0uc42")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_bkxos")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_e7ofm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_auw7t")
+}],
+"loop": 1,
+"name": &"swirl",
+"speed": 12.0
+}]

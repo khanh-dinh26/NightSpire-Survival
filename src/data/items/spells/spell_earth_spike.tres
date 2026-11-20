@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "spell_earth_spike"
+item_name = "Bí Kíp: Gai Đất"
+type = 2
+rarity = 2
+price = 30
+level = 1
+custom_icon_path = "res://assets/effects/magic_effects/Icons/tile002.png"
+spell_id = "earth_spike"
+cooldown = 4.0
+description = "Học hoặc tăng cấp Gai Đất: Trồi gai đá nhọn từ lòng đất tại vị trí chuột làm rung chuyển và tiêu diệt kẻ thù."

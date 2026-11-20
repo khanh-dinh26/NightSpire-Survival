@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://bt0t36tu1nnsy"]
 
-[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://diux81jhe5dbv" path="res://src/resources/EnemyData.gd" id="1_enemy"]
 
 [resource]
 script = ExtResource("1_enemy")
@@ -13,7 +13,6 @@ speed = 68.0
 contact_knockback = 150.0
 gold_drop_min = 35
 gold_drop_max = 50
-sprite_sheet = "monsters"
 sprite_region = Rect2(96, 192, 32, 32)
 attack_pattern = "projectile"
 projectile_speed = 160.0

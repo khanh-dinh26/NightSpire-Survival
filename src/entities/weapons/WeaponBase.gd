@@ -96,11 +96,54 @@ func _attack_melee() -> void:
 
 
 func _deal_melee_damage(target: Node2D) -> void:
-	if is_instance_valid(target) and target.has_method("take_damage"):
-		target.take_damage(item_data.base_damage)
-		if target.has_method("apply_knockback"):
-			var kb_dir: Vector2 = (target.global_position - global_position).normalized()
-			target.apply_knockback(kb_dir * item_data.knockback)
+	if not is_instance_valid(target) or not target.has_method("take_damage") or item_data == null:
+		return
+
+	var final_damage: int = item_data.base_damage
+
+	# Berserk Low HP check
+	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+	var player_ref: Player = players[0] as Player if players.size() > 0 else null
+
+	if item_data.special_effect == "berserk_low_hp" and player_ref != null:
+		if float(player_ref.current_hp) / float(maxi(player_ref.max_hp, 1)) <= 0.35:
+			final_damage = roundi(final_damage * 1.5)
+
+	target.take_damage(final_damage)
+
+	if target.has_method("apply_knockback"):
+		var kb_dir: Vector2 = (target.global_position - global_position).normalized()
+		target.apply_knockback(kb_dir * item_data.knockback)
+
+	# Lifesteal check
+	if item_data.special_effect == "lifesteal" and player_ref != null:
+		if randf() <= 0.25:
+			player_ref.heal(3)
+
+	# Greed Gold check
+	if item_data.special_effect == "greed_gold":
+		if randf() <= 0.35:
+			GameManager.add_gold(1)
+
+	# Radius Instakill Shockwave
+	if item_data.special_effect == "radius_execute":
+		if randf() <= 0.10:
+			_trigger_radius_execute(target.global_position)
+
+
+func _trigger_radius_execute(center_pos: Vector2) -> void:
+	# Eliminate regular enemies within 150px radius
+	var radius: float = 150.0
+	for enemy: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var e: Node2D = enemy as Node2D
+		if e == null or not is_instance_valid(e):
+			continue
+		if e.is_in_group(&"boss"):
+			continue # Bosses resist instakill shockwave
+		if center_pos.distance_to(e.global_position) <= radius:
+			if e.has_method("take_damage"):
+				e.take_damage(9999) # Instant execute
+	AudioManager.play_sfx("enemy_death")
 
 
 func _on_lunge_finished() -> void:
@@ -115,6 +158,7 @@ func _attack_ranged() -> void:
 	projectile.speed = item_data.projectile_speed
 	projectile.direction = (_target.global_position - global_position).normalized()
 	projectile.knockback_force = item_data.knockback
+	projectile.item_data = item_data
 	projectile.global_position = global_position
 	get_tree().current_scene.add_child(projectile)
 

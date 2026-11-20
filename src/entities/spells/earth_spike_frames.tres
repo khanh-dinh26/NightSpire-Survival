@@ -1,0 +1,51 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/001.png" id="1_cke68"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/002.png" id="2_cb3xj"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/003.png" id="3_2jhas"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/004.png" id="4_t7kby"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/005.png" id="5_7pbqk"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/006.png" id="6_ch2og"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/007.png" id="7_ko1m3"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/008.png" id="8_my75p"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Earth_Spike/009.png" id="9_b8akx"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_cke68")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_cb3xj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_2jhas")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_t7kby")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_7pbqk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ch2og")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ko1m3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_my75p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_b8akx")
+}],
+"loop": 0,
+"name": &"erupt",
+"speed": 12.0
+}]

@@ -2,7 +2,7 @@ class_name ItemData
 extends Resource
 ## Data definition for a weapon or passive buff item.
 
-enum ItemType { WEAPON, PASSIVE_BUFF }
+enum ItemType { WEAPON, PASSIVE_BUFF, SPELL }
 enum Rarity { COMMON, RARE, EPIC, LEGENDARY }
 enum WeaponStyle { MELEE_ORBIT, RANGED_PROJECTILE }
 
@@ -11,9 +11,11 @@ enum WeaponStyle { MELEE_ORBIT, RANGED_PROJECTILE }
 @export var type: ItemType = ItemType.WEAPON
 @export var rarity: Rarity = Rarity.COMMON
 @export var price: int = 10
+@export var level: int = 1
 
-## Sprite region in items.png
+## Sprite region in items.png or icon
 @export var sprite_region: Rect2 = Rect2(0, 0, 32, 32)
+@export var custom_icon_path: String = ""
 
 ## Weapon stats (only if type == WEAPON)
 @export var weapon_style: WeaponStyle = WeaponStyle.MELEE_ORBIT
@@ -22,6 +24,15 @@ enum WeaponStyle { MELEE_ORBIT, RANGED_PROJECTILE }
 @export var attack_range: float = 80.0  # detection range
 @export var projectile_speed: float = 200.0  # only for RANGED_PROJECTILE
 @export var knockback: float = 50.0
+
+## Special Effect & Passive traits
+## Options: "lifesteal", "radius_execute", "greed_gold", "berserk_low_hp"
+@export var special_effect: String = ""
+@export var special_effect_value: float = 0.0
+
+## Spell specific (if type == SPELL)
+@export var spell_id: String = ""
+@export var cooldown: float = 4.0
 
 ## Passive buff stats (only if type == PASSIVE_BUFF)
 @export var stats_modifier: Dictionary = {}

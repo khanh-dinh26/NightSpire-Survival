@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bhud0001"]
+[gd_scene load_steps=7 format=3 uid="uid://bhud0001"]
 
 [ext_resource type="Script" path="res://src/ui/HUD.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://src/ui/InventoryBar.tscn" id="2_invbar"]
 [ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="3_ui"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="4_btn_normal"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="5_btn_hover"]
+[ext_resource type="PackedScene" path="res://src/ui/SpellBar.tscn" id="6_spellbar"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_script")
@@ -174,3 +175,6 @@ theme_override_styles/normal = ExtResource("4_btn_normal")
 theme_override_styles/hover = ExtResource("5_btn_hover")
 theme_override_styles/pressed = ExtResource("5_btn_hover")
 text = "Chọn Tháp Mới"
+
+[node name="SpellBar" parent="." instance=ExtResource("6_spellbar")]
+

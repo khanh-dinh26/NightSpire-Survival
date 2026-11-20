@@ -36,10 +36,13 @@ func _refresh_display() -> void:
 		return
 
 	# Icon
-	var atlas_tex: AtlasTexture = AtlasTexture.new()
-	atlas_tex.atlas = _items_tex
-	atlas_tex.region = item_data.sprite_region
-	icon_rect.texture = atlas_tex
+	if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
+		icon_rect.texture = load(item_data.custom_icon_path)
+	else:
+		var atlas_tex: AtlasTexture = AtlasTexture.new()
+		atlas_tex.atlas = _items_tex
+		atlas_tex.region = item_data.sprite_region
+		icon_rect.texture = atlas_tex
 
 	# Name & Rarity Color
 	name_label.text = item_data.item_name
@@ -50,27 +53,46 @@ func _refresh_display() -> void:
 
 	# Type Badge
 	if item_data.type == ItemData.ItemType.WEAPON:
-		var count: int = 1
+		var existing_lvl: int = 1
+		var owned: bool = false
 		for eq: ItemData in GameManager.equipped_weapons:
 			if eq.item_id == item_data.item_id:
-				count += 1
-		var is_spell: bool = (item_data.item_id == "crystal_staff")
-		var tag: String = "SPELL" if is_spell else "WEAPON"
-		if count > 1:
-			type_badge.text = "[ %s x%d ]" % [tag, count]
+				owned = true
+				existing_lvl = eq.level
+				break
+		if owned:
+			type_badge.text = "[ WEAPON -> Lv.%d ]" % (existing_lvl + 1)
 			type_badge.add_theme_color_override(&"font_color", Color(1.0, 0.8, 0.3))
 		else:
-			type_badge.text = "[ %s ]" % tag
-			type_badge.add_theme_color_override(&"font_color", Color(0.7, 0.7, 0.7) if not is_spell else Color(0.6, 0.8, 1.0))
+			type_badge.text = "[ WEAPON ]"
+			type_badge.add_theme_color_override(&"font_color", Color(0.7, 0.7, 0.7))
+	elif item_data.type == ItemData.ItemType.SPELL:
+		var s_id: String = item_data.spell_id if not item_data.spell_id.is_empty() else item_data.item_id
+		var lvl: int = GameManager.learned_spells.get(s_id, 0)
+		if lvl > 0:
+			type_badge.text = "[ SPELL -> Lv.%d ]" % (lvl + 1)
+			type_badge.add_theme_color_override(&"font_color", Color(1.0, 0.7, 0.2))
+		else:
+			type_badge.text = "[ SPELL ]"
+			type_badge.add_theme_color_override(&"font_color", Color(0.3, 0.8, 1.0))
 	else:
 		type_badge.text = "[ BUFF ]"
 		type_badge.add_theme_color_override(&"font_color", Color(0.4, 0.9, 0.4))
 
 	# Description
 	if item_data.type == ItemData.ItemType.WEAPON:
-		desc_label.text = "Damage: %d  |  Speed: %.1f/s\n%s" % [
+		var extra_effect: String = ""
+		if not item_data.special_effect.is_empty():
+			extra_effect = "\n[Đặc tính: %s]" % item_data.special_effect
+		desc_label.text = "Damage: %d  |  Speed: %.1f/s%s\n%s" % [
 			item_data.base_damage,
 			item_data.attack_speed,
+			extra_effect,
+			item_data.description
+		]
+	elif item_data.type == ItemData.ItemType.SPELL:
+		desc_label.text = "Hồi chiêu: %.1fs (Kích hoạt chuột/phím số)\n%s" % [
+			item_data.cooldown,
 			item_data.description
 		]
 	else:

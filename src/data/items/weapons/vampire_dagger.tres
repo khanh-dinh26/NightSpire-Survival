@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "vampire_dagger"
+item_name = "Dao Huyết Tộc"
+type = 0
+rarity = 1
+price = 30
+level = 1
+sprite_region = Rect2(32, 0, 32, 32)
+weapon_style = 0
+base_damage = 18
+attack_speed = 3.5
+attack_range = 80.0
+projectile_speed = 200.0
+knockback = 50.0
+special_effect = "lifesteal"
+special_effect_value = 3.0
+description = "Vũ khí hút máu: 25% cơ hội hồi 3 Máu mỗi khi chém trúng quái."

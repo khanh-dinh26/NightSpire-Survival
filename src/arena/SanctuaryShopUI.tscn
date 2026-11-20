@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://csanctuaryshop01"]
+[gd_scene format=3 uid="uid://drcl7o8jqrgyy"]
 
 [ext_resource type="Script" path="res://src/arena/SanctuaryShopUI.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_panel"]

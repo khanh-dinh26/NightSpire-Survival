@@ -13,6 +13,7 @@ var player_current_hp: int = 100
 # ---- Inventory ----
 var equipped_weapons: Array[ItemData] = []
 var passive_buffs: Array[ItemData] = []
+var learned_spells: Dictionary = {} # spell_id: String -> level: int
 
 # ---- Floor Configs (populated when tower is selected) ----
 var floor_configs: Array[FloorConfig] = []
@@ -35,6 +36,7 @@ func start_new_run(tower: TowerData, floors: Array[FloorConfig], p_class: ClassD
 	gold = 0
 	equipped_weapons.clear()
 	passive_buffs.clear()
+	learned_spells.clear()
 	reroll_cost = 10
 
 	if chosen_class != null:
@@ -80,10 +82,34 @@ func spend_gold(amount: int) -> bool:
 func add_item(item: ItemData) -> void:
 	match item.type:
 		ItemData.ItemType.WEAPON:
-			equipped_weapons.append(item)
-			EventBus.weapons_changed.emit()
+			# Check if weapon already exists -> Upgrade damage and level!
+			var existing_weapon: ItemData = null
+			for w: ItemData in equipped_weapons:
+				if w.item_id == item.item_id:
+					existing_weapon = w
+					break
+			if existing_weapon != null:
+				existing_weapon.level += 1
+				existing_weapon.base_damage = roundi(existing_weapon.base_damage * 1.4)
+				var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+				if players.size() > 0:
+					var p: Player = players[0] as Player
+					if p != null and p.weapon_orbit != null:
+						p.weapon_orbit.upgrade_weapon(existing_weapon)
+				EventBus.weapons_changed.emit()
+				return
+			else:
+				equipped_weapons.append(item)
+				EventBus.weapons_changed.emit()
 		ItemData.ItemType.PASSIVE_BUFF:
 			passive_buffs.append(item)
+		ItemData.ItemType.SPELL:
+			var s_id: String = item.spell_id if not item.spell_id.is_empty() else item.item_id
+			if learned_spells.has(s_id):
+				learned_spells[s_id] += 1
+			else:
+				learned_spells[s_id] = 1
+			EventBus.spell_learned.emit(s_id, learned_spells[s_id])
 
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 	if players.size() > 0:

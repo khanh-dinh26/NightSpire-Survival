@@ -29,6 +29,18 @@ func add_weapon(item: ItemData) -> void:
 	_reposition_weapons()
 
 
+func upgrade_weapon(data: ItemData) -> void:
+	for w: WeaponBase in weapons:
+		if w.item_data != null and w.item_data.item_id == data.item_id:
+			w.item_data.level = data.level
+			w.item_data.base_damage = data.base_damage
+			# Visual pop on upgrade
+			var tw: Tween = create_tween()
+			tw.tween_property(w, ^"scale", Vector2(1.5, 1.5), 0.08)
+			tw.tween_property(w, ^"scale", Vector2(1.0, 1.0), 0.08)
+			break
+
+
 func remove_weapon(index: int) -> void:
 	if index < 0 or index >= weapons.size():
 		return
