@@ -55,6 +55,17 @@ func _process(delta: float) -> void:
 			if spell_target != null:
 				_auto_cast_embedded_spell(spell_target)
 
+	# Berserk Low HP visual indicator
+	if item_data != null and item_data.special_effect == "berserk_low_hp":
+		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+		if players.size() > 0:
+			var pl: Player = players[0] as Player
+			if pl != null and float(pl.current_hp) / float(maxi(pl.max_hp, 1)) <= 0.35:
+				var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012)
+				sprite.modulate = Color(2.2, 0.2 + 0.3 * pulse, 0.2 + 0.3 * pulse, 1.0)
+			else:
+				sprite.modulate = Color.WHITE
+
 
 func _find_closest_enemy() -> Node2D:
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
@@ -149,7 +160,7 @@ func _trigger_radius_execute(center_pos: Vector2) -> void:
 		var e: Node2D = enemy as Node2D
 		if e == null or not is_instance_valid(e):
 			continue
-		if e.is_in_group(&"boss"):
+		if e.is_in_group(&"boss") or e.is_in_group(&"bosses"):
 			continue # Bosses resist instakill shockwave
 		if center_pos.distance_to(e.global_position) <= radius:
 			if e.has_method("take_damage"):

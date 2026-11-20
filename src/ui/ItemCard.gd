@@ -86,7 +86,7 @@ func _refresh_display() -> void:
 	if item_data.type == ItemData.ItemType.WEAPON:
 		var extra_effect: String = ""
 		if not item_data.special_effect.is_empty():
-			extra_effect = "\n[Đặc tính: %s]" % item_data.special_effect
+			extra_effect = "\n[Đặc tính: %s]" % ItemData.get_special_effect_name(item_data.special_effect)
 		if not item_data.embedded_spell.is_empty():
 			extra_effect += "\n[Khảm Phép: %s Lv.%d (Tự Bắn)]" % [
 				item_data.embedded_spell.capitalize(), item_data.embedded_spell_level

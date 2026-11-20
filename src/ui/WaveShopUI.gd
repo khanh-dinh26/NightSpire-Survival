@@ -42,7 +42,6 @@ func _load_all_items() -> void:
 	_all_items_pool.clear()
 	# Weapons
 	var weapon_files: Array[String] = [
-		"res://src/data/items/weapons/starter_dagger.tres",
 		"res://src/data/items/weapons/dagger.tres",
 		"res://src/data/items/weapons/short_bow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
@@ -86,6 +85,8 @@ func _load_all_items() -> void:
 
 
 func open_shop(items: Array[ItemData]) -> void:
+	if visible:
+		return
 	_hide_replace_modal()
 	_rerolls_remaining = 2
 	get_tree().paused = true

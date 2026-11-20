@@ -36,6 +36,8 @@ func _ready() -> void:
 
 
 func open_draft(items: Array[ItemData]) -> void:
+	if visible:
+		return
 	_hide_replace_modal()
 	get_tree().paused = true
 	_picks_left = MAX_PICKS

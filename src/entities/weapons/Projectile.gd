@@ -54,7 +54,7 @@ func _on_body_entered(body: Node2D) -> void:
 				if randf() <= 0.10:
 					for enemy: Node in get_tree().get_nodes_in_group(&"enemies"):
 						var e: Node2D = enemy as Node2D
-						if e != null and is_instance_valid(e) and not e.is_in_group(&"boss"):
+						if e != null and is_instance_valid(e) and not e.is_in_group(&"boss") and not e.is_in_group(&"bosses"):
 							if global_position.distance_to(e.global_position) <= 150.0 and e.has_method("take_damage"):
 								e.take_damage(9999)
 

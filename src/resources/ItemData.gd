@@ -54,3 +54,17 @@ static func rarity_weight(r: Rarity) -> float:
 		Rarity.EPIC: return 15.0
 		Rarity.LEGENDARY: return 5.0
 	return 50.0
+
+
+static func get_special_effect_name(effect_key: String) -> String:
+	match effect_key:
+		"berserk_low_hp":
+			return "Cuồng Nộ Khi Máu Thấp"
+		"greed_gold":
+			return "Săn Tìm Vàng"
+		"lifesteal":
+			return "Hút Máu"
+		"radius_execute":
+			return "Trảm Sát Diện Rộng"
+		_:
+			return effect_key.capitalize()

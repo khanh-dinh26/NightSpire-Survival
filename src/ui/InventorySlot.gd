@@ -55,7 +55,7 @@ func set_item(item: ItemData, idx: int) -> void:
 
 		var effect_text: String = ""
 		if not item.special_effect.is_empty():
-			effect_text += "\nHiệu ứng: %s" % item.special_effect
+			effect_text += "\nHiệu ứng: %s" % ItemData.get_special_effect_name(item.special_effect)
 
 		if emblem_rect != null:
 			if not item.embedded_spell.is_empty() and _spell_icons.has(item.embedded_spell):

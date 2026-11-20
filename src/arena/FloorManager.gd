@@ -14,6 +14,8 @@ var all_floor_configs: Array[FloorConfig] = []
 var all_items_pool: Array[ItemData] = []
 var _current_sanctuary: Node2D = null
 var _random_sanctuary_floor: int = -1
+var _boss_draft_opened_for_floor: int = -1
+var _shop_opened_for_floor: int = -1
 
 
 func _ready() -> void:
@@ -43,7 +45,6 @@ func _load_items_pool() -> void:
 	all_items_pool.clear()
 	var item_paths: Array[String] = [
 		# Weapons
-		"res://src/data/items/weapons/starter_dagger.tres",
 		"res://src/data/items/weapons/dagger.tres",
 		"res://src/data/items/weapons/short_bow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
@@ -155,6 +156,10 @@ func _on_wave_ended(floor_index: int) -> void:
 	if spawner != null:
 		spawner.stop_spawning()
 
+	if _shop_opened_for_floor == floor_index:
+		return
+	_shop_opened_for_floor = floor_index
+
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	if cfg != null and cfg.floor_type == FloorConfig.FloorType.COMBAT_WAVE:
 		# Brief 1s delay before opening shop
@@ -176,6 +181,10 @@ func _on_wave_ended(floor_index: int) -> void:
 func _on_floor_cleared(floor_index: int) -> void:
 	if spawner != null:
 		spawner.stop_spawning()
+
+	if _boss_draft_opened_for_floor == floor_index:
+		return
+	_boss_draft_opened_for_floor = floor_index
 
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	if cfg != null and cfg.floor_type == FloorConfig.FloorType.MINIBOSS:

@@ -1,16 +1,23 @@
 class_name BossBase
 extends CharacterBody2D
-## Imposing Boss entity with multi-phase attack patterns, charge, summons, and projectiles.
+## Imposing Boss entity with smart multi-phase AI, unique skills, and enraged state.
 
 signal boss_hp_changed(current_hp: int, max_hp: int)
 signal boss_died(boss_name: String)
 
-enum State { CHASE, TELEGRAPH_CHARGE, CHARGING, CASTING, STUNNED }
+enum State {
+	CHASE,
+	TELEGRAPH_CHARGE,
+	CHARGING,
+	TELEGRAPH_SLAM,
+	CASTING,
+	STUNNED
+}
 
 @export var data: EnemyData = null
 
-var max_hp: int = 200
-var current_hp: int = 200
+var max_hp: int = 500
+var current_hp: int = 500
 var damage: int = 15
 var speed: float = 55.0
 var hp_mult: float = 1.0
@@ -20,11 +27,12 @@ var spd_mult: float = 1.0
 var current_state: State = State.CHASE
 var is_enraged: bool = false
 var charge_direction: Vector2 = Vector2.ZERO
-var charge_speed: float = 280.0
+var charge_speed: float = 290.0
 
 var _state_timer: float = 0.0
 var _attack_cooldown_timer: float = 2.0
 var _walk_phase: float = 0.0
+var _is_dying: bool = false
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var hitbox: Area2D = $Hitbox
@@ -63,6 +71,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _is_dying:
+		return
+
 	var player: Player = _get_player()
 	if player == null:
 		velocity = Vector2.ZERO
@@ -88,9 +99,11 @@ func _physics_process(delta: float) -> void:
 		State.CHASE:
 			_process_chase(delta, player, to_player)
 		State.TELEGRAPH_CHARGE:
-			_process_telegraph(delta)
+			_process_telegraph_charge(delta)
 		State.CHARGING:
 			_process_charging(delta)
+		State.TELEGRAPH_SLAM:
+			_process_telegraph_slam(delta, player)
 		State.CASTING:
 			_process_casting(delta)
 		State.STUNNED:
@@ -99,82 +112,227 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+# ── Smart Movement & Dynamic AI ──────────────────────────────────────────
 func _process_chase(delta: float, player: Player, to_player: Vector2) -> void:
-	velocity = to_player * speed
-	_walk_phase += delta * 8.0
+	var dist: float = global_position.distance_to(player.global_position)
+	var is_caster: bool = (data != null and (
+		data.attack_pattern in ["projectile", "spiral_projectile", "summon"] or
+		data.enemy_id in ["lich", "shadow_fiend", "necromancer_lord", "void_overlord", "venom_manticore"]
+	))
+
+	if is_caster:
+		# Caster bosses maintain strategic combat distance (110 - 180px)
+		if dist < 110.0:
+			# Backstep away with lateral evasive strafing
+			var retreat_dir: Vector2 = (-to_player * 0.8 + to_player.orthogonal() * sin(_walk_phase) * 0.6).normalized()
+			velocity = retreat_dir * speed * 1.1
+		elif dist > 190.0:
+			# Advance with weaving motion
+			var advance_dir: Vector2 = (to_player * 0.85 + to_player.orthogonal() * sin(_walk_phase) * 0.5).normalized()
+			velocity = advance_dir * speed
+		else:
+			# Orbit around player laterally
+			var orbit_sign: float = 1.0 if int(_walk_phase * 0.4) % 2 == 0 else -1.0
+			var orbit_dir: Vector2 = (to_player.orthogonal() * orbit_sign + to_player * 0.15 * sin(_walk_phase)).normalized()
+			velocity = orbit_dir * speed * 0.95
+	else:
+		# Melee bruiser: Weave and flank dynamically rather than walking straight
+		var flank_dir: Vector2 = (to_player * 0.85 + to_player.orthogonal() * sin(_walk_phase * 2.0) * 0.45).normalized()
+		velocity = flank_dir * speed
+
+	_walk_phase += delta * (8.0 if not is_enraged else 11.0)
 	sprite.position.y = -roundf(abs(sin(_walk_phase)) * 2.0)
 
-	# Pick next special attack when cooldown ready
+	# Special attack check
 	if _attack_cooldown_timer <= 0.0:
-		_choose_attack(player)
+		_choose_attack(player, dist, is_caster)
 
 
-func _choose_attack(player: Player) -> void:
-	var cooldown_base: float = data.attack_cooldown if data != null else 3.0
+func _choose_attack(player: Player, dist: float, is_caster: bool) -> void:
+	var cooldown_base: float = data.attack_cooldown if data != null else 2.6
 	_attack_cooldown_timer = cooldown_base * (0.65 if is_enraged else 1.0)
 
-	var roll: float = randf()
-	if data != null and data.attack_pattern == "charge":
-		_start_charge(player)
-	elif data != null and data.attack_pattern == "projectile":
-		_start_projectile_attack(player)
-	elif data != null and data.attack_pattern == "summon":
-		_start_summon()
-	else:
-		# Multi-boss mixed pattern
-		if roll < 0.4:
-			_start_charge(player)
-		elif roll < 0.75:
-			_start_projectile_attack(player)
-		else:
-			_start_summon()
+	var pattern: String = data.attack_pattern if data != null else "mixed"
+
+	match pattern:
+		"ground_slam":
+			if dist < 90.0 or randf() < 0.6:
+				_start_ground_slam(player)
+			else:
+				_start_charge(player)
+
+		"charge":
+			if dist < 70.0 and randf() < 0.4:
+				_start_ground_slam(player)
+			else:
+				_start_charge(player)
+
+		"spiral_projectile":
+			if randf() < 0.5:
+				_start_spiral_barrage()
+			elif randf() < 0.8:
+				_start_projectile_attack(player)
+			else:
+				_start_summon()
+
+		"projectile":
+			if randf() < 0.55:
+				_start_projectile_attack(player)
+			elif randf() < 0.85:
+				_start_spiral_barrage()
+			else:
+				_start_charge(player)
+
+		"summon":
+			if randf() < 0.4:
+				_start_summon()
+			elif randf() < 0.7:
+				_start_spiral_barrage()
+			else:
+				_start_projectile_attack(player)
+
+		_:
+			# Mixed / Final bosses (access to full arsenal)
+			if dist < 75.0:
+				_start_ground_slam(player)
+			elif dist > 170.0 and not is_caster:
+				_start_charge(player)
+			else:
+				var roll: float = randf()
+				if roll < 0.28:
+					_start_spiral_barrage()
+				elif roll < 0.55:
+					_start_projectile_attack(player)
+				elif roll < 0.78:
+					_start_ground_slam(player)
+				elif roll < 0.90:
+					_start_charge(player)
+				else:
+					_start_summon()
 
 
-# ── Special Skill 1: Charge Dash ────────────────────────────────────────
+# ── Skill 1: Charge Dash ────────────────────────────────────────────────
 func _start_charge(player: Player) -> void:
 	current_state = State.TELEGRAPH_CHARGE
-	_state_timer = 0.6
+	_state_timer = 0.55
 	velocity = Vector2.ZERO
 	charge_direction = (player.global_position - global_position).normalized()
 
 	# Red telegraph flash
 	var tw: Tween = create_tween()
 	tw.set_loops(3)
-	tw.tween_property(sprite, ^"modulate", Color(2.5, 0.4, 0.4, 1.0), 0.1)
-	tw.tween_property(sprite, ^"modulate", Color.WHITE, 0.1)
+	tw.tween_property(sprite, ^"modulate", Color(3.0, 0.4, 0.4, 1.0), 0.09)
+	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.09)
 
 
-func _process_telegraph(_delta: float) -> void:
+func _process_telegraph_charge(_delta: float) -> void:
 	velocity = Vector2.ZERO
 	if _state_timer <= 0.0:
-		# Launch dash
 		current_state = State.CHARGING
-		_state_timer = 0.55
+		_state_timer = 0.5
+		AudioManager.play_sfx("slash")
 
 
 func _process_charging(_delta: float) -> void:
-	velocity = charge_direction * (charge_speed * (1.2 if is_enraged else 1.0))
+	velocity = charge_direction * (charge_speed * (1.25 if is_enraged else 1.0))
 	if _state_timer <= 0.0:
 		current_state = State.STUNNED
-		_state_timer = 0.4
+		_state_timer = 0.35
 
 
-func _process_stunned(_delta: float) -> void:
+# ── Skill 2: Ground Slam / Shockwave ────────────────────────────────────
+func _start_ground_slam(_player: Player) -> void:
+	current_state = State.TELEGRAPH_SLAM
+	_state_timer = 0.6
+	velocity = Vector2.ZERO
+
+	# Leap up & warning glow
+	var tw: Tween = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(sprite, ^"position:y", -16.0, 0.25).set_ease(Tween.EASE_OUT)
+	tw.tween_property(sprite, ^"scale", Vector2(1.5, 1.5), 0.25)
+	tw.tween_property(sprite, ^"modulate", Color(3.0, 1.0, 0.3, 1.0), 0.25)
+
+
+func _process_telegraph_slam(_delta: float, player: Player) -> void:
 	velocity = Vector2.ZERO
 	if _state_timer <= 0.0:
-		current_state = State.CHASE
+		_execute_ground_slam(player)
 
 
-# ── Special Skill 2: Projectile Volley ──────────────────────────────────
-func _start_projectile_attack(player: Player) -> void:
-	current_state = State.CASTING
+func _execute_ground_slam(player: Player) -> void:
+	current_state = State.STUNNED
 	_state_timer = 0.4
 	velocity = Vector2.ZERO
 
-	# Channel glow
+	# Slam down impact animation
+	sprite.position.y = 0.0
 	var tw: Tween = create_tween()
-	tw.tween_property(sprite, ^"modulate", Color(0.5, 2.5, 0.5, 1.0), 0.2)
-	tw.tween_property(sprite, ^"modulate", Color.WHITE, 0.2)
+	tw.tween_property(sprite, ^"scale", Vector2(1.6, 0.8), 0.08)
+	tw.tween_property(sprite, ^"scale", Vector2(1.3, 1.3), 0.12)
+	tw.parallel().tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.15)
+
+	AudioManager.play_sfx("explosion")
+
+	# Area slam damage to nearby player
+	if is_instance_valid(player):
+		var dist_to_player: float = global_position.distance_to(player.global_position)
+		if dist_to_player <= 75.0:
+			player.take_damage(roundi(damage * 1.35))
+			var knock_dir: Vector2 = (player.global_position - global_position).normalized()
+			if knock_dir == Vector2.ZERO:
+				knock_dir = Vector2.DOWN
+			player.velocity += knock_dir * 240.0
+
+	# 8-Direction Expanding Shockwave Projectiles
+	var spike_count: int = 12 if is_enraged else 8
+	for i: int in range(spike_count):
+		var proj: BossProjectile = _proj_scene.instantiate() as BossProjectile
+		var angle: float = (float(i) / float(spike_count)) * TAU
+		proj.direction = Vector2.RIGHT.rotated(angle)
+		proj.damage = roundi(damage * 0.7)
+		proj.speed = 135.0
+		proj.global_position = global_position
+		get_tree().current_scene.add_child(proj)
+
+
+# ── Skill 3: Spiral Nova Barrage ────────────────────────────────────────
+func _start_spiral_barrage() -> void:
+	current_state = State.CASTING
+	_state_timer = 0.5
+	velocity = Vector2.ZERO
+
+	# Mystic violet glow
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"modulate", Color(2.0, 0.5, 3.0, 1.0), 0.2)
+	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.2)
+	tw.tween_callback(_fire_spiral_projectiles)
+
+
+func _fire_spiral_projectiles() -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = 12 if is_enraged else 8
+	var base_offset: float = randf() * TAU
+	for i: int in range(count):
+		var proj: BossProjectile = _proj_scene.instantiate() as BossProjectile
+		var angle: float = base_offset + (float(i) / float(count)) * TAU
+		proj.direction = Vector2.RIGHT.rotated(angle)
+		proj.damage = roundi(damage * 0.75)
+		proj.speed = 145.0
+		proj.global_position = global_position
+		get_tree().current_scene.add_child(proj)
+
+
+# ── Skill 4: Targeted Projectile Volley ─────────────────────────────────
+func _start_projectile_attack(player: Player) -> void:
+	current_state = State.CASTING
+	_state_timer = 0.45
+	velocity = Vector2.ZERO
+
+	# Emerald channel glow
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"modulate", Color(0.4, 3.0, 0.6, 1.0), 0.2)
+	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.2)
 	tw.tween_callback(func(): _fire_projectiles(player))
 
 
@@ -182,9 +340,9 @@ func _fire_projectiles(player: Player) -> void:
 	if not is_instance_valid(player):
 		return
 	var base_dir: Vector2 = (player.global_position - global_position).normalized()
+	AudioManager.play_sfx("slash")
 
-	# Fire 3 spread projectiles (or 6 if enraged!)
-	var count: int = 6 if is_enraged else 3
+	var count: int = 6 if is_enraged else 4
 	var spread_angle: float = PI * 0.4
 
 	for i: int in range(count):
@@ -197,7 +355,7 @@ func _fire_projectiles(player: Player) -> void:
 		get_tree().current_scene.add_child(proj)
 
 
-# ── Special Skill 3: Summon Minions ─────────────────────────────────────
+# ── Skill 5: Summon Minions ─────────────────────────────────────────────
 func _start_summon() -> void:
 	current_state = State.CASTING
 	_state_timer = 0.6
@@ -205,16 +363,17 @@ func _start_summon() -> void:
 
 	var tw: Tween = create_tween()
 	tw.tween_property(sprite, ^"scale", Vector2(1.8, 1.8), 0.3)
-	tw.tween_property(sprite, ^"scale", Vector2(1.4, 1.4), 0.3)
+	tw.tween_property(sprite, ^"scale", Vector2(1.3, 1.3), 0.3)
 	tw.tween_callback(_spawn_minions)
 
 
 func _spawn_minions() -> void:
+	AudioManager.play_sfx("enemy_death")
 	var count: int = 3 if is_enraged else 2
 	for i: int in range(count):
 		var minion: EnemyBase = _enemy_base_scene.instantiate() as EnemyBase
 		minion.setup(_spider_data, 0.8, 0.8, 1.1)
-		var offset: Vector2 = Vector2(randf_range(-30, 30), randf_range(-30, 30))
+		var offset: Vector2 = Vector2(randf_range(-35, 35), randf_range(-35, 35))
 		minion.global_position = global_position + offset
 		get_tree().current_scene.add_child(minion)
 
@@ -225,8 +384,16 @@ func _process_casting(_delta: float) -> void:
 		current_state = State.CHASE
 
 
+func _process_stunned(_delta: float) -> void:
+	velocity = Vector2.ZERO
+	if _state_timer <= 0.0:
+		current_state = State.CHASE
+
+
 # ── Contact Damage ──────────────────────────────────────────────────────
 func _on_hitbox_body_entered(body: Node2D) -> void:
+	if _is_dying:
+		return
 	if body is Player:
 		var final_dmg: int = damage if current_state != State.CHARGING else roundi(damage * 1.5)
 		(body as Player).take_damage(final_dmg)
@@ -234,13 +401,16 @@ func _on_hitbox_body_entered(body: Node2D) -> void:
 
 # ── Damage & Enrage ─────────────────────────────────────────────────────
 func take_damage(amount: int) -> void:
+	if _is_dying:
+		return
+
 	current_hp = maxi(current_hp - amount, 0)
 	boss_hp_changed.emit(current_hp, max_hp)
 
 	# White hit flash
 	var tw: Tween = create_tween()
 	tw.tween_property(sprite, ^"modulate", Color(3.0, 3.0, 3.0, 1.0), 0.0)
-	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.2, 0.7, 0.7), 0.08)
+	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.08)
 
 	# Enrage check at 50% HP
 	if not is_enraged and current_hp <= max_hp * 0.5:
@@ -252,16 +422,22 @@ func take_damage(amount: int) -> void:
 
 func _trigger_enrage() -> void:
 	is_enraged = true
-	speed *= 1.25
-	sprite.modulate = Color(1.2, 0.7, 0.7, 1.0)
-	# Shout shockwave pulse
+	speed *= 1.3
+	sprite.modulate = Color(1.3, 0.6, 0.6, 1.0)
+	AudioManager.play_sfx("explosion")
+
+	# Enrage roar pulse
 	var tw: Tween = create_tween()
-	tw.tween_property(self, ^"scale", Vector2(1.6, 1.6), 0.15)
+	tw.tween_property(self, ^"scale", Vector2(1.7, 1.7), 0.15)
 	tw.tween_property(self, ^"scale", Vector2(1.3, 1.3), 0.15)
 
 
 # ── Death ───────────────────────────────────────────────────────────────
 func die() -> void:
+	if _is_dying:
+		return
+	_is_dying = true
+
 	remove_from_group(&"enemies")
 	remove_from_group(&"bosses")
 	set_physics_process(false)
