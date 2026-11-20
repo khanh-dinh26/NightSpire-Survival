@@ -8,11 +8,13 @@ var _target: Node2D = null
 var _is_lunging: bool = false
 var _home_position: Vector2 = Vector2.ZERO
 var _cooldown_left: float = 0.0
+var _spell_cooldown_left: float = 0.0
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var attack_timer: Timer = $AttackTimer
 
 var _projectile_scene: PackedScene = preload("res://src/entities/weapons/Projectile.tscn")
+var _spell_scene: PackedScene = preload("res://src/entities/spells/SpellEntity.tscn")
 
 
 func _ready() -> void:
@@ -43,6 +45,15 @@ func _process(delta: float) -> void:
 	# Ready to strike the moment an enemy is within range
 	if _cooldown_left <= 0.0 and _target != null and not _is_lunging:
 		_execute_attack()
+
+	# Auto-cast embedded spell emblem
+	if item_data != null and not item_data.embedded_spell.is_empty():
+		if _spell_cooldown_left > 0.0:
+			_spell_cooldown_left -= delta
+		else:
+			var spell_target: Node2D = _find_spell_target()
+			if spell_target != null:
+				_auto_cast_embedded_spell(spell_target)
 
 
 func _find_closest_enemy() -> Node2D:
@@ -166,3 +177,113 @@ func _attack_ranged() -> void:
 	var tw: Tween = create_tween()
 	tw.tween_property(self, ^"scale", Vector2(0.8, 1.2), 0.04)
 	tw.tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.06)
+
+
+# ── Auto-Cast Embedded Spell ──────────────────────────────────────────
+func _find_spell_target() -> Node2D:
+	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
+	var closest: Node2D = null
+	var closest_dist: float = 240.0
+	for enemy: Node in enemies:
+		var e: Node2D = enemy as Node2D
+		if e == null or not is_instance_valid(e):
+			continue
+		var dist: float = global_position.distance_to(e.global_position)
+		if dist <= closest_dist:
+			closest_dist = dist
+			closest = e
+	return closest
+
+
+func _auto_cast_embedded_spell(target_node: Node2D) -> void:
+	if target_node == null or item_data == null:
+		return
+
+	var lvl: int = item_data.embedded_spell_level
+	_spell_cooldown_left = maxf(3.2 - float(lvl) * 0.35, 1.2)
+
+	var target_pos: Vector2 = target_node.global_position
+	var aim_dir: Vector2 = (target_pos - global_position).normalized()
+	if aim_dir == Vector2.ZERO:
+		aim_dir = Vector2.RIGHT
+
+	match item_data.embedded_spell:
+		"fireball":
+			_cast_fireball(lvl, aim_dir)
+		"molten_spear":
+			_cast_molten_spear(lvl, aim_dir)
+		"tornado":
+			_cast_tornado(lvl, aim_dir)
+		"earth_spike":
+			_cast_earth_spike(lvl, target_pos)
+
+	var tw: Tween = create_tween()
+	tw.tween_property(self, ^"scale", Vector2(1.3, 1.3), 0.06)
+	tw.tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.08)
+
+
+func _cast_fireball(lvl: int, base_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = lvl
+	var spread_angle: float = 0.22
+	for i: int in range(count):
+		var angle_offset: float = 0.0
+		if count > 1:
+			angle_offset = (float(i) - float(count - 1) / 2.0) * spread_angle
+		var fire_dir: Vector2 = base_dir.rotated(angle_offset)
+		var spell: Area2D = _spell_scene.instantiate() as Area2D
+		spell.set("spell_type", 0) # FIREBALL
+		spell.set("level", lvl)
+		spell.set("damage", 25 + (lvl - 1) * 12)
+		spell.set("direction", fire_dir)
+		spell.global_position = global_position
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_molten_spear(lvl: int, base_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = lvl
+	for i: int in range(count):
+		var offset_perp: Vector2 = base_dir.orthogonal() * ((float(i) - float(count - 1) / 2.0) * 14.0)
+		var spell: Area2D = _spell_scene.instantiate() as Area2D
+		spell.set("spell_type", 1) # MOLTEN_SPEAR
+		spell.set("level", lvl)
+		spell.set("damage", 35 + (lvl - 1) * 18)
+		spell.set("direction", base_dir)
+		spell.global_position = global_position + offset_perp
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_tornado(lvl: int, base_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = mini(lvl, 3)
+	for i: int in range(count):
+		var angle_offset: float = 0.0
+		if count > 1:
+			angle_offset = (float(i) - float(count - 1) / 2.0) * 0.35
+		var spell: Area2D = _spell_scene.instantiate() as Area2D
+		spell.set("spell_type", 2) # TORNADO
+		spell.set("level", lvl)
+		spell.set("damage", 18 + (lvl - 1) * 8)
+		spell.set("direction", base_dir.rotated(angle_offset))
+		spell.global_position = global_position
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	var count: int = 1 + (lvl - 1) * 2
+	var offsets: Array[Vector2] = [Vector2.ZERO]
+	if count >= 3:
+		offsets.append(Vector2(24, 0))
+		offsets.append(Vector2(-24, 0))
+	if count >= 5:
+		offsets.append(Vector2(0, 24))
+		offsets.append(Vector2(0, -24))
+	for offset: Vector2 in offsets:
+		var spell: Area2D = _spell_scene.instantiate() as Area2D
+		spell.set("spell_type", 3) # EARTH_SPIKE
+		spell.set("level", lvl)
+		spell.set("damage", 40 + (lvl - 1) * 20)
+		spell.global_position = target_pos + offset
+		get_tree().current_scene.add_child(spell)

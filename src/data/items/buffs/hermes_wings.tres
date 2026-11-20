@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "hermes_wings"
+item_name = "Đôi Cánh Hermes"
+type = 1
+rarity = 2
+price = 45
+level = 1
+sprite_region = Rect2(160, 64, 32, 32)
+stats_modifier = {
+"dodge_chance": 0.15,
+"speed": 35.0
+}
+description = "Đôi cánh tốc độ: Tăng +35 Tốc độ di chuyển và có 15% cơ hội né hoàn toàn mọi đòn sát thương."

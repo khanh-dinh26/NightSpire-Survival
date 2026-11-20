@@ -10,10 +10,18 @@ signal slot_clicked(slot_index: int, item: ItemData)
 @onready var icon_rect: TextureRect = $IconRect
 @onready var click_btn: Button = $ClickButton
 @onready var level_label: Label = $LevelLabel
+@onready var emblem_rect: TextureRect = $EmblemRect
 
 var current_item: ItemData = null
 var _slot_sheet: Texture2D = preload("res://assets/sprites/Sample-InventorySlotsSet.png")
 var _items_tex: Texture2D = preload("res://assets/sprites/items.png")
+
+var _spell_icons: Dictionary = {
+	"fireball": preload("res://assets/effects/magic_effects/Icons/tile000.png"),
+	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile001.png"),
+	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile002.png"),
+	"tornado": preload("res://assets/effects/magic_effects/Icons/tile004.png"),
+}
 
 
 func _ready() -> void:
@@ -47,7 +55,17 @@ func set_item(item: ItemData, idx: int) -> void:
 
 		var effect_text: String = ""
 		if not item.special_effect.is_empty():
-			effect_text = "\nHiệu ứng: %s" % item.special_effect
+			effect_text += "\nHiệu ứng: %s" % item.special_effect
+
+		if emblem_rect != null:
+			if not item.embedded_spell.is_empty() and _spell_icons.has(item.embedded_spell):
+				emblem_rect.texture = _spell_icons[item.embedded_spell]
+				emblem_rect.visible = true
+				effect_text += "\n[Khảm Phép: %s Lv.%d (Tự Động Bắn)]" % [
+					item.embedded_spell.capitalize(), item.embedded_spell_level
+				]
+			else:
+				emblem_rect.visible = false
 
 		click_btn.tooltip_text = "%s (Lv.%d | Damage: %d)%s\nClick to DROP" % [
 			item.item_name, item.level, item.base_damage, effect_text
@@ -62,6 +80,8 @@ func clear_slot() -> void:
 	icon_rect.visible = false
 	if level_label != null:
 		level_label.visible = false
+	if emblem_rect != null:
+		emblem_rect.visible = false
 	click_btn.tooltip_text = "Empty Slot"
 
 

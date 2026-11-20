@@ -67,7 +67,10 @@ func setup_floor(tower: TowerData, floor_config: FloorConfig) -> void:
 
 	# Apply ambient colour tint to the floor layer
 	if floor_layer != null:
-		floor_layer.modulate = tower.ambient_color
+		if GameManager.is_dark_night:
+			floor_layer.modulate = Color(0.45, 0.25, 0.6, 1.0)
+		else:
+			floor_layer.modulate = tower.ambient_color
 
 
 func get_spawn_bounds() -> Rect2:
@@ -137,6 +140,9 @@ func _clear_tiles() -> void:
 
 func _draw_floor(tower: TowerData) -> void:
 	var coords: Array[Vector2i] = tower.floor_tile_atlas_coords
+	if GameManager.is_dark_night:
+		coords = [Vector2i(1, 13), Vector2i(2, 13), Vector2i(3, 13)]
+
 	if coords.is_empty():
 		return
 

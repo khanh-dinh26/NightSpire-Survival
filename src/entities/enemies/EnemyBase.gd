@@ -146,6 +146,24 @@ func die() -> void:
 	EventBus.enemy_killed.emit(global_position, gold_value)
 	_spawn_gold(gold_value)
 
+	# Check player buffs (Vampire chalice & Lucky drops)
+	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+	if players.size() > 0:
+		var p: Player = players[0] as Player
+		if p != null:
+			if p.has_vampire_chalice:
+				p.kills_counter += 1
+				if p.kills_counter >= 8:
+					p.kills_counter = 0
+					p.heal(6)
+
+			# Lucky bonus drop
+			if p.luck_stat > 0.0 and randf() <= (0.15 + p.luck_stat * 0.15):
+				# Spawn extra high-value gold or heal drop
+				_spawn_gold(gold_value + 3)
+				if randf() <= 0.35:
+					p.heal(5)
+
 	# Death tween: scale to 0 + fade
 	if _walk_tween != null and _walk_tween.is_valid():
 		_walk_tween.kill()

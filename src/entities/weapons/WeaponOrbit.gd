@@ -34,11 +34,19 @@ func upgrade_weapon(data: ItemData) -> void:
 		if w.item_data != null and w.item_data.item_id == data.item_id:
 			w.item_data.level = data.level
 			w.item_data.base_damage = data.base_damage
+			w.item_data.embedded_spell = data.embedded_spell
+			w.item_data.embedded_spell_level = data.embedded_spell_level
 			# Visual pop on upgrade
 			var tw: Tween = create_tween()
 			tw.tween_property(w, ^"scale", Vector2(1.5, 1.5), 0.08)
 			tw.tween_property(w, ^"scale", Vector2(1.0, 1.0), 0.08)
 			break
+
+
+func sync_weapons(list: Array[ItemData]) -> void:
+	for i: int in range(mini(weapons.size(), list.size())):
+		if weapons[i] != null and is_instance_valid(weapons[i]):
+			weapons[i].item_data = list[i]
 
 
 func remove_weapon(index: int) -> void:

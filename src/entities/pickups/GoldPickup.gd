@@ -50,8 +50,10 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var dist: float = global_position.distance_to(player.global_position)
-	if dist < MAGNET_RANGE:
-		global_position = global_position.lerp(player.global_position, MAGNET_LERP_WEIGHT * delta)
+	var pull_range: float = player.magnet_range if "magnet_range" in player else MAGNET_RANGE
+	if dist < pull_range:
+		var speed_factor: float = MAGNET_LERP_WEIGHT * (1.5 if pull_range > 100.0 else 1.0)
+		global_position = global_position.lerp(player.global_position, speed_factor * delta)
 
 
 func _on_body_entered(body: Node2D) -> void:

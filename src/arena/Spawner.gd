@@ -114,12 +114,16 @@ func _spawn_burst() -> void:
 
 func _spawn_enemy(data: EnemyData) -> void:
 	var enemy: EnemyBase = _enemy_scene.instantiate() as EnemyBase
-	enemy.setup(
-		data,
-		current_floor_config.enemy_hp_multiplier,
-		current_floor_config.enemy_damage_multiplier,
-		current_floor_config.enemy_speed_multiplier
-	)
+	var hp_scale: float = current_floor_config.enemy_hp_multiplier
+	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
+	var spd_scale: float = current_floor_config.enemy_speed_multiplier
+
+	if GameManager.is_dark_night:
+		hp_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.6)
+		dmg_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.35)
+		spd_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.12)
+
+	enemy.setup(data, hp_scale, dmg_scale, spd_scale)
 
 	var spawn_pos: Vector2 = _get_spawn_position()
 	enemy.global_position = spawn_pos
@@ -165,12 +169,16 @@ func _spawn_final_boss() -> void:
 
 func _spawn_boss_instance(boss_data: EnemyData) -> void:
 	var boss: BossBase = _boss_scene.instantiate() as BossBase
-	boss.setup(
-		boss_data,
-		current_floor_config.enemy_hp_multiplier,
-		current_floor_config.enemy_damage_multiplier,
-		current_floor_config.enemy_speed_multiplier
-	)
+	var hp_scale: float = current_floor_config.enemy_hp_multiplier
+	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
+	var spd_scale: float = current_floor_config.enemy_speed_multiplier
+
+	if GameManager.is_dark_night:
+		hp_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.75)
+		dmg_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.4)
+		spd_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.15)
+
+	boss.setup(boss_data, hp_scale, dmg_scale, spd_scale)
 
 	# Position near top center of arena
 	if arena != null:

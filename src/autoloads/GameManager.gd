@@ -9,6 +9,8 @@ var current_floor_index: int = 1  # 1..10
 var gold: int = 0
 var player_max_hp: int = 100
 var player_current_hp: int = 100
+var is_dark_night: bool = false
+var dark_night_cycle: int = 0
 
 # ---- Inventory ----
 var equipped_weapons: Array[ItemData] = []
@@ -34,6 +36,8 @@ func start_new_run(tower: TowerData, floors: Array[FloorConfig], p_class: ClassD
 	chosen_class = p_class
 	current_floor_index = 1
 	gold = 0
+	is_dark_night = false
+	dark_night_cycle = 0
 	equipped_weapons.clear()
 	passive_buffs.clear()
 	learned_spells.clear()
@@ -109,7 +113,33 @@ func add_item(item: ItemData) -> void:
 				learned_spells[s_id] += 1
 			else:
 				learned_spells[s_id] = 1
+
+			# Emblem infusion into equipped weapons!
+			var socketed: bool = false
+			for w: ItemData in equipped_weapons:
+				if w.embedded_spell == s_id:
+					w.embedded_spell_level += 1
+					socketed = true
+					break
+			if not socketed:
+				for w: ItemData in equipped_weapons:
+					if w.embedded_spell.is_empty():
+						w.embedded_spell = s_id
+						w.embedded_spell_level = 1
+						socketed = true
+						break
+			if not socketed and not equipped_weapons.is_empty():
+				equipped_weapons[0].embedded_spell = s_id
+				equipped_weapons[0].embedded_spell_level = 1
+
+			var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+			if players.size() > 0:
+				var p: Player = players[0] as Player
+				if p != null and p.weapon_orbit != null:
+					p.weapon_orbit.sync_weapons(equipped_weapons)
+
 			EventBus.spell_learned.emit(s_id, learned_spells[s_id])
+			EventBus.weapons_changed.emit()
 
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 	if players.size() > 0:

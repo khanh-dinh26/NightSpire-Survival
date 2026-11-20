@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "abyssal_behemoth"
+enemy_name = "Quái Thú Vực Thẳm (Behemoth)"
+enemy_type = 1
+max_hp = 320
+damage = 25
+speed = 65.0
+contact_knockback = 180.0
+gold_drop_min = 25
+gold_drop_max = 40
+sprite_sheet = "monsters"
+sprite_region = Rect2(64, 128, 32, 32)
+attack_pattern = "charge"
+attack_cooldown = 3.0
+projectile_speed = 140.0

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_molten_spear"
-item_name = "Bí Kíp: Thương Dung Nham"
+item_name = "Khảm Phép: Thương Dung Nham"
 type = 2
 rarity = 1
 price = 25
@@ -13,4 +13,4 @@ level = 1
 custom_icon_path = "res://assets/effects/magic_effects/Icons/tile001.png"
 spell_id = "molten_spear"
 cooldown = 2.5
-description = "Học hoặc tăng cấp Thương Dung Nham: Phóng thương lửa xuyên qua hàng loạt mục tiêu với tốc độ xé gió."
+description = "Khảm ngọc ma thuật vào vũ khí: Vũ khí tự động bắn Thương Dung Nham xé gió xuyên thấu hàng loạt quái vật."

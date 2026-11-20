@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_tornado"
-item_name = "Bí Kíp: Lốc Xoáy"
+item_name = "Khảm Phép: Lốc Xoáy"
 type = 2
 rarity = 2
 price = 35
 level = 1
 custom_icon_path = "res://assets/effects/magic_effects/Icons/tile004.png"
 spell_id = "tornado"
-cooldown = 5.0
-description = "Học hoặc tăng cấp Lốc Xoáy: Tạo cuồng phong cuốn hút quái vật vào tâm và gây sát thương liên hoàn."
+cooldown = 4.5
+description = "Khảm ngọc ma thuật vào vũ khí: Vũ khí tự động triệu hồi Lốc Xoáy quét sạch và cuốn hút quái vật vào tâm."

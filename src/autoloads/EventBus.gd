@@ -13,6 +13,7 @@ signal enemy_killed(enemy_position: Vector2, gold_value: int)
 signal boss_killed(boss_id: String)
 signal player_hit(damage: int)
 signal player_died()
+signal tower_conquered()
 
 # --- Economy / Items ---
 signal gold_changed(new_total: int)

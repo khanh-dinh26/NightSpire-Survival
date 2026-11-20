@@ -30,6 +30,11 @@ enum WeaponStyle { MELEE_ORBIT, RANGED_PROJECTILE }
 @export var special_effect: String = ""
 @export var special_effect_value: float = 0.0
 
+## Embedded Spell Emblem (auto-fired from weapon)
+## Options: "fireball", "molten_spear", "tornado", "earth_spike"
+@export var embedded_spell: String = ""
+@export var embedded_spell_level: int = 1
+
 ## Spell specific (if type == SPELL)
 @export var spell_id: String = ""
 @export var cooldown: float = 4.0

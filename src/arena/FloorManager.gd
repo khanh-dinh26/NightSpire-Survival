@@ -63,6 +63,11 @@ func _load_items_pool() -> void:
 		"res://src/data/items/buffs/crystal_pendant.tres",
 		"res://src/data/items/buffs/iron_shield.tres",
 		"res://src/data/items/buffs/health_potion.tres",
+		"res://src/data/items/buffs/golden_magnet.tres",
+		"res://src/data/items/buffs/lucky_clover.tres",
+		"res://src/data/items/buffs/hermes_wings.tres",
+		"res://src/data/items/buffs/vampire_chalice.tres",
+		"res://src/data/items/buffs/frost_heart.tres",
 	]
 	for p: String in item_paths:
 		if ResourceLoader.exists(p):
@@ -185,11 +190,11 @@ func _on_floor_cleared(floor_index: int) -> void:
 			EventBus.draft_opened.emit(draft_items)
 		)
 	elif cfg != null and cfg.floor_type == FloorConfig.FloorType.FINAL_BOSS:
-		# Tower Conquered!
+		# Tower Conquered! Show Endgame Victory Screen
 		var tw: Tween = create_tween()
-		tw.tween_interval(2.0)
+		tw.tween_interval(1.8)
 		tw.tween_callback(func():
-			SaveManager.delete_save()
+			EventBus.tower_conquered.emit()
 		)
 	else:
 		var tw: Tween = create_tween()

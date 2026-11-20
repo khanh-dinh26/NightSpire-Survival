@@ -7,6 +7,12 @@ var max_hp: int = 100
 var current_hp: int = 100
 var speed: float = 130.0
 var defense: int = 0
+var is_dead: bool = false
+var magnet_range: float = 60.0
+var luck_stat: float = 0.0
+var dodge_chance: float = 0.0
+var has_vampire_chalice: bool = false
+var kills_counter: int = 0
 
 # ── Node references ────────────────────────────────────────────────────
 @onready var sprite: Sprite2D = $Sprite2D
@@ -60,6 +66,10 @@ func setup_from_class(p_class: ClassData) -> void:
 
 # ── Movement & Procedural Animation ─────────────────────────────────────
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		velocity = Vector2.ZERO
+		return
+
 	var input_dir: Vector2 = Vector2.ZERO
 	if Input.is_key_pressed(KEY_A) or Input.is_action_pressed(&"ui_left"):
 		input_dir.x -= 1.0
@@ -145,6 +155,14 @@ func apply_item(item: ItemData) -> void:
 					defense += int(val)
 				"instant_heal":
 					current_hp = mini(current_hp + int(val), max_hp)
+				"magnet_range":
+					magnet_range = float(val)
+				"luck":
+					luck_stat += float(val)
+				"dodge_chance":
+					dodge_chance += float(val)
+				"vampire_chalice":
+					has_vampire_chalice = true
 				"damage_mult":
 					if weapon_orbit != null:
 						for w: WeaponBase in weapon_orbit.weapons:
@@ -158,6 +176,14 @@ func apply_item(item: ItemData) -> void:
 
 # ── Damage ─────────────────────────────────────────────────────────────
 func take_damage(amount: int) -> void:
+	if is_dead:
+		return
+
+	# Dodge chance
+	if dodge_chance > 0.0 and randf() < dodge_chance:
+		# Dodged cleanly!
+		return
+
 	var effective: int = maxi(amount - defense, 1)
 	current_hp -= effective
 	GameManager.player_current_hp = current_hp
@@ -167,6 +193,14 @@ func take_damage(amount: int) -> void:
 
 	if current_hp <= 0:
 		current_hp = 0
+		is_dead = true
+		velocity = Vector2.ZERO
+		set_physics_process(false)
+		collision_layer = 0
+		collision_mask = 0
+		_is_hit_animating = false
+		sprite.rotation_degrees = 90.0
+		sprite.modulate = Color(0.7, 0.2, 0.2, 0.7)
 		EventBus.player_died.emit()
 
 

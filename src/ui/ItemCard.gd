@@ -70,13 +70,13 @@ func _refresh_display() -> void:
 		var s_id: String = item_data.spell_id if not item_data.spell_id.is_empty() else item_data.item_id
 		var lvl: int = GameManager.learned_spells.get(s_id, 0)
 		if lvl > 0:
-			type_badge.text = "[ SPELL -> Lv.%d ]" % (lvl + 1)
+			type_badge.text = "[ KHẢM PHÉP -> Lv.%d ]" % (lvl + 1)
 			type_badge.add_theme_color_override(&"font_color", Color(1.0, 0.7, 0.2))
 		else:
-			type_badge.text = "[ SPELL ]"
+			type_badge.text = "[ KHẢM PHÉP ]"
 			type_badge.add_theme_color_override(&"font_color", Color(0.3, 0.8, 1.0))
 	else:
-		type_badge.text = "[ BUFF ]"
+		type_badge.text = "[ RELIC / BUFF ]"
 		type_badge.add_theme_color_override(&"font_color", Color(0.4, 0.9, 0.4))
 
 	# Description
@@ -84,6 +84,10 @@ func _refresh_display() -> void:
 		var extra_effect: String = ""
 		if not item_data.special_effect.is_empty():
 			extra_effect = "\n[Đặc tính: %s]" % item_data.special_effect
+		if not item_data.embedded_spell.is_empty():
+			extra_effect += "\n[Khảm Phép: %s Lv.%d (Tự Động Bắn)]" % [
+				item_data.embedded_spell.capitalize(), item_data.embedded_spell_level
+			]
 		desc_label.text = "Damage: %d  |  Speed: %.1f/s%s\n%s" % [
 			item_data.base_damage,
 			item_data.attack_speed,
@@ -91,7 +95,7 @@ func _refresh_display() -> void:
 			item_data.description
 		]
 	elif item_data.type == ItemData.ItemType.SPELL:
-		desc_label.text = "Hồi chiêu: %.1fs (Kích hoạt chuột/phím số)\n%s" % [
+		desc_label.text = "Khảm vào vũ khí: Tự động bắn mỗi %.1fs\n%s" % [
 			item_data.cooldown,
 			item_data.description
 		]

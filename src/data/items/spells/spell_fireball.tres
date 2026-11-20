@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_fireball"
-item_name = "Bí Kíp: Cầu Lửa"
+item_name = "Khảm Phép: Cầu Lửa"
 type = 2
 rarity = 1
 price = 25
@@ -13,4 +13,4 @@ level = 1
 custom_icon_path = "res://assets/effects/magic_effects/Icons/tile000.png"
 spell_id = "fireball"
 cooldown = 3.0
-description = "Học hoặc tăng cấp phép Cầu Lửa: Bắn cầu lửa phát nổ diện rộng. Mỗi cấp tăng thêm số lượng cầu lửa bắn ra!"
+description = "Khảm ngọc ma thuật vào vũ khí: Vũ khí tự động phóng Cầu Lửa phát nổ thiêu đốt mục tiêu lân cận. Tăng số cầu lửa theo cấp độ!"

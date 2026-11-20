@@ -69,3 +69,20 @@ theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 9
 text = "L2"
 horizontal_alignment = 2
+
+[node name="EmblemRect" type="TextureRect" parent="."]
+visible = false
+texture_filter = 0
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -10.0
+offset_top = 1.0
+offset_right = 0.0
+offset_bottom = 11.0
+grow_horizontal = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5

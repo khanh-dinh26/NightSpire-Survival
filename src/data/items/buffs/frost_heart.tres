@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "frost_heart"
+item_name = "Trái Tim Băng Giá"
+type = 1
+rarity = 1
+price = 35
+level = 1
+sprite_region = Rect2(224, 64, 32, 32)
+stats_modifier = {
+"defense": 2,
+"max_hp": 45
+}
+description = "Băng giáp vĩnh hằng: Tăng thêm +45 Máu tối đa và giảm vĩnh viễn 2 sát thương từ mọi đòn tấn công."

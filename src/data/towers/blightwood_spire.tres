@@ -6,8 +6,10 @@
 [ext_resource type="Resource" path="res://src/data/enemies/bat.tres" id="3_bat"]
 [ext_resource type="Resource" path="res://src/data/enemies/snake.tres" id="4_snake"]
 [ext_resource type="Resource" path="res://src/data/enemies/toxic_slime.tres" id="4_slime"]
+[ext_resource type="Resource" path="res://src/data/enemies/abyssal_crawler.tres" id="4_crawler"]
 [ext_resource type="Resource" path="res://src/data/enemies/bosses/ancient_spider.tres" id="5_miniboss1"]
 [ext_resource type="Resource" path="res://src/data/enemies/bosses/venom_manticore.tres" id="6_miniboss2"]
+[ext_resource type="Resource" path="res://src/data/enemies/bosses/abyssal_behemoth.tres" id="6_behemoth"]
 [ext_resource type="Resource" path="res://src/data/enemies/bosses/forest_lord.tres" id="7_finalboss"]
 
 [resource]
@@ -18,7 +20,7 @@ lore_description = "Tòa tháp cổ mục nát bị bao phủ bởi gai độc c
 floor_tile_atlas_coords = Array[Vector2i]([Vector2i(1, 7), Vector2i(2, 7), Vector2i(3, 7)])
 wall_tile_atlas_coords = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0)])
 tower_modifier = 1
-common_enemies = Array[ExtResource("1_14nnr")]([ExtResource("2_spider"), ExtResource("3_bat"), ExtResource("4_snake"), ExtResource("4_slime")])
-miniboss_pool = Array[ExtResource("1_14nnr")]([ExtResource("5_miniboss1"), ExtResource("6_miniboss2")])
+common_enemies = Array[ExtResource("1_14nnr")]([ExtResource("2_spider"), ExtResource("3_bat"), ExtResource("4_snake"), ExtResource("4_slime"), ExtResource("4_crawler")])
+miniboss_pool = Array[ExtResource("1_14nnr")]([ExtResource("5_miniboss1"), ExtResource("6_miniboss2"), ExtResource("6_behemoth")])
 final_boss = ExtResource("7_finalboss")
 ambient_color = Color(0.7, 0.85, 0.65, 1)
