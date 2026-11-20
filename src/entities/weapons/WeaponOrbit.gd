@@ -2,11 +2,11 @@ class_name WeaponOrbit
 extends Node2D
 ## Manages up to 6 weapons orbiting the player in a balanced circle.
 
-const MAX_WEAPONS: int = 6
+const MAX_WEAPONS: int = 10
 
 var weapons: Array[WeaponBase] = []
-var orbit_radius: float = 34.0
-var rotation_speed: float = 3.8  # rad/s - spinning top whirl
+var orbit_radius: float = 38.0
+var rotation_speed: float = 5.6  # rad/s - blazing spinning top whirl
 
 var _orbit_angle: float = 0.0
 

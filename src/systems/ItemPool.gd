@@ -19,14 +19,24 @@ static func get_random_items(count: int, all_items: Array[ItemData], exclude_ids
 	while selected.size() < count and not pool.is_empty():
 		var total_weight: float = 0.0
 		for item: ItemData in pool:
-			total_weight += ItemData.rarity_weight(item.rarity)
+			var w: float = ItemData.rarity_weight(item.rarity)
+			if item.type == ItemData.ItemType.WEAPON:
+				w *= 2.2
+				if item.rarity == ItemData.Rarity.COMMON:
+					w *= 1.5
+			total_weight += w
 
 		var roll: float = randf_range(0.0, total_weight)
 		var cumulative: float = 0.0
 		var chosen_idx: int = 0
 
 		for i: int in range(pool.size()):
-			cumulative += ItemData.rarity_weight(pool[i].rarity)
+			var w: float = ItemData.rarity_weight(pool[i].rarity)
+			if pool[i].type == ItemData.ItemType.WEAPON:
+				w *= 2.2
+				if pool[i].rarity == ItemData.Rarity.COMMON:
+					w *= 1.5
+			cumulative += w
 			if roll <= cumulative:
 				chosen_idx = i
 				break

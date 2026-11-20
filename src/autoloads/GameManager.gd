@@ -13,6 +13,7 @@ var is_dark_night: bool = false
 var dark_night_cycle: int = 0
 
 # ---- Inventory ----
+const MAX_WEAPONS: int = 10
 var equipped_weapons: Array[ItemData] = []
 var passive_buffs: Array[ItemData] = []
 var learned_spells: Dictionary = {} # spell_id: String -> level: int

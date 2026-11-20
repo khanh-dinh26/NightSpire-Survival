@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "war_mace"
+item_name = "Chùy Thép"
+type = 0
+rarity = 0
+price = 18
+sprite_region = Rect2(224, 0, 32, 32)
+weapon_style = 0
+base_damage = 25
+attack_speed = 2.6
+attack_range = 80.0
+projectile_speed = 200.0
+knockback = 90.0
+stats_modifier = {}
+description = "Chùy nặng nghiền nát và đẩy văng quái vật."

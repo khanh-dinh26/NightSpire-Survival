@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "hunting_crossbow"
+item_name = "Nỏ Thợ Săn"
+type = 0
+rarity = 0
+price = 18
+sprite_region = Rect2(128, 288, 32, 32)
+weapon_style = 1
+base_damage = 22
+attack_speed = 2.2
+attack_range = 190.0
+projectile_speed = 240.0
+knockback = 65.0
+stats_modifier = {}
+description = "Bắn tiễn nỏ uy lực và xoay chém cận chiến."

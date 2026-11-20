@@ -72,8 +72,8 @@ func _physics_process(delta: float) -> void:
 func _process_spinning_contact_damage() -> void:
 	var now: float = Time.get_ticks_msec() / 1000.0
 	# Hit interval per enemy based on weapon attack speed
-	var hit_interval: float = clampf(1.0 / maxf(item_data.attack_speed, 1.0), 0.18, 0.45)
-	var contact_radius: float = 24.0
+	var hit_interval: float = clampf(1.0 / maxf(item_data.attack_speed, 1.0), 0.16, 0.40)
+	var contact_radius: float = 34.0
 
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for node: Node in enemies:

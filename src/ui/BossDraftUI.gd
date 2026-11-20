@@ -79,7 +79,7 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 				already_owned = true
 				break
 
-	if item.type == ItemData.ItemType.WEAPON and GameManager.equipped_weapons.size() >= 6 and not already_owned:
+	if item.type == ItemData.ItemType.WEAPON and GameManager.equipped_weapons.size() >= GameManager.MAX_WEAPONS and not already_owned:
 		_pending_item = item
 		_pending_card = card
 		_show_replace_modal(item)
@@ -104,7 +104,7 @@ func _claim_item(card: ItemCard, item: ItemData) -> void:
 
 
 func _show_replace_modal(new_item: ItemData) -> void:
-	replace_title.text = "INVENTORY FULL (6/6) — CHỌN WEAPON MUỐN DROP ĐỂ LẤY %s:" % new_item.item_name
+	replace_title.text = "TÚI ĐỒ ĐẦY (%d/%d) — CHỌN VŨ KHÍ MUỐN BỎ ĐỂ LẤY %s:" % [GameManager.MAX_WEAPONS, GameManager.MAX_WEAPONS, new_item.item_name]
 	for child: Node in replace_slots_container.get_children():
 		child.queue_free()
 

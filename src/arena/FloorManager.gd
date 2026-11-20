@@ -46,7 +46,13 @@ func _load_items_pool() -> void:
 	var item_paths: Array[String] = [
 		# Weapons
 		"res://src/data/items/weapons/dagger.tres",
+		"res://src/data/items/weapons/iron_sword.tres",
+		"res://src/data/items/weapons/iron_spear.tres",
+		"res://src/data/items/weapons/war_mace.tres",
+		"res://src/data/items/weapons/greatsword.tres",
+		"res://src/data/items/weapons/silver_rapier.tres",
 		"res://src/data/items/weapons/short_bow.tres",
+		"res://src/data/items/weapons/hunting_crossbow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
 		"res://src/data/items/weapons/crystal_staff.tres",
 		"res://src/data/items/weapons/vampire_dagger.tres",

@@ -43,7 +43,13 @@ func _load_all_items() -> void:
 	# Weapons
 	var weapon_files: Array[String] = [
 		"res://src/data/items/weapons/dagger.tres",
+		"res://src/data/items/weapons/iron_sword.tres",
+		"res://src/data/items/weapons/iron_spear.tres",
+		"res://src/data/items/weapons/war_mace.tres",
+		"res://src/data/items/weapons/greatsword.tres",
+		"res://src/data/items/weapons/silver_rapier.tres",
 		"res://src/data/items/weapons/short_bow.tres",
+		"res://src/data/items/weapons/hunting_crossbow.tres",
 		"res://src/data/items/weapons/flame_sword.tres",
 		"res://src/data/items/weapons/crystal_staff.tres",
 		"res://src/data/items/weapons/vampire_dagger.tres",
@@ -122,7 +128,7 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 				already_owned = true
 				break
 
-	if item.type == ItemData.ItemType.WEAPON and GameManager.equipped_weapons.size() >= 6 and not already_owned:
+	if item.type == ItemData.ItemType.WEAPON and GameManager.equipped_weapons.size() >= GameManager.MAX_WEAPONS and not already_owned:
 		_pending_item = item
 		_pending_card = card
 		_show_replace_modal(item)
@@ -139,7 +145,7 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 
 # ── Replace Modal Logic ─────────────────────────────────────────────────
 func _show_replace_modal(new_item: ItemData) -> void:
-	replace_title.text = "INVENTORY FULL (6/6) — CHỌN WEAPON MUỐN DROP ĐỂ LẤY %s:" % new_item.item_name
+	replace_title.text = "TÚI ĐỒ ĐẦY (%d/%d) — CHỌN VŨ KHÍ MUỐN BỎ ĐỂ LẤY %s:" % [GameManager.MAX_WEAPONS, GameManager.MAX_WEAPONS, new_item.item_name]
 	for child: Node in replace_slots_container.get_children():
 		child.queue_free()
 
