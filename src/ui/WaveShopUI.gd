@@ -21,7 +21,8 @@ var _cards: Array[ItemCard] = []
 
 var _pending_item: ItemData = null
 var _pending_card: ItemCard = null
-var _rerolls_remaining: int = 2
+const MAX_REROLLS: int = 1
+var _rerolls_remaining: int = MAX_REROLLS
 
 
 func _ready() -> void:
@@ -94,7 +95,7 @@ func open_shop(items: Array[ItemData]) -> void:
 	if visible:
 		return
 	_hide_replace_modal()
-	_rerolls_remaining = 2
+	_rerolls_remaining = MAX_REROLLS
 	get_tree().paused = true
 	title_label.text = "FLOOR %d CLEARED — ARMORY SHOP" % GameManager.current_floor_index
 	_refresh_gold()
@@ -212,10 +213,10 @@ func _refresh_gold() -> void:
 
 func _update_reroll_button() -> void:
 	if _rerolls_remaining <= 0:
-		reroll_btn.text = "Out of Rerolls (0/2)"
+		reroll_btn.text = "Out of Rerolls (0/%d)" % MAX_REROLLS
 		reroll_btn.disabled = true
 	else:
-		reroll_btn.text = "Reroll (%d/2 - %d Gold)" % [_rerolls_remaining, GameManager.reroll_cost]
+		reroll_btn.text = "Reroll (%d/%d - %d Gold)" % [_rerolls_remaining, MAX_REROLLS, GameManager.reroll_cost]
 		reroll_btn.disabled = (GameManager.gold < GameManager.reroll_cost)
 
 

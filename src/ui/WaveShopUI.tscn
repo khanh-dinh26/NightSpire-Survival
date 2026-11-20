@@ -86,7 +86,7 @@ theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "Reroll (2/2 - 10 Gold)"
+text = "Reroll (1/1 - 10 Gold)"
 
 [node name="ContinueButton" type="Button" parent="Panel/Margin/VBox/Footer"]
 custom_minimum_size = Vector2(150, 28)
