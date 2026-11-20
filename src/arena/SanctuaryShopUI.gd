@@ -301,6 +301,8 @@ func _create_item_card(item: ItemData) -> void:
 		atlas.region = item.sprite_region
 		tex_rect.texture = atlas
 	spr_center.add_child(tex_rect)
+	if item.type == ItemData.ItemType.PASSIVE_BUFF:
+		spr_center.visible = false
 	vbox.add_child(spr_center)
 
 	var name_lbl: Label = Label.new()

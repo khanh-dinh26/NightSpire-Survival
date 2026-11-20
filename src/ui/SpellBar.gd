@@ -11,9 +11,9 @@ var _slots: Dictionary = {} # spell_id: String -> SpellSlot
 # Spell icon preloads
 var _spell_icons: Dictionary = {
 	"fireball": preload("res://assets/effects/magic_effects/Icons/tile000.png"),
-	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile001.png"),
-	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile002.png"),
-	"tornado": preload("res://assets/effects/magic_effects/Icons/tile004.png"),
+	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile006.png"),
+	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile007.png"),
+	"tornado": preload("res://assets/effects/magic_effects/Icons/tile009.png"),
 }
 
 

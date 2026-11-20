@@ -7,6 +7,7 @@ signal item_selected(card: ItemCard, item: ItemData)
 @export var item_data: ItemData = null
 @export var is_free: bool = false
 
+@onready var icon_center: CenterContainer = $Margin/VBox/IconCenter
 @onready var icon_rect: TextureRect = $Margin/VBox/IconCenter/IconRect
 @onready var name_label: Label = $Margin/VBox/NameLabel
 @onready var type_badge: Label = $Margin/VBox/TypeBadge
@@ -35,14 +36,20 @@ func _refresh_display() -> void:
 	if item_data == null:
 		return
 
-	# Icon
-	if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
-		icon_rect.texture = load(item_data.custom_icon_path)
+	# Icon display: Relics/Buffs do not show icon
+	if item_data.type == ItemData.ItemType.PASSIVE_BUFF:
+		if icon_center != null:
+			icon_center.visible = false
 	else:
-		var atlas_tex: AtlasTexture = AtlasTexture.new()
-		atlas_tex.atlas = _items_tex
-		atlas_tex.region = item_data.sprite_region
-		icon_rect.texture = atlas_tex
+		if icon_center != null:
+			icon_center.visible = true
+		if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
+			icon_rect.texture = load(item_data.custom_icon_path)
+		else:
+			var atlas_tex: AtlasTexture = AtlasTexture.new()
+			atlas_tex.atlas = _items_tex
+			atlas_tex.region = item_data.sprite_region
+			icon_rect.texture = atlas_tex
 
 	# Name & Rarity Color
 	name_label.text = item_data.item_name
