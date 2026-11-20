@@ -62,15 +62,28 @@ func _process(delta: float) -> void:
 
 
 func _setup_background() -> void:
-	# 1. Pave dark dungeon brick floor
-	if floor_layer != null:
+	# 1. Ensure TileSetAtlasSource has all tiles created and pave dungeon floor
+	if floor_layer != null and floor_layer.tile_set != null:
+		var source: TileSetAtlasSource = floor_layer.tile_set.get_source(0) as TileSetAtlasSource
+		if source != null:
+			for tx: int in range(17):
+				for ty: int in range(26):
+					if not source.has_tile(Vector2i(tx, ty)):
+						source.create_tile(Vector2i(tx, ty))
+
+		# Top wall stone row
+		for x: int in range(20):
+			var wall_coord: Vector2i = Vector2i(x % 2, 0)
+			floor_layer.set_cell(Vector2i(x, 0), 0, wall_coord)
+
+		# Dungeon stone masonry floor
 		var floor_coords: Array[Vector2i] = [
-			Vector2i(1, 7), Vector2i(2, 7), Vector2i(3, 7),
-			Vector2i(1, 13), Vector2i(2, 13)
+			Vector2i(0, 1), Vector2i(1, 1),
+			Vector2i(1, 7), Vector2i(2, 7)
 		]
-		for y: int in range(12):
+		for y: int in range(1, 12):
 			for x: int in range(20):
-				var tile_coord: Vector2i = floor_coords[(x * 7 + y * 13) % floor_coords.size()]
+				var tile_coord: Vector2i = floor_coords[(x * 3 + y * 7) % floor_coords.size()]
 				floor_layer.set_cell(Vector2i(x, y), 0, tile_coord)
 
 	# 2. Breathing / bobbing idle animation for rogues
