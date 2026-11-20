@@ -78,14 +78,21 @@ func start_floor(floor_num: int) -> void:
 		return
 
 	_clean_sanctuary()
+	_clean_pickups()
+	_clean_enemies()
 
 	# Setup arena tiles and dimensions
 	if arena != null:
 		arena.setup_floor(GameManager.current_tower, config)
 
-	# Reset player to center
-	if player != null and arena != null:
-		player.global_position = arena.get_center_position()
+	# Reset player to exact center of arena and clear movement
+	if player != null:
+		var center_pos: Vector2 = arena.get_center_position() if arena != null else Vector2(448, 288)
+		player.global_position = center_pos
+		player.velocity = Vector2.ZERO
+		var cam: Camera2D = player.get_node_or_null("Camera2D") as Camera2D
+		if cam != null:
+			cam.reset_smoothing()
 
 	var is_sanctuary: bool = (config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY) or (floor_num == _random_sanctuary_floor)
 
@@ -112,9 +119,22 @@ func _clean_sanctuary() -> void:
 		_current_sanctuary = null
 
 
+func _clean_pickups() -> void:
+	for p: Node in get_tree().get_nodes_in_group(&"gold_pickups"):
+		if is_instance_valid(p):
+			p.queue_free()
+
+
+func _clean_enemies() -> void:
+	for e: Node in get_tree().get_nodes_in_group(&"enemies"):
+		if is_instance_valid(e):
+			e.queue_free()
+
+
 func _on_sanctuary_portal_entered() -> void:
 	SaveManager.save_run()
 	_clean_sanctuary()
+	_clean_pickups()
 	GameManager.advance_floor()
 
 
@@ -171,11 +191,13 @@ func _on_floor_cleared(floor_index: int) -> void:
 func _on_shop_closed() -> void:
 	# Permadeath save: save after shop is closed before next floor begins
 	SaveManager.save_run()
+	_clean_pickups()
 	GameManager.advance_floor()
 
 
 func _on_draft_closed() -> void:
 	SaveManager.save_run()
+	_clean_pickups()
 	GameManager.advance_floor()
 
 

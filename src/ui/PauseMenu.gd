@@ -22,9 +22,8 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		# If shop or draft is currently active, don't interfere
-		if get_tree().get_first_node_in_group(&"shop_ui") != null:
-			var shop: Node = get_tree().get_first_node_in_group(&"shop_ui")
+		# If any shop or draft is currently active, don't interfere
+		for shop: Node in get_tree().get_nodes_in_group(&"shop_ui"):
 			if shop is CanvasItem and shop.visible:
 				return
 		if get_tree().get_first_node_in_group(&"draft_ui") != null:

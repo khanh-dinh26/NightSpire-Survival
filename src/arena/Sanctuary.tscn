@@ -1,12 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://csanctuary001"]
+[gd_scene load_steps=7 format=3 uid="uid://csanctuary001"]
 
 [ext_resource type="Script" path="res://src/arena/Sanctuary.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/arena/SanctuaryShopUI.tscn" id="2_shop_ui"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
-radius = 28.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_solid"]
+radius = 12.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_portal"]
-radius = 32.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
+radius = 38.0
 
 [node name="Sanctuary" type="Node2D"]
 script = ExtResource("1_script")
@@ -16,24 +19,41 @@ script = ExtResource("1_script")
 [node name="Sprite2D" type="Sprite2D" parent="Campfire"]
 texture_filter = 0
 
-[node name="Blacksmith" type="Area2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="Campfire"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Campfire/StaticBody2D"]
+shape = SubResource("CircleShape2D_solid")
+
+[node name="Blacksmith" type="Node2D" parent="."]
 position = Vector2(-80, 0)
-collision_layer = 0
-collision_mask = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="Blacksmith"]
 texture_filter = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Blacksmith"]
-shape = SubResource("CircleShape2D_npc")
+[node name="StaticBody2D" type="StaticBody2D" parent="Blacksmith"]
+position = Vector2(0, 4)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Blacksmith/StaticBody2D"]
+shape = SubResource("CircleShape2D_solid")
+
+[node name="Area2D" type="Area2D" parent="Blacksmith"]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Blacksmith/Area2D"]
+shape = SubResource("CircleShape2D_detect")
 
 [node name="PromptContainer" type="Control" parent="Blacksmith"]
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = -100.0
+offset_left = -80.0
 offset_top = -36.0
-offset_right = 100.0
+offset_right = 80.0
 offset_bottom = -12.0
 
 [node name="Button" type="Button" parent="Blacksmith/PromptContainer"]
@@ -43,27 +63,41 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 9
-text = "[E] Blacksmith: Upgrade Weapon (+25% Damage - 30 Gold)"
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "[E] Thợ Rèn (Nâng Cấp)"
 
-[node name="Alchemist" type="Area2D" parent="."]
+[node name="Alchemist" type="Node2D" parent="."]
 position = Vector2(80, 0)
-collision_layer = 0
-collision_mask = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="Alchemist"]
 texture_filter = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Alchemist"]
-shape = SubResource("CircleShape2D_npc")
+[node name="StaticBody2D" type="StaticBody2D" parent="Alchemist"]
+position = Vector2(0, 4)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Alchemist/StaticBody2D"]
+shape = SubResource("CircleShape2D_solid")
+
+[node name="Area2D" type="Area2D" parent="Alchemist"]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Alchemist/Area2D"]
+shape = SubResource("CircleShape2D_detect")
 
 [node name="PromptContainer" type="Control" parent="Alchemist"]
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = -100.0
+offset_left = -80.0
 offset_top = -36.0
-offset_right = 100.0
+offset_right = 80.0
 offset_bottom = -12.0
 
 [node name="Button" type="Button" parent="Alchemist/PromptContainer"]
@@ -73,27 +107,41 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 9
-text = "[E] Alchemist: Full Heal & Max HP Buff (25 Gold)"
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "[E] Giả Kim (Mua Effect)"
 
-[node name="Smuggler" type="Area2D" parent="."]
+[node name="Smuggler" type="Node2D" parent="."]
 position = Vector2(0, -65)
-collision_layer = 0
-collision_mask = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="Smuggler"]
 texture_filter = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Smuggler"]
-shape = SubResource("CircleShape2D_npc")
+[node name="StaticBody2D" type="StaticBody2D" parent="Smuggler"]
+position = Vector2(0, 4)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Smuggler/StaticBody2D"]
+shape = SubResource("CircleShape2D_solid")
+
+[node name="Area2D" type="Area2D" parent="Smuggler"]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Smuggler/Area2D"]
+shape = SubResource("CircleShape2D_detect")
 
 [node name="PromptContainer" type="Control" parent="Smuggler"]
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = -100.0
+offset_left = -80.0
 offset_top = -36.0
-offset_right = 100.0
+offset_right = 80.0
 offset_bottom = -12.0
 
 [node name="Button" type="Button" parent="Smuggler/PromptContainer"]
@@ -103,27 +151,33 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 9
-text = "[E] Smuggler: Mua Rare Item (25 Gold)"
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "[E] Thương Nhân (Mua Đồ)"
 
-[node name="Portal" type="Area2D" parent="."]
+[node name="Portal" type="Node2D" parent="."]
 position = Vector2(0, 70)
-collision_layer = 0
-collision_mask = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Portal"]
 texture_filter = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
-shape = SubResource("CircleShape2D_portal")
+[node name="Area2D" type="Area2D" parent="Portal"]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Portal/Area2D"]
+shape = SubResource("CircleShape2D_detect")
 
 [node name="PromptContainer" type="Control" parent="Portal"]
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = -90.0
+offset_left = -80.0
 offset_top = 28.0
-offset_right = 90.0
+offset_right = 80.0
 offset_bottom = 52.0
 
 [node name="Button" type="Button" parent="Portal/PromptContainer"]
@@ -133,5 +187,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 9
-text = "[E] Portal: Sang Tầng Kế (Next Floor)"
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "[E] Vào Cổng (Qua Tầng)"
+
+[node name="SanctuaryShopUI" parent="." instance=ExtResource("2_shop_ui")]

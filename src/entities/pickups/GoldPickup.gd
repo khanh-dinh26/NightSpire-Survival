@@ -21,6 +21,7 @@ var _base_y: float = 0.0
 
 
 func _ready() -> void:
+	add_to_group(&"gold_pickups")
 	# Configure sprite
 	sprite.texture = _items_tex
 	sprite.region_enabled = true
