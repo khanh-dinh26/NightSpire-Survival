@@ -142,14 +142,33 @@ func _spawn_pincer_lines(available_slots: int) -> void:
 	if arena == null:
 		return
 	var bounds: Rect2 = arena.get_spawn_bounds()
-	var horizontal: bool = (randi() % 2 == 0)
+	var cam_center: Vector2 = arena.get_center_position()
+	var cam: Camera2D = get_viewport().get_camera_2d()
+	if cam != null:
+		cam_center = cam.get_screen_center_position()
+	else:
+		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+		if players.size() > 0:
+			cam_center = (players[0] as Node2D).global_position
+
+	var half_w: float = 345.0
+	var half_h: float = 205.0
 	var per_side: int = clampi(available_slots / 2, 2, 4)
 
+	var can_horizontal: bool = (cam_center.y - half_h - 10.0 >= bounds.position.y) or (cam_center.y + half_h + 10.0 <= bounds.end.y)
+	var can_vertical: bool = (cam_center.x - half_w - 10.0 >= bounds.position.x) or (cam_center.x + half_w + 10.0 <= bounds.end.x)
+
+	var horizontal: bool = true
+	if can_horizontal and can_vertical:
+		horizontal = (randi() % 2 == 0)
+	elif can_vertical:
+		horizontal = false
+
 	if horizontal:
-		var y_top: float = bounds.position.y + 6.0
-		var y_bot: float = bounds.end.y - 6.0
-		var x_start: float = bounds.position.x + 36.0
-		var x_end: float = bounds.end.x - 36.0
+		var y_top: float = clampf(cam_center.y - half_h - randf_range(15.0, 35.0), bounds.position.y + 4.0, bounds.end.y - 4.0)
+		var y_bot: float = clampf(cam_center.y + half_h + randf_range(15.0, 35.0), bounds.position.y + 4.0, bounds.end.y - 4.0)
+		var x_start: float = clampf(cam_center.x - half_w + 50.0, bounds.position.x + 16.0, bounds.end.x - 16.0)
+		var x_end: float = clampf(cam_center.x + half_w - 50.0, bounds.position.x + 16.0, bounds.end.x - 16.0)
 		var step_x: float = (x_end - x_start) / maxf(float(per_side - 1), 1.0)
 
 		for i: int in range(per_side):
@@ -163,10 +182,10 @@ func _spawn_pincer_lines(available_slots: int) -> void:
 			if data_bot != null:
 				_spawn_enemy(data_bot, false, Vector2(x_pos, y_bot))
 	else:
-		var x_left: float = bounds.position.x + 6.0
-		var x_right: float = bounds.end.x - 6.0
-		var y_start: float = bounds.position.y + 24.0
-		var y_end: float = bounds.end.y - 24.0
+		var x_left: float = clampf(cam_center.x - half_w - randf_range(15.0, 35.0), bounds.position.x + 4.0, bounds.end.x - 4.0)
+		var x_right: float = clampf(cam_center.x + half_w + randf_range(15.0, 35.0), bounds.position.x + 4.0, bounds.end.x - 4.0)
+		var y_start: float = clampf(cam_center.y - half_h + 40.0, bounds.position.y + 16.0, bounds.end.y - 16.0)
+		var y_end: float = clampf(cam_center.y + half_h - 40.0, bounds.position.y + 16.0, bounds.end.y - 16.0)
 		var step_y: float = (y_end - y_start) / maxf(float(per_side - 1), 1.0)
 
 		for i: int in range(per_side):
@@ -184,19 +203,34 @@ func _spawn_pincer_lines(available_slots: int) -> void:
 func _spawn_surrounding_circle(available_slots: int) -> void:
 	if arena == null:
 		return
-	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
-	var center: Vector2 = (players[0] as Node2D).global_position if players.size() > 0 else arena.get_center_position()
-	var bounds: Rect2 = arena.get_spawn_bounds()
+	var cam_center: Vector2 = arena.get_center_position()
+	var cam: Camera2D = get_viewport().get_camera_2d()
+	if cam != null:
+		cam_center = cam.get_screen_center_position()
+	else:
+		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+		if players.size() > 0:
+			cam_center = (players[0] as Node2D).global_position
 
+	var bounds: Rect2 = arena.get_spawn_bounds()
 	var count: int = clampi(available_slots, 4, 6)
-	var radius: float = 125.0
+	# Radius strictly outside visible camera screen (diagonal is ~367px)
+	var radius: float = 385.0
 	var step_angle: float = TAU / float(count)
 
 	for i: int in range(count):
 		var angle: float = float(i) * step_angle
-		var pos: Vector2 = center + Vector2(cos(angle), sin(angle)) * radius
-		pos.x = clampf(pos.x, bounds.position.x + 8.0, bounds.end.x - 8.0)
-		pos.y = clampf(pos.y, bounds.position.y + 8.0, bounds.end.y - 8.0)
+		var pos: Vector2 = cam_center + Vector2(cos(angle), sin(angle)) * radius
+		pos.x = clampf(pos.x, bounds.position.x + 6.0, bounds.end.x - 6.0)
+		pos.y = clampf(pos.y, bounds.position.y + 6.0, bounds.end.y - 6.0)
+
+		# Guarantee off-screen: if clamping brought it within visible viewport, push it off-screen
+		if absf(pos.x - cam_center.x) < 335.0 and absf(pos.y - cam_center.y) < 195.0:
+			if pos.y < cam_center.y:
+				pos.y = clampf(cam_center.y - 205.0, bounds.position.y + 4.0, bounds.end.y - 4.0)
+			else:
+				pos.y = clampf(cam_center.y + 205.0, bounds.position.y + 4.0, bounds.end.y - 4.0)
+
 		var data: EnemyData = _get_tiered_enemy()
 		if data != null:
 			var is_lead: bool = (i == 0 and randf() <= 0.35)
@@ -345,17 +379,57 @@ func _get_spawn_position() -> Vector2:
 		return Vector2(100, 100)
 
 	var bounds: Rect2 = arena.get_spawn_bounds()
-	var side: int = randi() % 4
+	var cam_center: Vector2 = arena.get_center_position()
+	var cam: Camera2D = get_viewport().get_camera_2d()
+	if cam != null:
+		cam_center = cam.get_screen_center_position()
+	else:
+		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+		if players.size() > 0:
+			cam_center = (players[0] as Node2D).global_position
+
+	# Screen half dimensions plus safety margin (viewport is 640x360)
+	var half_w: float = 345.0
+	var half_h: float = 205.0
+
+	var cam_rect: Rect2 = Rect2(cam_center.x - half_w, cam_center.y - half_h, half_w * 2.0, half_h * 2.0)
+
+	# Identify valid sides outside visible screen that still fit within arena floor
+	# 0: Top, 1: Bottom, 2: Left, 3: Right
+	var valid_sides: Array[int] = []
+	if cam_rect.position.y - 15.0 >= bounds.position.y:
+		valid_sides.append(0)
+	if cam_rect.end.y + 15.0 <= bounds.end.y:
+		valid_sides.append(1)
+	if cam_rect.position.x - 15.0 >= bounds.position.x:
+		valid_sides.append(2)
+	if cam_rect.end.x + 15.0 <= bounds.end.x:
+		valid_sides.append(3)
+
+	if valid_sides.is_empty():
+		valid_sides = [0, 1, 2, 3]
+
+	var side: int = valid_sides[randi() % valid_sides.size()]
 	var pos: Vector2 = Vector2.ZERO
+
 	match side:
-		0:
-			pos = Vector2(randf_range(bounds.position.x, bounds.end.x), bounds.position.y)
-		1:
-			pos = Vector2(randf_range(bounds.position.x, bounds.end.x), bounds.end.y)
-		2:
-			pos = Vector2(bounds.position.x, randf_range(bounds.position.y, bounds.end.y))
-		3:
-			pos = Vector2(bounds.end.x, randf_range(bounds.position.y, bounds.end.y))
+		0: # Top (above visible screen)
+			var spawn_y: float = clampf(cam_rect.position.y - randf_range(15.0, 45.0), bounds.position.y + 4.0, bounds.end.y - 4.0)
+			var spawn_x: float = clampf(cam_center.x + randf_range(-half_w, half_w), bounds.position.x + 8.0, bounds.end.x - 8.0)
+			pos = Vector2(spawn_x, spawn_y)
+		1: # Bottom (below visible screen)
+			var spawn_y: float = clampf(cam_rect.end.y + randf_range(15.0, 45.0), bounds.position.y + 4.0, bounds.end.y - 4.0)
+			var spawn_x: float = clampf(cam_center.x + randf_range(-half_w, half_w), bounds.position.x + 8.0, bounds.end.x - 8.0)
+			pos = Vector2(spawn_x, spawn_y)
+		2: # Left (left of visible screen)
+			var spawn_x: float = clampf(cam_rect.position.x - randf_range(15.0, 45.0), bounds.position.x + 4.0, bounds.end.x - 4.0)
+			var spawn_y: float = clampf(cam_center.y + randf_range(-half_h, half_h), bounds.position.y + 8.0, bounds.end.y - 8.0)
+			pos = Vector2(spawn_x, spawn_y)
+		3: # Right (right of visible screen)
+			var spawn_x: float = clampf(cam_rect.end.x + randf_range(15.0, 45.0), bounds.position.x + 4.0, bounds.end.x - 4.0)
+			var spawn_y: float = clampf(cam_center.y + randf_range(-half_h, half_h), bounds.position.y + 8.0, bounds.end.y - 8.0)
+			pos = Vector2(spawn_x, spawn_y)
+
 	return pos
 
 
