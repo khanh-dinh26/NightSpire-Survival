@@ -14,7 +14,6 @@ extends Control
 @onready var fire_right: Sprite2D = get_node_or_null("Background/Campfires/FireRight") as Sprite2D
 @onready var rogue_left: Sprite2D = get_node_or_null("Background/Rogues/RogueLeft") as Sprite2D
 @onready var rogue_right: Sprite2D = get_node_or_null("Background/Rogues/RogueRight") as Sprite2D
-@onready var magic_circle: Sprite2D = get_node_or_null("Background/Decorations/MagicCircleBR") as Sprite2D
 
 var _fire_timer: float = 0.0
 var _fire_frame: int = 0
@@ -84,11 +83,6 @@ func _setup_background() -> void:
 		var tw_right: Tween = create_tween().set_loops()
 		tw_right.tween_property(rogue_right, ^"scale", Vector2(1.5, 1.40), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		tw_right.tween_property(rogue_right, ^"scale", Vector2(1.5, 1.62), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-	# 3. Ambient slow rotating aura for magic circle
-	if magic_circle != null:
-		var tw_magic: Tween = create_tween().set_loops()
-		tw_magic.tween_property(magic_circle, ^"rotation", TAU, 18.0).from(0.0)
 
 
 func _on_new_run_pressed() -> void:

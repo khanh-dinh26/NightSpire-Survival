@@ -53,48 +53,160 @@ tile_set = SubResource("TileSet_bg")
 [node name="Decorations" type="Node2D" parent="Background" unique_id=1801234568]
 
 [node name="TreeTL1" type="Sprite2D" parent="Background/Decorations" unique_id=1801234569]
-position = Vector2(30, 36)
-scale = Vector2(1.5, 1.5)
+position = Vector2(24, 28)
+scale = Vector2(1.6, 1.6)
 texture = ExtResource("6_tiles")
 region_enabled = true
 region_rect = Rect2(0, 800, 32, 32)
 
 [node name="TreeTL2" type="Sprite2D" parent="Background/Decorations" unique_id=1801234570]
-position = Vector2(62, 44)
-scale = Vector2(1.3, 1.3)
+position = Vector2(58, 38)
+scale = Vector2(1.4, 1.4)
 texture = ExtResource("6_tiles")
 region_enabled = true
 region_rect = Rect2(32, 800, 32, 32)
 
+[node name="TreeTL3" type="Sprite2D" parent="Background/Decorations" unique_id=1801234583]
+position = Vector2(95, 26)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(64, 800, 32, 32)
+
+[node name="TreeTL4" type="Sprite2D" parent="Background/Decorations" unique_id=1801234584]
+position = Vector2(32, 70)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(96, 800, 32, 32)
+
+[node name="BushTL" type="Sprite2D" parent="Background/Decorations" unique_id=1801234585]
+position = Vector2(68, 75)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(96, 704, 32, 32)
+
 [node name="TreeTR1" type="Sprite2D" parent="Background/Decorations" unique_id=1801234571]
-position = Vector2(610, 36)
-scale = Vector2(1.5, 1.5)
+position = Vector2(616, 28)
+scale = Vector2(1.6, 1.6)
 texture = ExtResource("6_tiles")
 flip_h = true
 region_enabled = true
 region_rect = Rect2(0, 800, 32, 32)
 
 [node name="TreeTR2" type="Sprite2D" parent="Background/Decorations" unique_id=1801234572]
-position = Vector2(578, 44)
-scale = Vector2(1.3, 1.3)
+position = Vector2(582, 38)
+scale = Vector2(1.4, 1.4)
 texture = ExtResource("6_tiles")
 flip_h = true
 region_enabled = true
 region_rect = Rect2(32, 800, 32, 32)
 
+[node name="TreeTR3" type="Sprite2D" parent="Background/Decorations" unique_id=1801234586]
+position = Vector2(545, 26)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(64, 800, 32, 32)
+
+[node name="TreeTR4" type="Sprite2D" parent="Background/Decorations" unique_id=1801234587]
+position = Vector2(608, 70)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(96, 800, 32, 32)
+
+[node name="BushTR" type="Sprite2D" parent="Background/Decorations" unique_id=1801234588]
+position = Vector2(572, 75)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(96, 704, 32, 32)
+
+[node name="TreeML" type="Sprite2D" parent="Background/Decorations" unique_id=1801234589]
+position = Vector2(36, 195)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(96, 800, 32, 32)
+
+[node name="TreeMR" type="Sprite2D" parent="Background/Decorations" unique_id=1801234590]
+position = Vector2(604, 195)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(96, 800, 32, 32)
+
+[node name="TreeBL1" type="Sprite2D" parent="Background/Decorations" unique_id=1801234591]
+position = Vector2(18, 305)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(0, 800, 32, 32)
+
+[node name="TreeBL2" type="Sprite2D" parent="Background/Decorations" unique_id=1801234592]
+position = Vector2(76, 318)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(32, 800, 32, 32)
+
+[node name="BushBL" type="Sprite2D" parent="Background/Decorations" unique_id=1801234593]
+position = Vector2(100, 332)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(96, 704, 32, 32)
+
 [node name="ChestBL" type="Sprite2D" parent="Background/Decorations" unique_id=1801234573]
-position = Vector2(44, 316)
+position = Vector2(45, 322)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("6_tiles")
 region_enabled = true
 region_rect = Rect2(64, 544, 32, 32)
 
-[node name="MagicCircleBR" type="Sprite2D" parent="Background/Decorations" unique_id=1801234574]
-position = Vector2(592, 308)
-scale = Vector2(1.5, 1.5)
+[node name="TreeBR1" type="Sprite2D" parent="Background/Decorations" unique_id=1801234594]
+position = Vector2(620, 305)
+scale = Vector2(1.6, 1.6)
 texture = ExtResource("6_tiles")
+flip_h = true
 region_enabled = true
-region_rect = Rect2(448, 512, 32, 32)
+region_rect = Rect2(0, 800, 32, 32)
+
+[node name="TreeBR2" type="Sprite2D" parent="Background/Decorations" unique_id=1801234595]
+position = Vector2(580, 318)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(64, 800, 32, 32)
+
+[node name="TreeBR3" type="Sprite2D" parent="Background/Decorations" unique_id=1801234596]
+position = Vector2(540, 326)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(32, 800, 32, 32)
+
+[node name="TreeBR4" type="Sprite2D" parent="Background/Decorations" unique_id=1801234597]
+position = Vector2(612, 260)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(96, 800, 32, 32)
+
+[node name="BushBR" type="Sprite2D" parent="Background/Decorations" unique_id=1801234598]
+position = Vector2(560, 336)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(96, 704, 32, 32)
 
 [node name="Campfires" type="Node2D" parent="Background" unique_id=1801234575]
 
