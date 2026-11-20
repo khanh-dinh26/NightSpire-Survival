@@ -2,8 +2,9 @@ class_name HUD
 extends CanvasLayer
 ## In-game HUD showing HP, Gold, Floor Progression, Wave Timer, and Boss Health Bar.
 
-@onready var hp_bar: ProgressBar = $MarginContainer/VBoxContainer/TopBar/HPBar
-@onready var hp_label: Label = $MarginContainer/VBoxContainer/TopBar/HPBar/HPLabel
+@onready var hp_bar: TextureProgressBar = $MarginContainer/VBoxContainer/TopBar/HPContainer/HPBar
+@onready var hp_label: Label = $MarginContainer/VBoxContainer/TopBar/HPContainer/HPBar/HPLabel
+@onready var heart_icon: TextureRect = $MarginContainer/VBoxContainer/TopBar/HPContainer/HeartIcon
 @onready var gold_label: Label = $MarginContainer/VBoxContainer/TopBar/GoldLabel
 @onready var floor_label: Label = $MarginContainer/VBoxContainer/CenterBar/FloorLabel
 @onready var timer_label: Label = $MarginContainer/VBoxContainer/CenterBar/TimerLabel
@@ -11,7 +12,7 @@ extends CanvasLayer
 # Boss Bar
 @onready var boss_bar_container: VBoxContainer = $MarginContainer/VBoxContainer/BossBarContainer
 @onready var boss_name_label: Label = $MarginContainer/VBoxContainer/BossBarContainer/BossNameLabel
-@onready var boss_hp_bar: ProgressBar = $MarginContainer/VBoxContainer/BossBarContainer/BossHPBar
+@onready var boss_hp_bar: TextureProgressBar = $MarginContainer/VBoxContainer/BossBarContainer/BossHPBar
 @onready var boss_hp_label: Label = $MarginContainer/VBoxContainer/BossBarContainer/BossHPBar/BossHPLabel
 
 @onready var game_over_panel: PanelContainer = $GameOverPanel
@@ -63,6 +64,14 @@ func _update_hp_display(current: int, max_val: int) -> void:
 	hp_bar.max_value = max_val
 	hp_bar.value = current
 	hp_label.text = "%d / %d" % [current, max_val]
+	if float(current) / float(maxi(max_val, 1)) <= 0.3:
+		hp_label.add_theme_color_override(&"font_color", Color(1.0, 0.35, 0.35))
+		if heart_icon != null:
+			heart_icon.modulate = Color(1.0, 0.4, 0.4)
+	else:
+		hp_label.add_theme_color_override(&"font_color", Color(1.0, 1.0, 1.0))
+		if heart_icon != null:
+			heart_icon.modulate = Color.WHITE
 
 
 # ── Boss Bar ────────────────────────────────────────────────────────────

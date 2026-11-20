@@ -10,12 +10,9 @@ const DOOR_GAP_WIDTH: int = 2 # tiles wide, centered in top wall
 @onready var floor_layer: TileMapLayer = $FloorLayer
 @onready var decor_layer: TileMapLayer = $DecorLayer
 @onready var wall_layer: TileMapLayer = $WallLayer
-@onready var portals_container: Node2D = $Portals
 @onready var entities: Node2D = $Entities
 
 var _spawn_bounds: Rect2 = Rect2()
-var _portal_positions: Array[Vector2] = []
-var _portal_frames: SpriteFrames = null
 
 # --- Atlas source ID inside the TileSet ---
 const ATLAS_SOURCE_ID: int = 0
@@ -66,8 +63,6 @@ func setup_floor(tower: TowerData, floor_config: FloorConfig) -> void:
 		decor_layer = get_node_or_null("DecorLayer") as TileMapLayer
 	if wall_layer == null:
 		wall_layer = get_node_or_null("WallLayer") as TileMapLayer
-	if portals_container == null:
-		portals_container = get_node_or_null("Portals") as Node2D
 
 	_ensure_tileset_source()
 	_setup_camera_limits()
@@ -76,7 +71,6 @@ func setup_floor(tower: TowerData, floor_config: FloorConfig) -> void:
 	_draw_walls(tower, floor_config)
 	_draw_decorations(tower)
 	_calculate_spawn_bounds()
-	_setup_portals(floor_config)
 
 	# Apply ambient colour tint to floor and decor layers
 	if floor_layer != null:
@@ -90,10 +84,6 @@ func setup_floor(tower: TowerData, floor_config: FloorConfig) -> void:
 			decor_layer.modulate = Color(0.55, 0.35, 0.7, 1.0)
 		else:
 			decor_layer.modulate = tower.ambient_color
-
-
-func get_portal_positions() -> Array[Vector2]:
-	return _portal_positions
 
 
 func get_spawn_bounds() -> Rect2:
@@ -161,10 +151,6 @@ func _clear_tiles() -> void:
 	wall_layer.clear()
 	if decor_layer != null:
 		decor_layer.clear()
-	if portals_container != null:
-		for child: Node in portals_container.get_children():
-			child.queue_free()
-	_portal_positions.clear()
 
 
 func _draw_decorations(tower: TowerData) -> void:
@@ -205,55 +191,6 @@ func _draw_decorations(tower: TowerData) -> void:
 			ty = rng.randi_range(3, ARENA_HEIGHT - 4)
 
 		decor_layer.set_cell(Vector2i(tx, ty), ATLAS_SOURCE_ID, tile_coord)
-
-
-func _setup_portals(floor_config: FloorConfig) -> void:
-	if portals_container == null:
-		return
-
-	# Only spawn combat portals on combat and boss floors (not NPC sanctuary)
-	if floor_config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY:
-		return
-
-	# Load portal frames once
-	if _portal_frames == null:
-		_portal_frames = SpriteFrames.new()
-		_portal_frames.add_animation(&"spin")
-		_portal_frames.set_animation_speed(&"spin", 9.0)
-		_portal_frames.set_animation_loop(&"spin", true)
-		for i: int in range(1, 11):
-			var p_path: String = "res://assets/effects/magic_effects/Portal/%03d.png" % i
-			if ResourceLoader.exists(p_path):
-				_portal_frames.add_frame(&"spin", load(p_path) as Texture2D)
-
-	# 4 tactical summoning circle positions
-	var pts: Array[Vector2] = [
-		Vector2(256, 192),
-		Vector2(float((ARENA_WIDTH - 8) * TILE_SIZE), 192),
-		Vector2(256, float((ARENA_HEIGHT - 6) * TILE_SIZE)),
-		Vector2(float((ARENA_WIDTH - 8) * TILE_SIZE), float((ARENA_HEIGHT - 6) * TILE_SIZE))
-	]
-
-	_portal_positions = pts
-
-	for pt: Vector2 in pts:
-		# Draw summoning pentagram on floor underneath
-		var tile_x: int = int(pt.x / TILE_SIZE)
-		var tile_y: int = int(pt.y / TILE_SIZE)
-		if floor_layer != null:
-			floor_layer.set_cell(Vector2i(tile_x, tile_y), ATLAS_SOURCE_ID, Vector2i(14, 16))
-
-		var anim: AnimatedSprite2D = AnimatedSprite2D.new()
-		anim.sprite_frames = _portal_frames
-		anim.play(&"spin")
-		anim.global_position = pt
-		anim.scale = Vector2(1.0, 1.0)
-		portals_container.add_child(anim)
-
-		# Gentle pulsing glow tween
-		var tw: Tween = anim.create_tween().set_loops()
-		tw.tween_property(anim, ^"scale", Vector2(1.15, 1.15), 0.7).set_trans(Tween.TRANS_SINE)
-		tw.tween_property(anim, ^"scale", Vector2(0.9, 0.9), 0.7).set_trans(Tween.TRANS_SINE)
 
 
 func _draw_floor(tower: TowerData) -> void:

@@ -234,13 +234,6 @@ func _get_spawn_position() -> Vector2:
 	if arena == null:
 		return Vector2(100, 100)
 
-	# 50% chance to warp directly out of an active summoning portal!
-	var portals: Array[Vector2] = arena.get_portal_positions()
-	if not portals.is_empty() and randf() <= 0.5:
-		var p: Vector2 = portals[randi() % portals.size()]
-		var offset: Vector2 = Vector2(randf_range(-20, 20), randf_range(-20, 20))
-		return p + offset
-
 	var bounds: Rect2 = arena.get_spawn_bounds()
 	var side: int = randi() % 4
 	var pos: Vector2 = Vector2.ZERO
