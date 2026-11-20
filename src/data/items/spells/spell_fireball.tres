@@ -13,4 +13,4 @@ level = 1
 custom_icon_path = "res://assets/effects/magic_effects/Icons/tile000.png"
 spell_id = "fireball"
 cooldown = 3.0
-description = "Khảm ngọc ma thuật vào vũ khí: Vũ khí tự động phóng Cầu Lửa phát nổ thiêu đốt mục tiêu lân cận. Tăng số cầu lửa theo cấp độ!"
+description = "Tự bắn Cầu Lửa nổ thiêu đốt mục tiêu."

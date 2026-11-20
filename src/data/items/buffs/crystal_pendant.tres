@@ -20,4 +20,4 @@ knockback = 0.0
 stats_modifier = {
 "damage_mult": 0.25
 }
-description = "+25% Sát thương cho tất cả vũ khí."
+description = "+25% Sát thương toàn diện."

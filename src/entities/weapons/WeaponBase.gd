@@ -1,14 +1,16 @@
 class_name WeaponBase
 extends Node2D
-## A single weapon that orbits the player and attacks nearby enemies quickly and responsively.
+## Spinning orbital weapon that revolves around the player like a spinner/buzzsaw,
+## slicing and dealing contact damage to any enemy that collides with it.
+## Ranged weapons (bows) and embedded spells auto-cast projectiles outwards as normal.
 
 var item_data: ItemData = null
 
 var _target: Node2D = null
-var _is_lunging: bool = false
-var _home_position: Vector2 = Vector2.ZERO
 var _cooldown_left: float = 0.0
 var _spell_cooldown_left: float = 0.0
+var _enemy_hit_cooldowns: Dictionary = {}
+var _last_slash_sound_time: float = 0.0
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var attack_timer: Timer = $AttackTimer
@@ -18,7 +20,6 @@ var _spell_scene: PackedScene = preload("res://src/entities/spells/SpellEntity.t
 
 
 func _ready() -> void:
-	# Disable old timer in favor of responsive frame-based cooldown
 	attack_timer.stop()
 
 
@@ -26,28 +27,28 @@ func setup(data: ItemData) -> void:
 	item_data = data
 	sprite.region_rect = data.sprite_region
 	_cooldown_left = 0.0
+	_spell_cooldown_left = 0.0
 
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if item_data == null:
 		return
 
-	# Tick cooldown
-	if _cooldown_left > 0.0:
-		_cooldown_left -= delta
+	# Continuous spinning contact damage (slashes any enemy touching the weapon!)
+	_process_spinning_contact_damage()
 
-	# Look at closest enemy
-	_target = _find_closest_enemy()
-	if _target != null and not _is_lunging:
-		var target_angle: float = (_target.global_position - global_position).angle()
-		rotation = lerp_angle(rotation, target_angle, 18.0 * delta)
+	# Ranged weapon projectile firing (Bows/crossbows fire arrows outwards as normal)
+	if item_data.weapon_style == ItemData.WeaponStyle.RANGED_PROJECTILE:
+		if _cooldown_left > 0.0:
+			_cooldown_left -= delta
+		else:
+			_target = _find_closest_enemy()
+			if _target != null:
+				_cooldown_left = 1.0 / maxf(item_data.attack_speed, 0.5)
+				_attack_ranged()
 
-	# Ready to strike the moment an enemy is within range
-	if _cooldown_left <= 0.0 and _target != null and not _is_lunging:
-		_execute_attack()
-
-	# Auto-cast embedded spell emblem
-	if item_data != null and not item_data.embedded_spell.is_empty():
+	# Auto-cast embedded spell emblem (Fireball, Molten Spear, Tornado, Earth Spike)
+	if not item_data.embedded_spell.is_empty():
 		if _spell_cooldown_left > 0.0:
 			_spell_cooldown_left -= delta
 		else:
@@ -55,8 +56,8 @@ func _process(delta: float) -> void:
 			if spell_target != null:
 				_auto_cast_embedded_spell(spell_target)
 
-	# Berserk Low HP visual indicator
-	if item_data != null and item_data.special_effect == "berserk_low_hp":
+	# Berserk Low HP visual indicator (crimson pulse if HP <= 35%)
+	if item_data.special_effect == "berserk_low_hp":
 		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 		if players.size() > 0:
 			var pl: Player = players[0] as Player
@@ -67,54 +68,33 @@ func _process(delta: float) -> void:
 				sprite.modulate = Color.WHITE
 
 
-func _find_closest_enemy() -> Node2D:
-	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
-	var closest: Node2D = null
-	var closest_dist: float = item_data.attack_range if item_data != null else 80.0
-	for enemy: Node in enemies:
-		var e: Node2D = enemy as Node2D
-		if e == null or not is_instance_valid(e):
+# ── Continuous Spinning Contact Damage ────────────────────────────────────
+func _process_spinning_contact_damage() -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	# Hit interval per enemy based on weapon attack speed
+	var hit_interval: float = clampf(1.0 / maxf(item_data.attack_speed, 1.0), 0.18, 0.45)
+	var contact_radius: float = 24.0
+
+	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
+	for node: Node in enemies:
+		var enemy: Node2D = node as Node2D
+		if enemy == null or not is_instance_valid(enemy):
 			continue
-		var dist: float = global_position.distance_to(e.global_position)
-		if dist <= closest_dist:
-			closest_dist = dist
-			closest = e
-	return closest
+		if global_position.distance_to(enemy.global_position) <= contact_radius:
+			var eid: int = enemy.get_instance_id()
+			var last_hit: float = _enemy_hit_cooldowns.get(eid, 0.0)
+			if now - last_hit >= hit_interval:
+				_enemy_hit_cooldowns[eid] = now
+				_deal_melee_damage(enemy)
 
-
-func _execute_attack() -> void:
-	if item_data == null:
-		return
-	_cooldown_left = 1.0 / item_data.attack_speed
-	AudioManager.play_sfx("slash")
-
-	match item_data.weapon_style:
-		ItemData.WeaponStyle.MELEE_ORBIT:
-			_attack_melee()
-		ItemData.WeaponStyle.RANGED_PROJECTILE:
-			_attack_ranged()
-
-
-func _attack_melee() -> void:
-	if _is_lunging or _target == null:
-		return
-	_is_lunging = true
-	_home_position = position
-
-	var target_ref: Node2D = _target
-	var direction: Vector2 = (target_ref.global_position - global_position).normalized()
-	var lunge_offset: Vector2 = direction * (item_data.attack_range * 0.55)
-
-	# Snappy lunge forward and bounce back
-	var tw: Tween = create_tween()
-	tw.set_parallel(true)
-	tw.tween_property(self, ^"position", _home_position + lunge_offset, 0.05).set_ease(Tween.EASE_OUT)
-	tw.tween_property(self, ^"scale", Vector2(1.35, 1.35), 0.05)
-
-	tw.chain().tween_callback(func(): _deal_melee_damage(target_ref))
-	tw.chain().tween_property(self, ^"position", _home_position, 0.06).set_ease(Tween.EASE_IN)
-	tw.parallel().tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.06)
-	tw.chain().tween_callback(_on_lunge_finished)
+	# Prune stale IDs
+	if _enemy_hit_cooldowns.size() > 64:
+		var valid_ids: Dictionary = {}
+		for node: Node in enemies:
+			var eid: int = node.get_instance_id()
+			if _enemy_hit_cooldowns.has(eid):
+				valid_ids[eid] = _enemy_hit_cooldowns[eid]
+		_enemy_hit_cooldowns = valid_ids
 
 
 func _deal_melee_damage(target: Node2D) -> void:
@@ -133,9 +113,23 @@ func _deal_melee_damage(target: Node2D) -> void:
 
 	target.take_damage(final_damage)
 
-	if target.has_method("apply_knockback"):
-		var kb_dir: Vector2 = (target.global_position - global_position).normalized()
-		target.apply_knockback(kb_dir * item_data.knockback)
+	# Knock enemy away from player center (deflection effect)
+	if target.has_method("apply_knockback") and player_ref != null:
+		var kb_dir: Vector2 = (target.global_position - player_ref.global_position).normalized()
+		if kb_dir == Vector2.ZERO:
+			kb_dir = Vector2.RIGHT
+		target.apply_knockback(kb_dir * (item_data.knockback * 0.6))
+
+	# Responsive hit pop
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"scale", Vector2(1.28, 1.28), 0.03)
+	tw.tween_property(sprite, ^"scale", Vector2(1.0, 1.0), 0.05)
+
+	# Sound throttling (max 1 sound per 0.12s to keep audio crisp)
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if now - _last_slash_sound_time > 0.12:
+		_last_slash_sound_time = now
+		AudioManager.play_sfx("slash")
 
 	# Lifesteal check
 	if item_data.special_effect == "lifesteal" and player_ref != null:
@@ -154,22 +148,33 @@ func _deal_melee_damage(target: Node2D) -> void:
 
 
 func _trigger_radius_execute(center_pos: Vector2) -> void:
-	# Eliminate regular enemies within 150px radius
 	var radius: float = 150.0
 	for enemy: Node in get_tree().get_nodes_in_group(&"enemies"):
 		var e: Node2D = enemy as Node2D
 		if e == null or not is_instance_valid(e):
 			continue
 		if e.is_in_group(&"boss") or e.is_in_group(&"bosses"):
-			continue # Bosses resist instakill shockwave
+			continue
 		if center_pos.distance_to(e.global_position) <= radius:
 			if e.has_method("take_damage"):
-				e.take_damage(9999) # Instant execute
+				e.take_damage(9999)
 	AudioManager.play_sfx("enemy_death")
 
 
-func _on_lunge_finished() -> void:
-	_is_lunging = false
+# ── Ranged Weapon Projectile ──────────────────────────────────────────────
+func _find_closest_enemy() -> Node2D:
+	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
+	var closest: Node2D = null
+	var closest_dist: float = item_data.attack_range if item_data != null else 180.0
+	for enemy: Node in enemies:
+		var e: Node2D = enemy as Node2D
+		if e == null or not is_instance_valid(e):
+			continue
+		var dist: float = global_position.distance_to(e.global_position)
+		if dist <= closest_dist:
+			closest_dist = dist
+			closest = e
+	return closest
 
 
 func _attack_ranged() -> void:

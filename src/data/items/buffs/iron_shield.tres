@@ -20,4 +20,4 @@ knockback = 0.0
 stats_modifier = {
 "defense": 2
 }
-description = "+2 Phòng thủ. Giảm trực tiếp sát thương gánh chịu."
+description = "+2 Giáp. Giảm sát thương nhận vào."

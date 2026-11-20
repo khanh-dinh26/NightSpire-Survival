@@ -17,4 +17,4 @@ attack_range = 160.0
 projectile_speed = 280.0
 knockback = 40.0
 stats_modifier = {}
-description = "Bắn những mũi tên bay nhanh chuẩn xác vào mục tiêu chỉ định."
+description = "Bắn tên tầm xa nhanh và chính xác."

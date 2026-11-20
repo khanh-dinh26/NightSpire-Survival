@@ -15,4 +15,4 @@ sprite_region = Rect2(96, 64, 32, 32)
 stats_modifier = {
 "magnet_range": 220.0
 }
-description = "Nam châm cổ xưa: Tăng bán kính hút vàng và vật phẩm lên 220px, tự động bay dồn dập về bạn."
+description = "Hút vàng và vật phẩm từ xa về bạn."

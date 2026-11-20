@@ -15,4 +15,4 @@ sprite_region = Rect2(128, 64, 32, 32)
 stats_modifier = {
 "luck": 1.0
 }
-description = "Vận may hộ mệnh: Quái vật tiêu diệt có cơ hội cao rơi thêm vàng khủng và hồi Máu trực tiếp trên sàn."
+description = "Tăng cơ hội quái rơi vàng và máu."

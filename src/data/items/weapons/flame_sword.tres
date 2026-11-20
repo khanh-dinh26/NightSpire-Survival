@@ -19,4 +19,4 @@ knockback = 80.0
 embedded_spell = "fireball"
 embedded_spell_level = 1
 stats_modifier = {}
-description = "Được yểm hỏa diệm: Chém diện rộng và tự động bắn Cầu Lửa phát nổ thiêu đốt!"
+description = "Kiếm lửa xoay chém và tự bắn Cầu Lửa."

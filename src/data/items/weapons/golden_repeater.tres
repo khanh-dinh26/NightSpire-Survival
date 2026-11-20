@@ -19,4 +19,4 @@ projectile_speed = 260.0
 knockback = 45.0
 special_effect = "greed_gold"
 special_effect_value = 1.0
-description = "Nỏ săn kho báu: Bắn tên liên hoàn và có 35% cơ hội rơi thêm vàng khi trúng đích."
+description = "Bắn tên liên hoàn, 35% rơi thêm vàng."

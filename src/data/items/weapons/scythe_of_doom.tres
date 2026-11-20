@@ -21,4 +21,4 @@ special_effect = "radius_execute"
 special_effect_value = 150.0
 embedded_spell = "tornado"
 embedded_spell_level = 1
-description = "Lưỡi hái tử thần: 10% cơ hội kích phát sóng xung kích và tự động thả Lốc Xoáy quét sạch quái vật."
+description = "10% trảm sát diện rộng và thả Lốc Xoáy."

@@ -88,7 +88,7 @@ func _refresh_display() -> void:
 		if not item_data.special_effect.is_empty():
 			extra_effect = "\n[Đặc tính: %s]" % ItemData.get_special_effect_name(item_data.special_effect)
 		if not item_data.embedded_spell.is_empty():
-			extra_effect += "\n[Khảm Phép: %s Lv.%d (Tự Bắn)]" % [
+			extra_effect += "\n[Khảm Phép: %s Lv.%d]" % [
 				item_data.embedded_spell.capitalize(), item_data.embedded_spell_level
 			]
 		desc_label.text = "Sát thương: %d  |  Tốc đánh: %.1f/s%s\n%s" % [
@@ -98,7 +98,7 @@ func _refresh_display() -> void:
 			item_data.description
 		]
 	elif item_data.type == ItemData.ItemType.SPELL:
-		desc_label.text = "Khảm vào vũ khí: Tự động bắn mỗi %.1fs\n%s" % [
+		desc_label.text = "Tự động bắn mỗi %.1fs\n%s" % [
 			item_data.cooldown,
 			item_data.description
 		]

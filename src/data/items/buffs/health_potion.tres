@@ -20,4 +20,4 @@ knockback = 0.0
 stats_modifier = {
 "instant_heal": 40
 }
-description = "Hồi phục 40 Máu ngay lập tức."
+description = "Hồi 40 Máu ngay lập tức."

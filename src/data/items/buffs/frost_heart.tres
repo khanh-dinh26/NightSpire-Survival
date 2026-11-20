@@ -16,4 +16,4 @@ stats_modifier = {
 "defense": 2,
 "max_hp": 45
 }
-description = "Băng giáp vĩnh hằng: Tăng thêm +45 Máu tối đa và giảm vĩnh viễn 2 sát thương từ mọi đòn tấn công."
+description = "+45 Máu và giảm 2 sát thương nhận."

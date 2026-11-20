@@ -19,4 +19,4 @@ projectile_speed = 200.0
 knockback = 90.0
 special_effect = "berserk_low_hp"
 special_effect_value = 1.5
-description = "Cuồng nộ sinh tồn: Khi Máu tụt dưới 35%, sát thương của rìu tăng vọt +50%!"
+description = "Máu dưới 35% tăng 50% sát thương."

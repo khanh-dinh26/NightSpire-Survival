@@ -13,4 +13,4 @@ level = 1
 custom_icon_path = "res://assets/effects/magic_effects/Icons/tile009.png"
 spell_id = "tornado"
 cooldown = 4.5
-description = "Khảm ngọc ma thuật vào vũ khí: Vũ khí tự động triệu hồi Lốc Xoáy quét sạch và cuốn hút quái vật vào tâm."
+description = "Tự triệu hồi Lốc Xoáy cuốn hút quái vật."

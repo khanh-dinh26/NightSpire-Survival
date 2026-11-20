@@ -20,4 +20,4 @@ knockback = 0.0
 stats_modifier = {
 "speed": 20.0
 }
-description = "+20 Tốc độ di chuyển giúp né đòn linh hoạt."
+description = "+20 Tốc độ di chuyển."

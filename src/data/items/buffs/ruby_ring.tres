@@ -20,4 +20,4 @@ knockback = 0.0
 stats_modifier = {
 "max_hp": 25
 }
-description = "+25 Máu tối đa và hồi ngay 25 Máu."
+description = "+25 Máu tối đa và hồi 25 Máu."

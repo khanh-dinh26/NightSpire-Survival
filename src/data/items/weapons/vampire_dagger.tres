@@ -19,4 +19,4 @@ projectile_speed = 200.0
 knockback = 50.0
 special_effect = "lifesteal"
 special_effect_value = 3.0
-description = "Vũ khí hút máu: 25% cơ hội hồi 3 Máu mỗi khi chém trúng quái."
+description = "25% cơ hội hồi 3 Máu khi chém trúng quái."

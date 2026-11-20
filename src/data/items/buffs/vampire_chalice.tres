@@ -15,4 +15,4 @@ sprite_region = Rect2(192, 64, 32, 32)
 stats_modifier = {
 "vampire_chalice": 1
 }
-description = "Bảo vật hút hồn: Cứ mỗi khi tiêu diệt 8 quái vật bất kỳ, cơ thể bạn tự động hồi phục 6 HP."
+description = "Diệt mỗi 8 quái hồi 6 Máu."

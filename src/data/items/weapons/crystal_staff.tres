@@ -19,4 +19,4 @@ knockback = 70.0
 embedded_spell = "molten_spear"
 embedded_spell_level = 1
 stats_modifier = {}
-description = "Vũ khí ma thuật: Tự động phóng Thương Dung Nham xuyên thấu kẻ địch tầm xa."
+description = "Cận chiến xoay và tự phóng Thương Dung Nham."

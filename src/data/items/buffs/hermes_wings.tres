@@ -16,4 +16,4 @@ stats_modifier = {
 "dodge_chance": 0.15,
 "speed": 35.0
 }
-description = "Đôi cánh tốc độ: Tăng +35 Tốc độ di chuyển và có 15% cơ hội né hoàn toàn mọi đòn sát thương."
+description = "+35 Tốc độ chạy, 15% né đòn."
