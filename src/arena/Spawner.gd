@@ -17,6 +17,8 @@ var _wave_timer: Timer = null
 var _enemy_scene: PackedScene = preload("res://src/entities/enemies/EnemyBase.tscn")
 var _boss_scene: PackedScene = preload("res://src/entities/enemies/BossBase.tscn")
 var _formation_tick_counter: int = 0
+var all_miniboss_pool: Array[EnemyData] = []
+var _last_spawned_miniboss_id: String = ""
 
 
 func _ready() -> void:
@@ -31,6 +33,28 @@ func _ready() -> void:
 	add_child(_wave_timer)
 
 	EventBus.enemy_killed.connect(_on_enemy_killed)
+	_load_all_minibosses()
+
+
+func _load_all_minibosses() -> void:
+	all_miniboss_pool.clear()
+	var boss_paths: Array[String] = [
+		"res://src/data/enemies/bosses/ancient_spider.tres",
+		"res://src/data/enemies/bosses/venom_manticore.tres",
+		"res://src/data/enemies/bosses/abyssal_behemoth.tres",
+		"res://src/data/enemies/bosses/death_knight.tres",
+		"res://src/data/enemies/bosses/lich.tres",
+		"res://src/data/enemies/bosses/orc_warchief.tres",
+		"res://src/data/enemies/bosses/rock_golem_boss.tres",
+		"res://src/data/enemies/bosses/shadow_fiend_boss.tres",
+		"res://src/data/enemies/bosses/blood_vampire_lord.tres",
+		"res://src/data/enemies/bosses/flame_hellhound.tres",
+		"res://src/data/enemies/bosses/abyssal_gargoyle.tres",
+		"res://src/data/enemies/bosses/spectral_wraith.tres",
+	]
+	for p: String in boss_paths:
+		if ResourceLoader.exists(p):
+			all_miniboss_pool.append(load(p) as EnemyData)
 
 
 func _process(_delta: float) -> void:
@@ -312,22 +336,45 @@ func _spawn_enemy(data: EnemyData, is_elite: bool = false, custom_pos: Vector2 =
 
 
 func _spawn_miniboss() -> void:
-	if current_tower.miniboss_pool.is_empty():
+	var pool: Array[EnemyData] = []
+	if current_tower != null and not current_tower.miniboss_pool.is_empty():
+		pool.append_array(current_tower.miniboss_pool)
+	if not all_miniboss_pool.is_empty():
+		for b: EnemyData in all_miniboss_pool:
+			if not pool.has(b):
+				pool.append(b)
+
+	if pool.is_empty():
 		return
 
-	# Floor 3 -> miniboss 1 (index 0); Floor 6+ -> miniboss 2 (index 1 if exists)
-	var boss_idx: int = 0
-	if current_floor_config.floor_index >= 6 and current_tower.miniboss_pool.size() > 1:
-		boss_idx = 1
-	var data: EnemyData = current_tower.miniboss_pool[boss_idx]
-
+	# Randomize miniboss from diverse pool
+	var data: EnemyData = pool.pick_random()
+	_last_spawned_miniboss_id = data.enemy_id
 	_spawn_boss_instance(data)
 
-	# Spawn 2-3 supporting minions (one of which is an Elite minion)
-	for i: int in range(3):
-		if not current_tower.common_enemies.is_empty():
+	# Spawn 2 supporting minions (one of which is an Elite minion)
+	for i: int in range(2):
+		if current_tower != null and not current_tower.common_enemies.is_empty():
 			var minion_data: EnemyData = current_tower.common_enemies[i % current_tower.common_enemies.size()]
 			_spawn_enemy(minion_data, (i == 0))
+
+
+func spawn_second_miniboss() -> void:
+	var pool: Array[EnemyData] = all_miniboss_pool if not all_miniboss_pool.is_empty() else (current_tower.miniboss_pool if current_tower != null else [])
+	if pool.is_empty():
+		return
+
+	var candidates: Array[EnemyData] = []
+	for b: EnemyData in pool:
+		if b.enemy_id != _last_spawned_miniboss_id:
+			candidates.append(b)
+	if candidates.is_empty():
+		candidates = pool
+
+	var second_boss: EnemyData = candidates.pick_random()
+	_last_spawned_miniboss_id = second_boss.enemy_id
+	_spawn_boss_instance(second_boss)
+	AudioManager.play_sfx("explosion")
 
 
 func _spawn_final_boss() -> void:

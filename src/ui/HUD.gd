@@ -173,14 +173,14 @@ func _on_wave_started(floor_idx: int) -> void:
 		match cfg.floor_type:
 			FloorConfig.FloorType.COMBAT_WAVE: type_str = "QUÁI VẬT"
 			FloorConfig.FloorType.MINIBOSS: type_str = "TRÙM PHỤ"
-			FloorConfig.FloorType.NPC_SANCTUARY: type_str = "THÁNH ĐỊA"
+			FloorConfig.FloorType.NPC_SANCTUARY: type_str = "THƯƠNG NHÂN"
 			FloorConfig.FloorType.FINAL_BOSS: type_str = "TRÙM CUỐI"
 
 	var prefix: String = ""
 	if GameManager.is_dark_night:
 		prefix = "[ĐÊM TỐI C%d] " % GameManager.dark_night_cycle
 
-	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 6
+	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 10
 	floor_label.text = "%sTầng %d/%d — %s" % [prefix, floor_idx, total_floors, type_str]
 	if spawner != null and not spawner.is_spawning and cfg != null and cfg.floor_type == FloorConfig.FloorType.COMBAT_WAVE:
 		floor_label.text = "%sTầng %d/%d — THƯƠNG NHÂN" % [prefix, floor_idx, total_floors]

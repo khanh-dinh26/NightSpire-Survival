@@ -103,6 +103,13 @@ func open_shop(items: Array[ItemData]) -> void:
 	visible = true
 
 
+func get_scaled_price(item: ItemData) -> int:
+	var floor_idx: int = maxi(1, GameManager.current_floor_index)
+	# Càng lên tầng cao đồ càng đắt 1 tí (+10% mỗi tầng sau tầng 1, trừ thương nhân luôn giữ giá)
+	var inflation: float = 1.0 + float(floor_idx - 1) * 0.10
+	return ceili(item.price * inflation)
+
+
 func _populate_cards(items: Array[ItemData]) -> void:
 	for child: Node in cards_container.get_children():
 		child.queue_free()
@@ -111,13 +118,14 @@ func _populate_cards(items: Array[ItemData]) -> void:
 	for item: ItemData in items:
 		var card: ItemCard = _card_scene.instantiate() as ItemCard
 		cards_container.add_child(card)
-		card.setup(item, false)
+		card.setup(item, false, get_scaled_price(item))
 		card.item_selected.connect(_on_card_selected)
 		_cards.append(card)
 
 
 func _on_card_selected(card: ItemCard, item: ItemData) -> void:
-	if GameManager.gold < item.price:
+	var cost: int = card.get_effective_price()
+	if GameManager.gold < cost:
 		return
 
 	# If weapons are full (6/6) and player does not own this weapon yet, prompt to drop
@@ -135,7 +143,7 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 		return
 
 	# Standard purchase
-	if GameManager.spend_gold(item.price):
+	if GameManager.spend_gold(cost):
 		GameManager.add_item(item)
 		card.mark_as_bought()
 		EventBus.item_bought.emit(item.item_id)
@@ -164,7 +172,8 @@ func _show_replace_modal(new_item: ItemData) -> void:
 func _on_replace_confirmed(slot_idx: int) -> void:
 	if _pending_item == null or _pending_card == null:
 		return
-	if GameManager.spend_gold(_pending_item.price):
+	var cost: int = _pending_card.get_effective_price()
+	if GameManager.spend_gold(cost):
 		GameManager.replace_weapon(slot_idx, _pending_item)
 		_pending_card.mark_as_bought()
 		EventBus.item_bought.emit(_pending_item.item_id)

@@ -27,10 +27,14 @@ var _spell_icons: Dictionary = {
 }
 
 
-func setup(data: ItemData, p_is_free: bool = false) -> void:
+var custom_price: int = -1
+
+
+func setup(data: ItemData, p_is_free: bool = false, price_override: int = -1) -> void:
 	item_data = data
 	is_free = p_is_free
 	is_bought = false
+	custom_price = price_override
 	_refresh_display()
 
 
@@ -146,6 +150,10 @@ func _refresh_display() -> void:
 	update_button_state()
 
 
+func get_effective_price() -> int:
+	return custom_price if custom_price >= 0 else (item_data.price if item_data != null else 0)
+
+
 func update_button_state() -> void:
 	if is_bought:
 		action_btn.text = "ĐÃ CHỌN"
@@ -158,8 +166,9 @@ func update_button_state() -> void:
 		action_btn.text = "CHỌN MIỄN PHÍ"
 		action_btn.disabled = false
 	else:
-		action_btn.text = "%d Vàng" % item_data.price
-		action_btn.disabled = (GameManager.gold < item_data.price)
+		var price_val: int = get_effective_price()
+		action_btn.text = "%d Vàng" % price_val
+		action_btn.disabled = (GameManager.gold < price_val)
 
 
 func _on_action_pressed() -> void:

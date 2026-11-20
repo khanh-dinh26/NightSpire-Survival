@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "spectral_wraith"
+enemy_name = "Oán Hồn Hắc Ám — Banshee"
+enemy_type = 1
+max_hp = 490
+damage = 12
+speed = 68.0
+contact_knockback = 110.0
+gold_drop_min = 20
+gold_drop_max = 32
+sprite_region = Rect2(0, 160, 32, 32)
+attack_pattern = "projectile"
+projectile_speed = 165.0
+attack_cooldown = 2.2

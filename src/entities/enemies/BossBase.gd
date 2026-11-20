@@ -156,16 +156,22 @@ func _choose_attack(player: Player, dist: float, is_caster: bool) -> void:
 
 	match pattern:
 		"ground_slam":
-			if dist < 90.0 or randf() < 0.6:
+			var roll_gs: float = randf()
+			if roll_gs < 0.35:
+				_start_spiral_barrage()
+			elif roll_gs < 0.75 or dist < 90.0:
 				_start_ground_slam(player)
 			else:
 				_start_charge(player)
 
 		"charge":
-			if dist < 70.0 and randf() < 0.4:
-				_start_ground_slam(player)
-			else:
+			var roll_c: float = randf()
+			if roll_c < 0.35:
+				_start_projectile_attack(player)
+			elif roll_c < 0.75:
 				_start_charge(player)
+			else:
+				_start_ground_slam(player)
 
 		"spiral_projectile":
 			if randf() < 0.5:
@@ -447,7 +453,6 @@ func die() -> void:
 
 	var boss_id: String = data.enemy_id if data != null else "boss"
 	EventBus.boss_killed.emit(boss_id)
-	EventBus.floor_cleared.emit(GameManager.current_floor_index)
 	boss_died.emit(boss_id)
 
 	# Spawn wealth of gold

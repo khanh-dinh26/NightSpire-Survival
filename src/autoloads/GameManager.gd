@@ -64,7 +64,7 @@ func get_current_floor_config() -> FloorConfig:
 
 
 func advance_floor() -> void:
-	var total_floors: int = floor_configs.size() if not floor_configs.is_empty() else 6
+	var total_floors: int = floor_configs.size() if not floor_configs.is_empty() else 10
 	if current_floor_index < total_floors:
 		current_floor_index += 1
 		EventBus.floor_transition_requested.emit(current_floor_index)

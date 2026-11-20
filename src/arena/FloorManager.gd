@@ -17,6 +17,8 @@ var _random_sanctuary_floor: int = -1
 var _random_merchant_floor: int = -1
 var _boss_draft_opened_for_floor: int = -1
 var _shop_opened_for_floor: int = -1
+var is_double_boss_event: bool = false
+var double_boss_stage: int = 0
 
 
 func _ready() -> void:
@@ -25,6 +27,7 @@ func _ready() -> void:
 
 	EventBus.wave_ended.connect(_on_wave_ended)
 	EventBus.floor_cleared.connect(_on_floor_cleared)
+	EventBus.boss_killed.connect(_on_boss_killed)
 	EventBus.shop_closed.connect(_on_shop_closed)
 	EventBus.draft_closed.connect(_on_draft_closed)
 	EventBus.floor_transition_requested.connect(_on_floor_transition_requested)
@@ -35,7 +38,7 @@ func _ready() -> void:
 
 func _load_floor_configs() -> void:
 	all_floor_configs.clear()
-	for i: int in range(1, 7):
+	for i: int in range(1, 11):
 		var path: String = "res://src/data/floors/floor_%02d.tres" % i
 		if ResourceLoader.exists(path):
 			var config: FloorConfig = load(path) as FloorConfig
@@ -83,10 +86,11 @@ func _load_items_pool() -> void:
 
 
 func start_default_run() -> void:
-	# Có tỉ lệ xuất hiện 1 tầng thương nhân an toàn (không có quái, chỉ có thương nhân + cổng qua tầng)
+	# Thương nhân luôn xuất hiện ở tầng 9 (trước final boss tầng 10 theo floor_type == NPC_SANCTUARY)
+	# Các tầng quái còn lại (2, 4, 5, 7, 8) có tỉ lệ ngẫu nhiên xuất hiện thêm tầng thương nhân
 	_random_sanctuary_floor = -1
-	if randf() <= 0.65:
-		_random_merchant_floor = [2, 4, 5].pick_random()
+	if randf() <= 0.40:
+		_random_merchant_floor = [2, 4, 5, 7, 8].pick_random()
 	else:
 		_random_merchant_floor = -1
 
@@ -121,9 +125,22 @@ func start_floor(floor_num: int) -> void:
 		if cam != null:
 			cam.reset_smoothing()
 
+	is_double_boss_event = false
+	double_boss_stage = 0
+	if config.floor_type == FloorConfig.FloorType.MINIBOSS:
+		# 40% tỉ lệ kích hoạt sự kiện Song Đấu Trùm (Double Miniboss)
+		is_double_boss_event = (randf() <= 0.40)
+		double_boss_stage = 1
+		if is_double_boss_event:
+			var hud_nodes: Array[Node] = get_tree().get_nodes_in_group(&"hud")
+			if hud_nodes.size() > 0:
+				var hud: HUD = hud_nodes[0] as HUD
+				if hud != null and hud.timer_label != null:
+					hud.timer_label.text = "SỰ KIỆN: SONG ĐẤU TRÙM (DOUBLE BOSS)!"
+
 	var is_sanctuary: bool = (config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY) or (floor_num == _random_sanctuary_floor) or (floor_num == _random_merchant_floor)
 
-	# NPC Sanctuary: Safe haven without monsters
+	# NPC Sanctuary / Merchant Floor: Safe haven without monsters
 	if is_sanctuary:
 		if spawner != null:
 			spawner.stop_spawning()
@@ -191,6 +208,31 @@ func _on_wave_ended(floor_index: int) -> void:
 		tw.tween_callback(func(): GameManager.advance_floor())
 
 
+func _on_boss_killed(_boss_id: String) -> void:
+	var cfg: FloorConfig = GameManager.get_current_floor_config()
+	if cfg != null and cfg.floor_type == FloorConfig.FloorType.MINIBOSS:
+		# Double Miniboss event: đánh xong boss 1 thì đánh tiếp 1 con nữa, không mở draft ngay
+		if is_double_boss_event and double_boss_stage == 1:
+			double_boss_stage = 2
+			AudioManager.play_sfx("confirm")
+			var hud_nodes: Array[Node] = get_tree().get_nodes_in_group(&"hud")
+			if hud_nodes.size() > 0:
+				var hud: HUD = hud_nodes[0] as HUD
+				if hud != null and hud.timer_label != null:
+					hud.timer_label.text = "CẢNH BÁO: TRÙM THỨ 2 XUẤT HIỆN!"
+			var tw_second: Tween = create_tween()
+			tw_second.tween_interval(1.5)
+			tw_second.tween_callback(func():
+				if spawner != null:
+					spawner.spawn_second_miniboss()
+			)
+			return
+		else:
+			EventBus.floor_cleared.emit(GameManager.current_floor_index)
+	elif cfg != null and cfg.floor_type == FloorConfig.FloorType.FINAL_BOSS:
+		EventBus.floor_cleared.emit(GameManager.current_floor_index)
+
+
 func _on_floor_cleared(floor_index: int) -> void:
 	if spawner != null:
 		spawner.stop_spawning()
@@ -201,9 +243,9 @@ func _on_floor_cleared(floor_index: int) -> void:
 
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	if cfg != null and cfg.floor_type == FloorConfig.FloorType.MINIBOSS:
-		# Open boss draft (pick 2 of 5 for free) after 10s so player can collect all dropped gold
+		# Open boss draft (pick 2 of 5 for free) after 3s (giảm từ 10s xuống 3s để nhặt đồ nhanh)
 		var tw: Tween = create_tween()
-		tw.tween_interval(10.0)
+		tw.tween_interval(3.0)
 		tw.tween_callback(func():
 			var draft_items: Array[ItemData] = ItemPool.get_boss_draft_items(5, all_items_pool)
 			if boss_draft_ui != null:
@@ -211,9 +253,9 @@ func _on_floor_cleared(floor_index: int) -> void:
 			EventBus.draft_opened.emit(draft_items)
 		)
 	elif cfg != null and cfg.floor_type == FloorConfig.FloorType.FINAL_BOSS:
-		# Tower Conquered! Show Endgame Victory Screen after 10s
+		# Tower Conquered! Show Endgame Victory Screen after 3s
 		var tw: Tween = create_tween()
-		tw.tween_interval(10.0)
+		tw.tween_interval(3.0)
 		tw.tween_callback(func():
 			EventBus.tower_conquered.emit()
 		)

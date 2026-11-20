@@ -113,7 +113,7 @@ func _on_continue_pressed() -> void:
 
 	# Load floors
 	var floors: Array[FloorConfig] = []
-	for i: int in range(1, 7):
+	for i: int in range(1, 11):
 		var path: String = "res://src/data/floors/floor_%02d.tres" % i
 		if ResourceLoader.exists(path):
 			floors.append(load(path) as FloorConfig)
