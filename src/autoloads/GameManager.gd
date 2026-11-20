@@ -108,7 +108,17 @@ func add_item(item: ItemData) -> void:
 				equipped_weapons.append(item)
 				EventBus.weapons_changed.emit()
 		ItemData.ItemType.PASSIVE_BUFF:
-			passive_buffs.append(item)
+			var existing_buff: ItemData = null
+			for b: ItemData in passive_buffs:
+				if b.item_id == item.item_id:
+					existing_buff = b
+					break
+			if existing_buff != null:
+				existing_buff.level += 1
+			else:
+				var buff_copy: ItemData = item.duplicate()
+				buff_copy.level = 1
+				passive_buffs.append(buff_copy)
 		ItemData.ItemType.SPELL:
 			var s_id: String = item.spell_id if not item.spell_id.is_empty() else item.item_id
 			if learned_spells.has(s_id):

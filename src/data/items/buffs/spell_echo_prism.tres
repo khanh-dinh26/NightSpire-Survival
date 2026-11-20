@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "spell_echo_prism"
+item_name = "Lăng Kính Phân Phép"
+type = 1
+rarity = 2
+price = 28
+sprite_region = Rect2(160, 512, 32, 32)
+custom_icon_path = "res://assets/sprites/relic_icons/relic_spell_prism.png"
+stats_modifier = {
+"spell_echo": 2
+}
+description = "Phép thuật bắn thêm các tia phép tỏa ra nhiều hướng."

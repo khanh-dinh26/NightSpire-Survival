@@ -7,8 +7,9 @@ signal item_selected(card: ItemCard, item: ItemData)
 @export var item_data: ItemData = null
 @export var is_free: bool = false
 
-@onready var icon_center: CenterContainer = $Margin/VBox/IconCenter
-@onready var icon_rect: TextureRect = $Margin/VBox/IconCenter/IconRect
+@onready var icon_row: HBoxContainer = $Margin/VBox/IconRow
+@onready var icon_rect: TextureRect = $Margin/VBox/IconRow/IconRect
+@onready var emblem_rect: TextureRect = $Margin/VBox/IconRow/EmblemRect
 @onready var name_label: Label = $Margin/VBox/NameLabel
 @onready var type_badge: Label = $Margin/VBox/TypeBadge
 @onready var desc_label: Label = $Margin/VBox/DescLabel
@@ -17,6 +18,13 @@ signal item_selected(card: ItemCard, item: ItemData)
 
 var is_bought: bool = false
 var _items_tex: Texture2D = preload("res://assets/sprites/items.png")
+
+var _spell_icons: Dictionary = {
+	"fireball": preload("res://assets/effects/magic_effects/Icons/tile000.png"),
+	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile006.png"),
+	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile007.png"),
+	"tornado": preload("res://assets/effects/magic_effects/Icons/tile009.png"),
+}
 
 
 func setup(data: ItemData, p_is_free: bool = false) -> void:
@@ -37,8 +45,6 @@ func _refresh_display() -> void:
 		return
 
 	# Icon display
-	if icon_center != null:
-		icon_center.visible = true
 	if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
 		icon_rect.texture = load(item_data.custom_icon_path)
 	else:
@@ -46,6 +52,14 @@ func _refresh_display() -> void:
 		atlas_tex.atlas = _items_tex
 		atlas_tex.region = item_data.sprite_region
 		icon_rect.texture = atlas_tex
+
+	# Spell Emblem on weapon card
+	if emblem_rect != null:
+		if item_data.type == ItemData.ItemType.WEAPON and not item_data.embedded_spell.is_empty() and _spell_icons.has(item_data.embedded_spell):
+			emblem_rect.texture = _spell_icons[item_data.embedded_spell]
+			emblem_rect.visible = true
+		else:
+			emblem_rect.visible = false
 
 	# Name & Rarity Color
 	name_label.text = item_data.item_name
@@ -78,9 +92,20 @@ func _refresh_display() -> void:
 		else:
 			type_badge.text = "[ KHẢM PHÉP ]"
 			type_badge.add_theme_color_override(&"font_color", Color(0.3, 0.8, 1.0))
-	else:
-		type_badge.text = "[ DI VẬT / PHƯỚC LÀNH ]"
-		type_badge.add_theme_color_override(&"font_color", Color(0.4, 0.9, 0.4))
+	elif item_data.type == ItemData.ItemType.PASSIVE_BUFF:
+		var existing_lvl: int = 1
+		var owned: bool = false
+		for b: ItemData in GameManager.passive_buffs:
+			if b.item_id == item_data.item_id:
+				owned = true
+				existing_lvl = b.level
+				break
+		if owned:
+			type_badge.text = "[ PHƯỚC LÀNH -> Lv.%d ]" % (existing_lvl + 1)
+			type_badge.add_theme_color_override(&"font_color", Color(0.4, 1.0, 0.4))
+		else:
+			type_badge.text = "[ DI VẬT / PHƯỚC LÀNH ]"
+			type_badge.add_theme_color_override(&"font_color", Color(0.4, 0.9, 0.4))
 
 	# Description
 	if item_data.type == ItemData.ItemType.WEAPON:
@@ -102,6 +127,18 @@ func _refresh_display() -> void:
 			item_data.cooldown,
 			item_data.description
 		]
+	elif item_data.type == ItemData.ItemType.PASSIVE_BUFF:
+		var existing_lvl: int = 1
+		var owned: bool = false
+		for b: ItemData in GameManager.passive_buffs:
+			if b.item_id == item_data.item_id:
+				owned = true
+				existing_lvl = b.level
+				break
+		if owned:
+			desc_label.text = "%s\n(Hiện có: Cấp %d - Nâng cấp hiệu ứng!)" % [item_data.description, existing_lvl]
+		else:
+			desc_label.text = item_data.description
 	else:
 		desc_label.text = item_data.description
 

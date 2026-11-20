@@ -238,15 +238,30 @@ func _auto_cast_embedded_spell(target_node: Node2D) -> void:
 	tw.tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.08)
 
 
+func _get_spell_directions(lvl: int, base_dir: Vector2) -> Array[Vector2]:
+	var echo_bonus: int = 0
+	for buff: ItemData in GameManager.passive_buffs:
+		if buff != null and buff.item_id == "spell_echo_prism":
+			echo_bonus += buff.level
+	
+	var total_count: int = lvl + echo_bonus
+	var dirs: Array[Vector2] = []
+	if total_count <= 1:
+		dirs.append(base_dir)
+	elif total_count == 2:
+		dirs.append(base_dir)
+		dirs.append(-base_dir)
+	else:
+		var step: float = TAU / float(total_count)
+		for i: int in range(total_count):
+			dirs.append(base_dir.rotated(float(i) * step))
+	return dirs
+
+
 func _cast_fireball(lvl: int, base_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	var count: int = lvl
-	var spread_angle: float = 0.22
-	for i: int in range(count):
-		var angle_offset: float = 0.0
-		if count > 1:
-			angle_offset = (float(i) - float(count - 1) / 2.0) * spread_angle
-		var fire_dir: Vector2 = base_dir.rotated(angle_offset)
+	var dirs: Array[Vector2] = _get_spell_directions(lvl, base_dir)
+	for fire_dir: Vector2 in dirs:
 		var spell: Area2D = _spell_scene.instantiate() as Area2D
 		spell.set("spell_type", 0) # FIREBALL
 		spell.set("level", lvl)
@@ -258,44 +273,46 @@ func _cast_fireball(lvl: int, base_dir: Vector2) -> void:
 
 func _cast_molten_spear(lvl: int, base_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	var count: int = lvl
-	for i: int in range(count):
-		var offset_perp: Vector2 = base_dir.orthogonal() * ((float(i) - float(count - 1) / 2.0) * 14.0)
+	var dirs: Array[Vector2] = _get_spell_directions(lvl, base_dir)
+	for fire_dir: Vector2 in dirs:
 		var spell: Area2D = _spell_scene.instantiate() as Area2D
 		spell.set("spell_type", 1) # MOLTEN_SPEAR
 		spell.set("level", lvl)
 		spell.set("damage", 35 + (lvl - 1) * 18)
-		spell.set("direction", base_dir)
-		spell.global_position = global_position + offset_perp
+		spell.set("direction", fire_dir)
+		spell.global_position = global_position
 		get_tree().current_scene.add_child(spell)
 
 
 func _cast_tornado(lvl: int, base_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	var count: int = mini(lvl, 3)
-	for i: int in range(count):
-		var angle_offset: float = 0.0
-		if count > 1:
-			angle_offset = (float(i) - float(count - 1) / 2.0) * 0.35
+	var dirs: Array[Vector2] = _get_spell_directions(lvl, base_dir)
+	for fire_dir: Vector2 in dirs:
 		var spell: Area2D = _spell_scene.instantiate() as Area2D
 		spell.set("spell_type", 2) # TORNADO
 		spell.set("level", lvl)
 		spell.set("damage", 18 + (lvl - 1) * 8)
-		spell.set("direction", base_dir.rotated(angle_offset))
+		spell.set("direction", fire_dir)
 		spell.global_position = global_position
 		get_tree().current_scene.add_child(spell)
 
 
 func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	var count: int = 1 + (lvl - 1) * 2
+	var echo_bonus: int = 0
+	for buff: ItemData in GameManager.passive_buffs:
+		if buff != null and buff.item_id == "spell_echo_prism":
+			echo_bonus += buff.level
+	var count: int = 1 + (lvl - 1) * 2 + echo_bonus
 	var offsets: Array[Vector2] = [Vector2.ZERO]
-	if count >= 3:
-		offsets.append(Vector2(24, 0))
-		offsets.append(Vector2(-24, 0))
-	if count >= 5:
-		offsets.append(Vector2(0, 24))
-		offsets.append(Vector2(0, -24))
+	if count == 2:
+		offsets.append(Vector2(28, 0))
+	elif count >= 3:
+		var radius: float = 30.0
+		for i: int in range(count - 1):
+			var angle: float = float(i) * TAU / float(count - 1)
+			offsets.append(Vector2(cos(angle), sin(angle)) * radius)
+
 	for offset: Vector2 in offsets:
 		var spell: Area2D = _spell_scene.instantiate() as Area2D
 		spell.set("spell_type", 3) # EARTH_SPIKE

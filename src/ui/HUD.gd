@@ -117,8 +117,6 @@ func _update_buffs_display() -> void:
 		icon_rect.custom_minimum_size = Vector2(16, 16)
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon_rect.tooltip_text = "%s: %s" % [buff.item_name, buff.description]
-
 		if not buff.custom_icon_path.is_empty() and ResourceLoader.exists(buff.custom_icon_path):
 			icon_rect.texture = load(buff.custom_icon_path)
 		else:
@@ -126,6 +124,20 @@ func _update_buffs_display() -> void:
 			atlas.atlas = preload("res://assets/sprites/items.png")
 			atlas.region = buff.sprite_region
 			icon_rect.texture = atlas
+
+		if buff.level > 1:
+			icon_rect.tooltip_text = "%s (Cấp %d): %s" % [buff.item_name, buff.level, buff.description]
+			var lvl_lbl: Label = Label.new()
+			lvl_lbl.text = "%d" % buff.level
+			lvl_lbl.add_theme_font_size_override(&"font_size", 8)
+			lvl_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.2))
+			lvl_lbl.add_theme_color_override(&"font_shadow_color", Color.BLACK)
+			lvl_lbl.add_theme_constant_override(&"shadow_offset_x", 1)
+			lvl_lbl.add_theme_constant_override(&"shadow_offset_y", 1)
+			lvl_lbl.position = Vector2(9, 6)
+			icon_rect.add_child(lvl_lbl)
+		else:
+			icon_rect.tooltip_text = "%s: %s" % [buff.item_name, buff.description]
 
 		buffs_container.add_child(icon_rect)
 

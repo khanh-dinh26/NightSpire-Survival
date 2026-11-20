@@ -74,6 +74,7 @@ func _load_items_pool() -> void:
 		"res://src/data/items/buffs/blacksmith_talisman.tres",
 		"res://src/data/items/buffs/vampire_chalice.tres",
 		"res://src/data/items/buffs/frost_heart.tres",
+		"res://src/data/items/buffs/spell_echo_prism.tres",
 	]
 	for p: String in item_paths:
 		if ResourceLoader.exists(p):

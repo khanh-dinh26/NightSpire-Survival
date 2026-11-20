@@ -83,6 +83,7 @@ func _load_all_items() -> void:
 		"res://src/data/items/buffs/vampire_chalice.tres",
 		"res://src/data/items/buffs/frost_heart.tres",
 		"res://src/data/items/buffs/blacksmith_talisman.tres",
+		"res://src/data/items/buffs/spell_echo_prism.tres",
 	]
 	for path: String in buff_files:
 		if ResourceLoader.exists(path):

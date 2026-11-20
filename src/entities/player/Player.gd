@@ -156,7 +156,7 @@ func apply_item(item: ItemData) -> void:
 				"instant_heal":
 					current_hp = mini(current_hp + int(val), max_hp)
 				"magnet_range":
-					magnet_range = float(val)
+					magnet_range += 50.0
 				"luck":
 					luck_stat += float(val)
 				"dodge_chance":
