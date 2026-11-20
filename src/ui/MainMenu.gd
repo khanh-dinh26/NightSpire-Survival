@@ -71,17 +71,12 @@ func _setup_background() -> void:
 					if not source.has_tile(Vector2i(tx, ty)):
 						source.create_tile(Vector2i(tx, ty))
 
-		# Top wall stone row
-		for x: int in range(20):
-			var wall_coord: Vector2i = Vector2i(x % 2, 0)
-			floor_layer.set_cell(Vector2i(x, 0), 0, wall_coord)
-
-		# Dungeon stone masonry floor
+		# Dungeon stone masonry floor across the entire screen
 		var floor_coords: Array[Vector2i] = [
 			Vector2i(0, 1), Vector2i(1, 1),
 			Vector2i(1, 7), Vector2i(2, 7)
 		]
-		for y: int in range(1, 12):
+		for y: int in range(12):
 			for x: int in range(20):
 				var tile_coord: Vector2i = floor_coords[(x * 3 + y * 7) % floor_coords.size()]
 				floor_layer.set_cell(Vector2i(x, y), 0, tile_coord)
