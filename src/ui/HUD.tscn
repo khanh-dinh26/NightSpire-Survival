@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bhud0001"]
+[gd_scene load_steps=6 format=3 uid="uid://bhud0001"]
 
 [ext_resource type="Script" path="res://src/ui/HUD.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/ui/InventoryBar.tscn" id="2_invbar"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="3_ui"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="4_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="5_btn_hover"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_script")
@@ -18,12 +22,13 @@ theme_override_constants/margin_bottom = 8
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
 [node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
 [node name="HPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(140, 16)
+custom_minimum_size = Vector2(160, 16)
 layout_mode = 2
 value = 100.0
 show_percentage = false
@@ -35,7 +40,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 10
 text = "100 / 100"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -47,8 +52,8 @@ size_flags_horizontal = 3
 [node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
-theme_override_font_sizes/font_size = 12
-text = "🪙 Gold: 0"
+theme_override_font_sizes/font_size = 11
+text = "Gold: 0"
 
 [node name="CenterBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -56,7 +61,7 @@ alignment = 1
 
 [node name="FloorLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterBar"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Floor 1/10 — WAVE"
 
 [node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/CenterBar"]
@@ -66,36 +71,106 @@ layout_mode = 2
 [node name="TimerLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterBar"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Time: 25s"
+
+[node name="BossBarContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="BossNameLabel" type="Label" parent="MarginContainer/VBoxContainer/BossBarContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 11
+text = "BOSS"
+horizontal_alignment = 1
+
+[node name="BossHPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/BossBarContainer"]
+custom_minimum_size = Vector2(320, 14)
+layout_mode = 2
+size_flags_horizontal = 4
+value = 100.0
+show_percentage = false
+
+[node name="BossHPLabel" type="Label" parent="MarginContainer/VBoxContainer/BossBarContainer/BossHPBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 9
+text = "200 / 200"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomSpacer" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BottomBar" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InventoryBar" parent="MarginContainer/VBoxContainer/BottomBar" instance=ExtResource("2_invbar")]
+layout_mode = 2
 
 [node name="GameOverPanel" type="PanelContainer" parent="."]
 visible = false
+custom_minimum_size = Vector2(300, 160)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -40.0
-offset_right = 100.0
-offset_bottom = 40.0
+offset_left = -150.0
+offset_top = -80.0
+offset_right = 150.0
+offset_bottom = 80.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="GameOverPanel"]
+[node name="FrameBG" type="NinePatchRect" parent="GameOverPanel"]
 layout_mode = 2
+texture = ExtResource("3_ui")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
+
+[node name="Margin" type="MarginContainer" parent="GameOverPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="GameOverPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Title" type="Label" parent="GameOverPanel/VBox"]
+[node name="Title" type="Label" parent="GameOverPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.2, 0.2, 1)
-theme_override_font_sizes/font_size = 16
-text = "YOU DIED"
+theme_override_font_sizes/font_size = 18
+text = "BẠN ĐÃ TỬ TRẬN"
 horizontal_alignment = 1
 
-[node name="Sub" type="Label" parent="GameOverPanel/VBox"]
+[node name="Sub" type="Label" parent="GameOverPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "Save deleted. Permadeath."
+text = "Dữ liệu chuyến đi đã bị xóa (Chết vĩnh viễn)."
 horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="GameOverPanel/Margin/VBox"]
+custom_minimum_size = Vector2(140, 28)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("4_btn_normal")
+theme_override_styles/hover = ExtResource("5_btn_hover")
+theme_override_styles/pressed = ExtResource("5_btn_hover")
+text = "Chọn Tháp Mới"

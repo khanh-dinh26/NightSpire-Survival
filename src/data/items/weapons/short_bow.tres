@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "short_bow"
-item_name = "Short Bow"
+item_name = "Cung Ngắn"
 type = 0
 rarity = 0
 price = 20
@@ -17,4 +17,4 @@ attack_range = 160.0
 projectile_speed = 280.0
 knockback = 40.0
 stats_modifier = {}
-description = "Fires swift arrows at distant threats."
+description = "Bắn những mũi tên bay nhanh chuẩn xác vào mục tiêu chỉ định."

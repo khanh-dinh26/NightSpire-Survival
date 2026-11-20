@@ -1,0 +1,15 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/SVN-Coder's Crux.otf" id="1_oi513"]
+[ext_resource type="Texture2D" path="res://assets/ui/slider/slider_grabber_white.png" id="1_vgvmq"]
+[ext_resource type="StyleBox" path="res://assets/ui/slider/slider_fill_style.tres" id="2_4onf4"]
+[ext_resource type="StyleBox" path="res://assets/ui/slider/slider_track_style.tres" id="3_queru"]
+
+[resource]
+default_font = ExtResource("1_oi513")
+default_font_size = 16
+HSlider/icons/grabber = ExtResource("1_vgvmq")
+HSlider/icons/grabber_highlight = ExtResource("1_vgvmq")
+HSlider/styles/grabber_area = ExtResource("2_4onf4")
+HSlider/styles/grabber_area_highlight = ExtResource("2_4onf4")
+HSlider/styles/slider = ExtResource("3_queru")

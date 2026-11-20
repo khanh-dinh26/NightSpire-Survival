@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "dagger"
-item_name = "Steel Dagger"
+item_name = "Dao Thép"
 type = 0
 rarity = 0
 price = 15
@@ -17,4 +17,4 @@ attack_range = 80.0
 projectile_speed = 200.0
 knockback = 60.0
 stats_modifier = {}
-description = "Fast stabbing blade with high attack speed."
+description = "Lưỡi dao cận chiến sắc bén với tốc độ chém chớp nhoáng."

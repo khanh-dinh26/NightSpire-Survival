@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "orc_warchief"
+enemy_name = "Thủ Lĩnh Chiến Binh — Gorthok"
+enemy_type = 1
+max_hp = 250
+damage = 18
+speed = 64.0
+contact_knockback = 160.0
+gold_drop_min = 28
+gold_drop_max = 40
+sprite_sheet = "monsters"
+sprite_region = Rect2(128, 0, 32, 32)
+attack_pattern = "charge"
+projectile_speed = 150.0
+attack_cooldown = 2.6

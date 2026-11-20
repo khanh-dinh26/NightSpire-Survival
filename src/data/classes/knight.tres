@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClassData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ClassData.gd" id="1_class"]
+[ext_resource type="Resource" path="res://src/data/items/weapons/dagger.tres" id="2_weap"]
+
+[resource]
+script = ExtResource("1_class")
+class_id = "knight"
+display_name = "Hiệp Sĩ (Knight)"
+sprite_region = Rect2(0, 32, 32, 32)
+max_hp = 130
+speed = 115.0
+defense = 2
+starter_weapon = ExtResource("2_weap")
+description = "Chiến binh kiên cường với lượng máu dày và giáp sắt giảm sát thương nhận vào. Khởi đầu với Dao Thép."

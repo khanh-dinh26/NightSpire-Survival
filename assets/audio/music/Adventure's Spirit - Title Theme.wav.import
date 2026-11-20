@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cxurmdvlq8frn"
+path="res://.godot/imported/Adventure's Spirit - Title Theme.wav-96ea562d2331f8ff43d504a64b7d2025.sample"
+
+[deps]
+
+source_file="res://assets/audio/music/Adventure's Spirit - Title Theme.wav"
+dest_files=["res://.godot/imported/Adventure's Spirit - Title Theme.wav-96ea562d2331f8ff43d504a64b7d2025.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

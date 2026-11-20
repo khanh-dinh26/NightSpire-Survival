@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://dxurlo6rb85ae"]
+
+[ext_resource type="Script" path="res://src/ui/SoundSettings.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_panel"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+
+[node name="SoundSettings" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(320, 210)
+layout_mode = 2
+
+[node name="FrameBG" type="NinePatchRect" parent="Center/Panel"]
+layout_mode = 2
+texture = ExtResource("2_panel")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "CÀI ĐẶT ÂM THANH"
+horizontal_alignment = 1
+
+[node name="SFXSection" type="VBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="HeaderRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/SFXSection"]
+layout_mode = 2
+alignment = 1
+
+[node name="SFXLabel" type="Label" parent="Center/Panel/Margin/VBox/SFXSection/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "Âm Thanh Game (SFX)"
+
+[node name="SFXValLabel" type="Label" parent="Center/Panel/Margin/VBox/SFXSection/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "100%"
+horizontal_alignment = 2
+
+[node name="SFXMuteBtn" type="Button" parent="Center/Panel/Margin/VBox/SFXSection/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Bật"
+
+[node name="SFXSlider" type="HSlider" parent="Center/Panel/Margin/VBox/SFXSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 100.0
+
+[node name="MusicSection" type="VBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="HeaderRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/MusicSection"]
+layout_mode = 2
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="Center/Panel/Margin/VBox/MusicSection/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "Nhạc Nền (Music)"
+
+[node name="MusicValLabel" type="Label" parent="Center/Panel/Margin/VBox/MusicSection/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "100%"
+horizontal_alignment = 2
+
+[node name="MusicMuteBtn" type="Button" parent="Center/Panel/Margin/VBox/MusicSection/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Bật"
+
+[node name="MusicSlider" type="HSlider" parent="Center/Panel/Margin/VBox/MusicSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 100.0
+
+[node name="HSeparator" type="Control" parent="Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.05, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Quay Lại"

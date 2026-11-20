@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "ghost"
+enemy_name = "Wraith"
+enemy_type = 0
+max_hp = 22
+damage = 9
+speed = 75.0
+contact_knockback = 80.0
+gold_drop_min = 2
+gold_drop_max = 4
+sprite_sheet = "monsters"
+sprite_region = Rect2(0, 160, 32, 32)
+attack_pattern = ""
+projectile_speed = 120.0
+attack_cooldown = 2.0

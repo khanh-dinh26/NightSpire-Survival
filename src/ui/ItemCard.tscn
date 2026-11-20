@@ -1,0 +1,75 @@
+[gd_scene load_steps=5 format=3 uid="uid://citemcard001"]
+
+[ext_resource type="Script" path="res://src/ui/ItemCard.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/card_notched.png" id="2_frame"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+
+[node name="ItemCard" type="PanelContainer"]
+custom_minimum_size = Vector2(150, 200)
+offset_right = 150.0
+offset_bottom = 200.0
+script = ExtResource("1_card")
+
+[node name="FrameBackground" type="NinePatchRect" parent="."]
+layout_mode = 2
+texture = ExtResource("2_frame")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TypeBadge" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+theme_override_font_sizes/font_size = 10
+text = "[ WEAPON ]"
+horizontal_alignment = 1
+
+[node name="IconCenter" type="CenterContainer" parent="Margin/VBox"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+
+[node name="IconRect" type="TextureRect" parent="Margin/VBox/IconCenter"]
+texture_filter = 0
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Item Name"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="DescLabel" type="Label" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 10
+text = "Stats and description..."
+autowrap_mode = 3
+
+[node name="ActionButton" type="Button" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.3, 0.2, 0.05, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "10 Gold"

@@ -1,11 +1,11 @@
 class_name WeaponOrbit
 extends Node2D
-## Manages weapon nodes orbiting the player in a circle.
+## Manages up to 6 weapons orbiting the player in a balanced circle.
 
-const MAX_WEAPONS: int = 5
+const MAX_WEAPONS: int = 6
 
 var weapons: Array[WeaponBase] = []
-var orbit_radius: float = 30.0
+var orbit_radius: float = 32.0
 var rotation_speed: float = 1.4  # rad/s
 
 var _orbit_angle: float = 0.0
@@ -21,9 +21,10 @@ func _process(delta: float) -> void:
 func add_weapon(item: ItemData) -> void:
 	if weapons.size() >= MAX_WEAPONS:
 		return
+
 	var weapon: WeaponBase = _weapon_scene.instantiate() as WeaponBase
 	add_child(weapon)
-	weapon.setup(item)
+	weapon.setup(item.duplicate())
 	weapons.append(weapon)
 	_reposition_weapons()
 
@@ -37,10 +38,17 @@ func remove_weapon(index: int) -> void:
 	_reposition_weapons()
 
 
+func clear_weapons() -> void:
+	for w: WeaponBase in weapons:
+		w.queue_free()
+	weapons.clear()
+
+
 func _reposition_weapons() -> void:
-	var count: int = weapons.size()
-	if count == 0:
+	var total: int = weapons.size()
+	if total == 0:
 		return
-	for i: int in range(count):
-		var angle: float = _orbit_angle + (float(i) / float(count)) * TAU
+
+	for i: int in range(total):
+		var angle: float = _orbit_angle + (float(i) / float(total)) * TAU
 		weapons[i].position = Vector2(cos(angle), sin(angle)) * orbit_radius

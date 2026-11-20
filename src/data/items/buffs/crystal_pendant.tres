@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "crystal_pendant"
+item_name = "Mặt Dây Chuyền Pha Lê"
+type = 1
+rarity = 1
+price = 30
+sprite_region = Rect2(64, 512, 32, 32)
+weapon_style = 0
+base_damage = 0
+attack_speed = 0.0
+attack_range = 0.0
+projectile_speed = 0.0
+knockback = 0.0
+stats_modifier = {
+"damage_mult": 0.25
+}
+description = "+25% Sát thương cho tất cả vũ khí."

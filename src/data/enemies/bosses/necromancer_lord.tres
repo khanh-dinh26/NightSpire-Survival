@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "necromancer_lord"
+enemy_name = "Đại Pháp Sư Tử Linh — Lord Valerius"
+enemy_type = 2
+max_hp = 780
+damage = 25
+speed = 58.0
+contact_knockback = 180.0
+gold_drop_min = 90
+gold_drop_max = 140
+sprite_sheet = "monsters"
+sprite_region = Rect2(32, 96, 32, 32)
+attack_pattern = "mixed"
+projectile_speed = 180.0
+attack_cooldown = 1.9

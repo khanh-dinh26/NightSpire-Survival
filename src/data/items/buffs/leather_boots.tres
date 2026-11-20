@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "leather_boots"
+item_name = "Ủng Da Nhanh Nhẹn"
+type = 1
+rarity = 0
+price = 15
+sprite_region = Rect2(32, 448, 32, 32)
+weapon_style = 0
+base_damage = 0
+attack_speed = 0.0
+attack_range = 0.0
+projectile_speed = 0.0
+knockback = 0.0
+stats_modifier = {
+"speed": 20.0
+}
+description = "+20 Tốc độ di chuyển giúp né đòn linh hoạt."

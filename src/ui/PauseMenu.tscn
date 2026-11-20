@@ -1,0 +1,115 @@
+[gd_scene load_steps=6 format=3 uid="uid://cpausemenu01"]
+
+[ext_resource type="Script" path="res://src/ui/PauseMenu.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_ui"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+[ext_resource type="PackedScene" path="res://src/ui/SoundSettings.tscn" id="5_sound"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 25
+script = ExtResource("1_script")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="Panel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(260, 160)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -80.0
+offset_right = 130.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FrameBG" type="NinePatchRect" parent="Panel"]
+layout_mode = 2
+texture = ExtResource("2_ui")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 16
+text = "TẠM DỪNG (PAUSED)"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 10
+text = "Bấm [ESC] để tiếp tục chơi"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.5, 0.1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Tiếp Tục (Resume)"
+
+[node name="SoundButton" type="Button" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.05, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Cài Đặt Âm Thanh (Sound)"
+
+[node name="MenuButton" type="Button" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.5, 0.4, 0.1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Rời Khỏi Tháp (Exit)"
+
+[node name="QuitButton" type="Button" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.1, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.6, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Thoát Game (Quit)"
+
+[node name="SoundSettingsModal" parent="." instance=ExtResource("5_sound")]
+visible = false

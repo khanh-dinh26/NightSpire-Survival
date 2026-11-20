@@ -18,6 +18,8 @@ signal player_died()
 signal gold_changed(new_total: int)
 signal item_bought(item_id: String)
 signal item_picked(item_id: String)
+signal weapons_changed()
+signal weapon_dropped(item_id: String)
 
 # --- UI ---
 signal shop_opened(card_list: Array)

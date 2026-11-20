@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "crystal_staff"
-item_name = "Crystal Staff"
+item_name = "Trượng Pha Lê"
 type = 0
 rarity = 1
 price = 40
@@ -17,4 +17,4 @@ attack_range = 160.0
 projectile_speed = 180.0
 knockback = 70.0
 stats_modifier = {}
-description = "Channels piercing arcane bolts across great distance."
+description = "Phóng các luồng sét ma thuật xuyên thấu kẻ địch tầm xa."

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClassData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ClassData.gd" id="1_class"]
+[ext_resource type="Resource" path="res://src/data/items/weapons/crystal_staff.tres" id="2_weap"]
+
+[resource]
+script = ExtResource("1_class")
+class_id = "wizard"
+display_name = "Pháp Sư (Wizard)"
+sprite_region = Rect2(32, 128, 32, 32)
+max_hp = 85
+speed = 120.0
+defense = 0
+starter_weapon = ExtResource("2_weap")
+description = "Bậc thầy phép thuật phóng những tia sét xuyên thấu uy lực cao. Khởi đầu với Trượng Pha Lê."

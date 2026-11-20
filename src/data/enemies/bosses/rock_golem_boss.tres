@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "rock_golem_boss"
+enemy_name = "Khổng Lồ Nham Thạch — Ignis"
+enemy_type = 1
+max_hp = 450
+damage = 22
+speed = 48.0
+contact_knockback = 200.0
+gold_drop_min = 45
+gold_drop_max = 70
+sprite_sheet = "monsters"
+sprite_region = Rect2(64, 224, 32, 32)
+attack_pattern = "charge"
+projectile_speed = 140.0
+attack_cooldown = 2.4

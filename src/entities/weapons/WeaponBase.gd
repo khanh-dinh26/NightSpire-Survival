@@ -64,6 +64,7 @@ func _execute_attack() -> void:
 	if item_data == null:
 		return
 	_cooldown_left = 1.0 / item_data.attack_speed
+	AudioManager.play_sfx("slash")
 
 	match item_data.weapon_style:
 		ItemData.WeaponStyle.MELEE_ORBIT:

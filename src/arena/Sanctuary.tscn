@@ -1,0 +1,137 @@
+[gd_scene load_steps=4 format=3 uid="uid://csanctuary001"]
+
+[ext_resource type="Script" path="res://src/arena/Sanctuary.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
+radius = 28.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_portal"]
+radius = 32.0
+
+[node name="Sanctuary" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Campfire" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Campfire"]
+texture_filter = 0
+
+[node name="Blacksmith" type="Area2D" parent="."]
+position = Vector2(-80, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Blacksmith"]
+texture_filter = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Blacksmith"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="PromptContainer" type="Control" parent="Blacksmith"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = -100.0
+offset_top = -36.0
+offset_right = 100.0
+offset_bottom = -12.0
+
+[node name="Button" type="Button" parent="Blacksmith/PromptContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 9
+text = "[E] Blacksmith: Upgrade Weapon (+25% Damage - 30 Gold)"
+
+[node name="Alchemist" type="Area2D" parent="."]
+position = Vector2(80, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Alchemist"]
+texture_filter = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Alchemist"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="PromptContainer" type="Control" parent="Alchemist"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = -100.0
+offset_top = -36.0
+offset_right = 100.0
+offset_bottom = -12.0
+
+[node name="Button" type="Button" parent="Alchemist/PromptContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 9
+text = "[E] Alchemist: Full Heal & Max HP Buff (25 Gold)"
+
+[node name="Smuggler" type="Area2D" parent="."]
+position = Vector2(0, -65)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Smuggler"]
+texture_filter = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Smuggler"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="PromptContainer" type="Control" parent="Smuggler"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = -100.0
+offset_top = -36.0
+offset_right = 100.0
+offset_bottom = -12.0
+
+[node name="Button" type="Button" parent="Smuggler/PromptContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 9
+text = "[E] Smuggler: Mua Rare Item (25 Gold)"
+
+[node name="Portal" type="Area2D" parent="."]
+position = Vector2(0, 70)
+collision_layer = 0
+collision_mask = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Portal"]
+texture_filter = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
+shape = SubResource("CircleShape2D_portal")
+
+[node name="PromptContainer" type="Control" parent="Portal"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = -90.0
+offset_top = 28.0
+offset_right = 90.0
+offset_bottom = 52.0
+
+[node name="Button" type="Button" parent="Portal/PromptContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 9
+text = "[E] Portal: Sang Tầng Kế (Next Floor)"

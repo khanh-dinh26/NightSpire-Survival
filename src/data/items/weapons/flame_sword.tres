@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "flame_sword"
-item_name = "Flame Sword"
+item_name = "Kiếm Lửa Địa Ngục"
 type = 0
 rarity = 1
 price = 35
@@ -17,4 +17,4 @@ attack_range = 75.0
 projectile_speed = 200.0
 knockback = 80.0
 stats_modifier = {}
-description = "Imbued with hellfire. Heavy cleaving strikes."
+description = "Được yểm hỏa diệm thiêu đốt với các nhát chém diện rộng uy lực."

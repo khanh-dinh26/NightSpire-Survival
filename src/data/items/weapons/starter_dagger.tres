@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "starter_dagger"
-item_name = "Rusty Dagger"
+item_name = "Dao Găm Cũ"
 type = 0
 rarity = 0
 price = 0
@@ -17,4 +17,4 @@ attack_range = 75.0
 projectile_speed = 200.0
 knockback = 50.0
 stats_modifier = {}
-description = "A trusty worn dagger that orbits the wielder."
+description = "Vũ khí cận chiến cơ bản đáng tin cậy."

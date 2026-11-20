@@ -21,12 +21,38 @@ var _is_hit_animating: bool = false
 
 func _ready() -> void:
 	add_to_group(&"player")
-	current_hp = max_hp
+	if GameManager.chosen_class != null:
+		setup_from_class(GameManager.chosen_class)
+	else:
+		current_hp = max_hp
+		if weapon_orbit != null:
+			weapon_orbit.clear_weapons()
+			if GameManager.equipped_weapons.is_empty():
+				var starter: ItemData = preload("res://src/data/items/weapons/starter_dagger.tres")
+				GameManager.equipped_weapons.append(starter)
+				weapon_orbit.add_weapon(starter)
+			else:
+				for w: ItemData in GameManager.equipped_weapons:
+					weapon_orbit.add_weapon(w)
 
-	# Give starter weapon if none equipped
-	var starter: ItemData = preload("res://src/data/items/weapons/starter_dagger.tres")
+	# Apply any existing passives
+	for buff: ItemData in GameManager.passive_buffs:
+		apply_item(buff)
+
+
+func setup_from_class(p_class: ClassData) -> void:
+	if p_class == null:
+		return
+	max_hp = p_class.max_hp
+	current_hp = max_hp
+	speed = p_class.speed
+	defense = p_class.defense
+	sprite.region_rect = p_class.sprite_region
+
 	if weapon_orbit != null:
-		weapon_orbit.add_weapon(starter)
+		weapon_orbit.clear_weapons()
+		for w: ItemData in GameManager.equipped_weapons:
+			weapon_orbit.add_weapon(w)
 
 
 # ── Movement & Procedural Animation ─────────────────────────────────────
@@ -97,6 +123,36 @@ func _animate_character(delta: float, input_dir: Vector2) -> void:
 		sprite.scale = Vector2.ONE
 
 
+# ── Item & Buff Application ───────────────────────────────────────────
+func apply_item(item: ItemData) -> void:
+	if item.type == ItemData.ItemType.WEAPON:
+		if weapon_orbit != null:
+			weapon_orbit.add_weapon(item)
+	elif item.type == ItemData.ItemType.PASSIVE_BUFF:
+		for stat: String in item.stats_modifier:
+			var val: Variant = item.stats_modifier[stat]
+			match stat:
+				"max_hp":
+					var add_hp: int = int(val)
+					max_hp += add_hp
+					current_hp += add_hp
+				"speed":
+					speed += float(val)
+				"defense":
+					defense += int(val)
+				"instant_heal":
+					current_hp = mini(current_hp + int(val), max_hp)
+				"damage_mult":
+					if weapon_orbit != null:
+						for w: WeaponBase in weapon_orbit.weapons:
+							if w.item_data != null:
+								w.item_data.base_damage = roundi(w.item_data.base_damage * (1.0 + float(val)))
+
+		GameManager.player_max_hp = max_hp
+		GameManager.player_current_hp = current_hp
+		EventBus.player_hit.emit(0)
+
+
 # ── Damage ─────────────────────────────────────────────────────────────
 func take_damage(amount: int) -> void:
 	var effective: int = maxi(amount - defense, 1)
@@ -109,6 +165,13 @@ func take_damage(amount: int) -> void:
 	if current_hp <= 0:
 		current_hp = 0
 		EventBus.player_died.emit()
+
+
+func heal(amount: int) -> void:
+	current_hp = mini(current_hp + amount, max_hp)
+	GameManager.player_current_hp = current_hp
+	AudioManager.play_sfx("heal")
+	EventBus.player_hit.emit(0)
 
 
 # ── Hit flash + squash effect ──────────────────────────────────────────

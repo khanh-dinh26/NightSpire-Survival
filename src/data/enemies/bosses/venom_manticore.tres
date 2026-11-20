@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+enemy_id = "venom_manticore"
+enemy_name = "Sư Tử Gai Độc — Manticore"
+enemy_type = 1
+max_hp = 340
+damage = 18
+speed = 68.0
+contact_knockback = 150.0
+gold_drop_min = 35
+gold_drop_max = 50
+sprite_sheet = "monsters"
+sprite_region = Rect2(96, 192, 32, 32)
+attack_pattern = "projectile"
+projectile_speed = 160.0
+attack_cooldown = 2.5

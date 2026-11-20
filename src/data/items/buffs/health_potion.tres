@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "health_potion"
+item_name = "Bình Dược Sinh Mệnh"
+type = 1
+rarity = 0
+price = 15
+sprite_region = Rect2(32, 608, 32, 32)
+weapon_style = 0
+base_damage = 0
+attack_speed = 0.0
+attack_range = 0.0
+projectile_speed = 0.0
+knockback = 0.0
+stats_modifier = {
+"instant_heal": 40
+}
+description = "Hồi phục 40 Máu ngay lập tức."

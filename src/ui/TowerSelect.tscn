@@ -1,0 +1,540 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctowerselect01"]
+
+[ext_resource type="Script" path="res://src/ui/TowerSelect.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/card_notched.png" id="2_card"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+
+[node name="TowerSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.04, 0.07, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TowerStep" type="VBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Header" type="VBoxContainer" parent="Margin/VBox/TowerStep"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Margin/VBox/TowerStep/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "BƯỚC 1: CHỌN TÒA THÁP CHINH PHỤC"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Margin/VBox/TowerStep/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 10
+text = "Mỗi tòa tháp sở hữu quái vật và đặc tính riêng biệt"
+horizontal_alignment = 1
+
+[node name="TowerCards" type="HBoxContainer" parent="Margin/VBox/TowerStep"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Tower0" type="Button" parent="Margin/VBox/TowerStep/TowerCards"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="FrameBG" type="NinePatchRect" parent="Margin/VBox/TowerStep/TowerCards/Tower0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_card")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/TowerStep/TowerCards/Tower0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/TowerStep/TowerCards/Tower0/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower0/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "THÁP RỪNG ĐỘC"
+horizontal_alignment = 1
+
+[node name="Modifier" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower0/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 9
+text = "Quái phát độc tố rút HP theo thời gian."
+autowrap_mode = 3
+
+[node name="Desc" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower0/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 9
+text = "Khu rừng độc nguyên sinh ngập tràn dây leo gai độc."
+autowrap_mode = 3
+
+[node name="Tower1" type="Button" parent="Margin/VBox/TowerStep/TowerCards"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="FrameBG" type="NinePatchRect" parent="Margin/VBox/TowerStep/TowerCards/Tower1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_card")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/TowerStep/TowerCards/Tower1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/TowerStep/TowerCards/Tower1/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower1/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "HẦM MỘ CỔ"
+horizontal_alignment = 1
+
+[node name="Modifier" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower1/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 9
+text = "Heal giảm -25%, quái rơi Gold +30%."
+autowrap_mode = 3
+
+[node name="Desc" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower1/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 9
+text = "Hầm ngục tối tăm với quân đoàn xương cốt và ma quỷ."
+autowrap_mode = 3
+
+[node name="Tower2" type="Button" parent="Margin/VBox/TowerStep/TowerCards"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="FrameBG" type="NinePatchRect" parent="Margin/VBox/TowerStep/TowerCards/Tower2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_card")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/TowerStep/TowerCards/Tower2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/TowerStep/TowerCards/Tower2/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower2/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "LÒ RÈN LỬA"
+horizontal_alignment = 1
+
+[node name="Modifier" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower2/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_font_sizes/font_size = 9
+text = "Damage cả hai bên tăng vọt +25%!"
+autowrap_mode = 3
+
+[node name="Desc" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower2/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 9
+text = "Tháp dung nham rực lửa nơi trui rèn vũ khí và quỷ dữ."
+autowrap_mode = 3
+
+[node name="NavFooter" type="HBoxContainer" parent="Margin/VBox/TowerStep"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BackToMenuButton" type="Button" parent="Margin/VBox/TowerStep/NavFooter"]
+custom_minimum_size = Vector2(110, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Menu Chính"
+
+[node name="ToClassButton" type="Button" parent="Margin/VBox/TowerStep/NavFooter"]
+custom_minimum_size = Vector2(160, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Tiếp Tục (Chọn Anh Hùng)"
+
+[node name="ClassStep" type="VBoxContainer" parent="Margin/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Header" type="VBoxContainer" parent="Margin/VBox/ClassStep"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Margin/VBox/ClassStep/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "BƯỚC 2: CHỌN ANH HÙNG XUẤT TRẬN"
+horizontal_alignment = 1
+
+[node name="TowerBadge" type="Label" parent="Margin/VBox/ClassStep/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "THÁP ĐÃ CHỌN: THÁP RỪNG ĐỘC"
+horizontal_alignment = 1
+
+[node name="ClassCards" type="HBoxContainer" parent="Margin/VBox/ClassStep"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Class0" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="FrameBG" type="NinePatchRect" parent="Margin/VBox/ClassStep/ClassCards/Class0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_card")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/ClassStep/ClassCards/Class0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="SpriteCenter" type="CenterContainer" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HeroSprite" type="TextureRect" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox/SpriteCenter"]
+texture_filter = 0
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "Hiệp Sĩ (Knight)"
+horizontal_alignment = 1
+
+[node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "130 HP  |  115 SPD  |  2 DEF\nStarter: Dao Thép"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+theme_override_font_sizes/font_size = 9
+text = "Chiến binh kiên cường với lượng HP dày và giáp sắt giảm sát thương nhận vào."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Class1" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="FrameBG" type="NinePatchRect" parent="Margin/VBox/ClassStep/ClassCards/Class1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_card")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/ClassStep/ClassCards/Class1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="SpriteCenter" type="CenterContainer" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HeroSprite" type="TextureRect" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox/SpriteCenter"]
+texture_filter = 0
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "Cung Thủ (Ranger)"
+horizontal_alignment = 1
+
+[node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "95 HP  |  145 SPD  |  0 DEF\nStarter: Cung Ngắn"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+theme_override_font_sizes/font_size = 9
+text = "Thợ săn bóng đêm với Speed di chuyển cực nhanh và khả năng bắn tỉa tầm xa."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Class2" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="FrameBG" type="NinePatchRect" parent="Margin/VBox/ClassStep/ClassCards/Class2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_card")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/ClassStep/ClassCards/Class2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="SpriteCenter" type="CenterContainer" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HeroSprite" type="TextureRect" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox/SpriteCenter"]
+texture_filter = 0
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "Pháp Sư (Wizard)"
+horizontal_alignment = 1
+
+[node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "85 HP  |  120 SPD  |  0 DEF\nStarter: Trượng Pha Lê (Spell)"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+theme_override_font_sizes/font_size = 9
+text = "Bậc thầy phép thuật phóng những tia sét xuyên thấu uy lực cao."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="NavFooter" type="HBoxContainer" parent="Margin/VBox/ClassStep"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BackToTowerButton" type="Button" parent="Margin/VBox/ClassStep/NavFooter"]
+custom_minimum_size = Vector2(110, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Chọn Lại Tháp"
+
+[node name="EmbarkButton" type="Button" parent="Margin/VBox/ClassStep/NavFooter"]
+custom_minimum_size = Vector2(180, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "BẮT ĐẦU CHUYẾN ĐI"

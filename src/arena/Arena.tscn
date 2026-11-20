@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dbarena001"]
+[gd_scene load_steps=11 format=3 uid="uid://dbarena001"]
 
 [ext_resource type="Script" path="res://src/arena/Arena.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/tiles.png" id="2_tiles"]
@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://src/arena/Spawner.gd" id="4_spawner"]
 [ext_resource type="Script" path="res://src/arena/FloorManager.gd" id="5_floormgr"]
 [ext_resource type="PackedScene" path="res://src/ui/HUD.tscn" id="6_hud"]
+[ext_resource type="PackedScene" path="res://src/ui/WaveShopUI.tscn" id="7_shop"]
+[ext_resource type="PackedScene" path="res://src/ui/BossDraftUI.tscn" id="8_draft"]
+[ext_resource type="PackedScene" path="res://src/ui/PauseMenu.tscn" id="9_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_atlas"]
 texture = ExtResource("2_tiles")
@@ -27,7 +30,7 @@ tile_set = SubResource("TileSet_arena")
 [node name="Entities" type="Node2D" parent="."]
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
-position = Vector2(288, 192)
+position = Vector2(448, 288)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position_smoothing_enabled = false
@@ -37,10 +40,18 @@ script = ExtResource("4_spawner")
 arena = NodePath("..")
 entities_container = NodePath("../Entities")
 
-[node name="FloorManager" type="Node" parent="." node_paths=PackedStringArray("arena", "spawner", "player")]
+[node name="FloorManager" type="Node" parent="." node_paths=PackedStringArray("arena", "spawner", "player", "wave_shop_ui", "boss_draft_ui")]
 script = ExtResource("5_floormgr")
 arena = NodePath("..")
 spawner = NodePath("../Spawner")
 player = NodePath("../Player")
+wave_shop_ui = NodePath("../WaveShopUI")
+boss_draft_ui = NodePath("../BossDraftUI")
 
 [node name="HUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="WaveShopUI" parent="." instance=ExtResource("7_shop")]
+
+[node name="BossDraftUI" parent="." instance=ExtResource("8_draft")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("9_pause")]
