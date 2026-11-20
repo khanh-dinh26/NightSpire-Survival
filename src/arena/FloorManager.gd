@@ -32,7 +32,7 @@ func _ready() -> void:
 
 func _load_floor_configs() -> void:
 	all_floor_configs.clear()
-	for i: int in range(1, 11):
+	for i: int in range(1, 13):
 		var path: String = "res://src/data/floors/floor_%02d.tres" % i
 		if ResourceLoader.exists(path):
 			var config: FloorConfig = load(path) as FloorConfig
@@ -75,8 +75,7 @@ func _load_items_pool() -> void:
 
 
 func start_default_run() -> void:
-	if _random_sanctuary_floor < 0:
-		_random_sanctuary_floor = randi_range(5, 7) # Random sanctuary floor between minibosses
+	_random_sanctuary_floor = -1
 	if GameManager.current_tower == null:
 		GameManager.start_new_run(default_tower, all_floor_configs)
 	else:

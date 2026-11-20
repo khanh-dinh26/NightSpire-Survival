@@ -6,9 +6,9 @@
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
 
 [node name="ItemCard" type="PanelContainer"]
-custom_minimum_size = Vector2(150, 200)
-offset_right = 150.0
-offset_bottom = 200.0
+custom_minimum_size = Vector2(140, 116)
+offset_right = 140.0
+offset_bottom = 116.0
 script = ExtResource("1_card")
 
 [node name="FrameBackground" type="NinePatchRect" parent="."]
@@ -21,55 +21,55 @@ patch_margin_bottom = 6
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
 
 [node name="VBox" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 2
 
 [node name="TypeBadge" type="Label" parent="Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
-theme_override_font_sizes/font_size = 10
-text = "[ WEAPON ]"
+theme_override_font_sizes/font_size = 9
+text = "[ VŨ KHÍ ]"
 horizontal_alignment = 1
 
 [node name="IconCenter" type="CenterContainer" parent="Margin/VBox"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 
 [node name="IconRect" type="TextureRect" parent="Margin/VBox/IconCenter"]
 texture_filter = 0
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 stretch_mode = 5
 
 [node name="NameLabel" type="Label" parent="Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Item Name"
+theme_override_font_sizes/font_size = 11
+text = "Tên Vật Phẩm"
 horizontal_alignment = 1
 text_overrun_behavior = 3
 
 [node name="DescLabel" type="Label" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
-theme_override_font_sizes/font_size = 10
-text = "Stats and description..."
+theme_override_font_sizes/font_size = 9
+text = "Thuộc tính và mô tả..."
 autowrap_mode = 3
 
 [node name="ActionButton" type="Button" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_colors/font_hover_color = Color(0.3, 0.2, 0.05, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "10 Gold"
+text = "10 Vàng"

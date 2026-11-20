@@ -141,28 +141,34 @@ func die() -> void:
 	collision_layer = 0
 	collision_mask = 0
 
-	# Emit signal & spawn gold
-	var gold_value: int = randi_range(data.gold_drop_min, data.gold_drop_max)
-	EventBus.enemy_killed.emit(global_position, gold_value)
-	_spawn_gold(gold_value)
+	# Emit signal & spawn gold with balanced drop chance
+	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+	var p: Player = players[0] as Player if players.size() > 0 else null
+	var luck: float = p.luck_stat if p != null else 0.0
+
+	var drop_chance: float = 0.40 + (luck * 0.12)
+	var drops_gold: bool = randf() <= drop_chance
+	var gold_value: int = randi_range(data.gold_drop_min, data.gold_drop_max) if data != null else 1
+	gold_value = clampi(gold_value, 1, 2)
+
+	EventBus.enemy_killed.emit(global_position, gold_value if drops_gold else 0)
+	if drops_gold:
+		_spawn_gold(gold_value)
 
 	# Check player buffs (Vampire chalice & Lucky drops)
-	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
-	if players.size() > 0:
-		var p: Player = players[0] as Player
-		if p != null:
-			if p.has_vampire_chalice:
-				p.kills_counter += 1
-				if p.kills_counter >= 8:
-					p.kills_counter = 0
-					p.heal(6)
+	if p != null:
+		if p.has_vampire_chalice:
+			p.kills_counter += 1
+			if p.kills_counter >= 8:
+				p.kills_counter = 0
+				p.heal(6)
 
-			# Lucky bonus drop
-			if p.luck_stat > 0.0 and randf() <= (0.15 + p.luck_stat * 0.15):
-				# Spawn extra high-value gold or heal drop
-				_spawn_gold(gold_value + 3)
-				if randf() <= 0.35:
-					p.heal(5)
+		# Lucky bonus drop (rare heal or extra coin)
+		if luck > 0.0 and randf() <= (0.10 + luck * 0.10):
+			if randf() <= 0.35:
+				p.heal(5)
+			else:
+				_spawn_gold(1)
 
 	# Death tween: scale to 0 + fade
 	if _walk_tween != null and _walk_tween.is_valid():

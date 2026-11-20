@@ -9,6 +9,7 @@ item_name = "Ủng Da Nhanh Nhẹn"
 type = 1
 rarity = 0
 price = 15
+custom_icon_path = "res://assets/sprites/relic_icons/relic_leather_boots.png"
 sprite_region = Rect2(32, 448, 32, 32)
 weapon_style = 0
 base_damage = 0

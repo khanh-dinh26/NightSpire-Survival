@@ -68,7 +68,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 		# Add gold
 		GameManager.add_gold(gold_amount)
-		AudioManager.play_sfx("buy")
+		AudioManager.play_sfx("gold")
 
 		# Collect tween
 		var tw: Tween = create_tween()

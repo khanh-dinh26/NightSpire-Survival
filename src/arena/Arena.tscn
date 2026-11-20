@@ -24,8 +24,13 @@ script = ExtResource("1_script")
 [node name="FloorLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_arena")
 
+[node name="DecorLayer" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_arena")
+
 [node name="WallLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_arena")
+
+[node name="Portals" type="Node2D" parent="."]
 
 [node name="Entities" type="Node2D" parent="."]
 

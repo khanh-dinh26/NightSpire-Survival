@@ -154,5 +154,5 @@ func _explode() -> void:
 	exp_spell.damage = roundi(damage * 0.8)
 	exp_spell.global_position = global_position
 	get_tree().current_scene.add_child(exp_spell)
-	AudioManager.play_sfx("enemy_death")
+	AudioManager.play_sfx("spell_fire")
 	queue_free()

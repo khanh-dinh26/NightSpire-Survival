@@ -36,20 +36,16 @@ func _refresh_display() -> void:
 	if item_data == null:
 		return
 
-	# Icon display: Relics/Buffs do not show icon
-	if item_data.type == ItemData.ItemType.PASSIVE_BUFF:
-		if icon_center != null:
-			icon_center.visible = false
+	# Icon display
+	if icon_center != null:
+		icon_center.visible = true
+	if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
+		icon_rect.texture = load(item_data.custom_icon_path)
 	else:
-		if icon_center != null:
-			icon_center.visible = true
-		if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
-			icon_rect.texture = load(item_data.custom_icon_path)
-		else:
-			var atlas_tex: AtlasTexture = AtlasTexture.new()
-			atlas_tex.atlas = _items_tex
-			atlas_tex.region = item_data.sprite_region
-			icon_rect.texture = atlas_tex
+		var atlas_tex: AtlasTexture = AtlasTexture.new()
+		atlas_tex.atlas = _items_tex
+		atlas_tex.region = item_data.sprite_region
+		icon_rect.texture = atlas_tex
 
 	# Name & Rarity Color
 	name_label.text = item_data.item_name
@@ -68,10 +64,10 @@ func _refresh_display() -> void:
 				existing_lvl = eq.level
 				break
 		if owned:
-			type_badge.text = "[ WEAPON -> Lv.%d ]" % (existing_lvl + 1)
+			type_badge.text = "[ VŨ KHÍ -> Lv.%d ]" % (existing_lvl + 1)
 			type_badge.add_theme_color_override(&"font_color", Color(1.0, 0.8, 0.3))
 		else:
-			type_badge.text = "[ WEAPON ]"
+			type_badge.text = "[ VŨ KHÍ ]"
 			type_badge.add_theme_color_override(&"font_color", Color(0.7, 0.7, 0.7))
 	elif item_data.type == ItemData.ItemType.SPELL:
 		var s_id: String = item_data.spell_id if not item_data.spell_id.is_empty() else item_data.item_id
@@ -83,7 +79,7 @@ func _refresh_display() -> void:
 			type_badge.text = "[ KHẢM PHÉP ]"
 			type_badge.add_theme_color_override(&"font_color", Color(0.3, 0.8, 1.0))
 	else:
-		type_badge.text = "[ RELIC / BUFF ]"
+		type_badge.text = "[ DI VẬT / PHƯỚC LÀNH ]"
 		type_badge.add_theme_color_override(&"font_color", Color(0.4, 0.9, 0.4))
 
 	# Description
@@ -92,10 +88,10 @@ func _refresh_display() -> void:
 		if not item_data.special_effect.is_empty():
 			extra_effect = "\n[Đặc tính: %s]" % item_data.special_effect
 		if not item_data.embedded_spell.is_empty():
-			extra_effect += "\n[Khảm Phép: %s Lv.%d (Tự Động Bắn)]" % [
+			extra_effect += "\n[Khảm Phép: %s Lv.%d (Tự Bắn)]" % [
 				item_data.embedded_spell.capitalize(), item_data.embedded_spell_level
 			]
-		desc_label.text = "Damage: %d  |  Speed: %.1f/s%s\n%s" % [
+		desc_label.text = "Sát thương: %d  |  Tốc đánh: %.1f/s%s\n%s" % [
 			item_data.base_damage,
 			item_data.attack_speed,
 			extra_effect,
@@ -115,17 +111,17 @@ func _refresh_display() -> void:
 
 func update_button_state() -> void:
 	if is_bought:
-		action_btn.text = "BOUGHT"
+		action_btn.text = "ĐÃ CHỌN"
 		action_btn.disabled = true
 		modulate = Color(0.6, 0.6, 0.6, 0.8)
 		return
 
 	modulate = Color.WHITE
 	if is_free:
-		action_btn.text = "SELECT (FREE)"
+		action_btn.text = "CHỌN MIỄN PHÍ"
 		action_btn.disabled = false
 	else:
-		action_btn.text = "%d Gold" % item_data.price
+		action_btn.text = "%d Vàng" % item_data.price
 		action_btn.disabled = (GameManager.gold < item_data.price)
 
 

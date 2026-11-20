@@ -10,6 +10,7 @@ type = 1
 rarity = 1
 price = 35
 level = 1
+custom_icon_path = "res://assets/sprites/relic_icons/relic_frost_heart.png"
 sprite_region = Rect2(224, 64, 32, 32)
 stats_modifier = {
 "defense": 2,

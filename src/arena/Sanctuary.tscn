@@ -6,7 +6,7 @@
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_solid"]
-radius = 12.0
+radius = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
 radius = 38.0

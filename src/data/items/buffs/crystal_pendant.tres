@@ -9,6 +9,7 @@ item_name = "Mặt Dây Chuyền Pha Lê"
 type = 1
 rarity = 1
 price = 30
+custom_icon_path = "res://assets/sprites/relic_icons/relic_crystal_pendant.png"
 sprite_region = Rect2(64, 512, 32, 32)
 weapon_style = 0
 base_damage = 0

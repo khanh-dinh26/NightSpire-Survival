@@ -108,8 +108,39 @@ func _spawn_burst() -> void:
 	)
 
 	for i: int in range(burst_count):
-		var enemy_data: EnemyData = current_tower.common_enemies[randi() % current_tower.common_enemies.size()]
-		_spawn_enemy(enemy_data)
+		var enemy_data: EnemyData = _get_tiered_enemy()
+		if enemy_data != null:
+			_spawn_enemy(enemy_data)
+
+
+func _get_tiered_enemy() -> EnemyData:
+	if current_tower.common_enemies.is_empty():
+		return null
+
+	var enemies: Array = current_tower.common_enemies
+	var floor_idx: int = current_floor_config.floor_index if current_floor_config != null else 1
+	var pool: Array[EnemyData] = []
+
+	if floor_idx <= 3:
+		# Floors 1-3: Early game. Mostly low-tier monsters (bats, spiders, goblins)
+		var max_k: int = mini(3, enemies.size())
+		for k: int in range(max_k):
+			pool.append(enemies[k])
+	elif floor_idx <= 7:
+		# Floors 5-7: Mid game. Move to mid-tier monsters (snakes, slimes, cultists, zombies)
+		var start_k: int = 1 if enemies.size() > 2 else 0
+		var end_k: int = mini(enemies.size(), 4)
+		for k: int in range(start_k, end_k):
+			pool.append(enemies[k])
+	else:
+		# Floors 10-12+: Late game elite horde. Brutal monsters only (abyssal crawlers, demons, golems)
+		var start_k: int = maxi(0, enemies.size() - 3)
+		for k: int in range(start_k, enemies.size()):
+			pool.append(enemies[k])
+
+	if pool.is_empty():
+		return enemies[randi() % enemies.size()]
+	return pool[randi() % pool.size()]
 
 
 func _spawn_enemy(data: EnemyData) -> void:
@@ -202,6 +233,14 @@ func _spawn_boss_instance(boss_data: EnemyData) -> void:
 func _get_spawn_position() -> Vector2:
 	if arena == null:
 		return Vector2(100, 100)
+
+	# 50% chance to warp directly out of an active summoning portal!
+	var portals: Array[Vector2] = arena.get_portal_positions()
+	if not portals.is_empty() and randf() <= 0.5:
+		var p: Vector2 = portals[randi() % portals.size()]
+		var offset: Vector2 = Vector2(randf_range(-20, 20), randf_range(-20, 20))
+		return p + offset
+
 	var bounds: Rect2 = arena.get_spawn_bounds()
 	var side: int = randi() % 4
 	var pos: Vector2 = Vector2.ZERO

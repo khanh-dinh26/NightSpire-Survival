@@ -103,27 +103,28 @@ func _on_player_died() -> void:
 
 func _on_wave_started(floor_idx: int) -> void:
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
-	var type_str: String = "WAVE"
+	var type_str: String = "QUÁI VẬT"
 	if cfg != null:
 		match cfg.floor_type:
-			FloorConfig.FloorType.COMBAT_WAVE: type_str = "WAVE"
-			FloorConfig.FloorType.MINIBOSS: type_str = "MINI-BOSS"
-			FloorConfig.FloorType.NPC_SANCTUARY: type_str = "SANCTUARY"
-			FloorConfig.FloorType.FINAL_BOSS: type_str = "FINAL BOSS"
+			FloorConfig.FloorType.COMBAT_WAVE: type_str = "QUÁI VẬT"
+			FloorConfig.FloorType.MINIBOSS: type_str = "TRÙM PHỤ"
+			FloorConfig.FloorType.NPC_SANCTUARY: type_str = "THÁNH ĐỊA"
+			FloorConfig.FloorType.FINAL_BOSS: type_str = "TRÙM CUỐI"
 
 	var prefix: String = ""
 	if GameManager.is_dark_night:
-		prefix = "[DARK NIGHT C%d] " % GameManager.dark_night_cycle
+		prefix = "[ĐÊM TỐI C%d] " % GameManager.dark_night_cycle
 
-	floor_label.text = "%sFloor %d/10 — %s" % [prefix, floor_idx, type_str]
+	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 12
+	floor_label.text = "%sTầng %d/%d — %s" % [prefix, floor_idx, total_floors, type_str]
 	if spawner != null and not spawner.is_spawning and cfg != null and cfg.floor_type == FloorConfig.FloorType.COMBAT_WAVE:
-		floor_label.text = "%sFloor %d/10 — SANCTUARY" % [prefix, floor_idx]
+		floor_label.text = "%sTầng %d/%d — THÁNH ĐỊA" % [prefix, floor_idx, total_floors]
 	if cfg == null or (cfg.floor_type != FloorConfig.FloorType.MINIBOSS and cfg.floor_type != FloorConfig.FloorType.FINAL_BOSS):
 		hide_boss_bar()
 
 
 func _on_wave_ended(_floor_idx: int) -> void:
-	timer_label.text = "WAVE CLEARED!"
+	timer_label.text = "HOÀN THÀNH TẦNG!"
 
 
 func _on_restart_pressed() -> void:

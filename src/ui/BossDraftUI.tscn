@@ -19,16 +19,16 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.7)
 
 [node name="Panel" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(520, 280)
+custom_minimum_size = Vector2(580, 320)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -140.0
-offset_right = 260.0
-offset_bottom = 140.0
+offset_left = -290.0
+offset_top = -160.0
+offset_right = 290.0
+offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -43,9 +43,9 @@ patch_margin_bottom = 14
 [node name="Margin" type="MarginContainer" parent="Panel"]
 layout_mode = 2
 theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 8
 
 [node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
 layout_mode = 2
@@ -59,38 +59,44 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_font_sizes/font_size = 13
-text = "BOSS DEFEATED — SPOILS OF WAR"
+text = "CHIẾN THẮNG TRÙM — CHIẾN LỢI PHẨM"
 
 [node name="PicksLabel" type="Label" parent="Panel/Margin/VBox/Header"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
 theme_override_font_sizes/font_size = 12
-text = "Draft: 2 / 2 remaining"
+text = "Chọn: 2 / 2 phần thưởng"
 
-[node name="CardsScroll" type="ScrollContainer" parent="Panel/Margin/VBox"]
+[node name="CardsLayout" type="VBoxContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-horizontal_scroll_mode = 1
-vertical_scroll_mode = 0
+theme_override_constants/separation = 8
+alignment = 1
 
-[node name="CardsContainer" type="HBoxContainer" parent="Panel/Margin/VBox/CardsScroll"]
+[node name="RowTop" type="HBoxContainer" parent="Panel/Margin/VBox/CardsLayout"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="RowBottom" type="HBoxContainer" parent="Panel/Margin/VBox/CardsLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
 alignment = 1
 
 [node name="Footer" type="CenterContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
 
 [node name="ContinueButton" type="Button" parent="Panel/Margin/VBox/Footer"]
-custom_minimum_size = Vector2(160, 28)
+custom_minimum_size = Vector2(170, 26)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "Continue"
+text = "Tiếp Tục Leo Tháp"
 
 [node name="ReplaceModal" type="PanelContainer" parent="."]
 visible = false

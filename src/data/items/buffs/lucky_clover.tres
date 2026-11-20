@@ -10,6 +10,7 @@ type = 1
 rarity = 1
 price = 30
 level = 1
+custom_icon_path = "res://assets/sprites/relic_icons/relic_clover.png"
 sprite_region = Rect2(128, 64, 32, 32)
 stats_modifier = {
 "luck": 1.0

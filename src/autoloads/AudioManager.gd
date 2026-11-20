@@ -26,12 +26,30 @@ var _sfx_library: Dictionary = {
 	"block": "res://assets/audio/sfx/10_Battle_SFX/39_Block_03.wav",
 	"confirm": "res://assets/audio/sfx/10_UI_Menu_SFX/013_Confirm_03.wav",
 	"buy": "res://assets/audio/sfx/10_UI_Menu_SFX/079_Buy_sell_01.wav",
+	"gold": "res://assets/audio/sfx/10_UI_Menu_SFX/051_use_item_01.wav",
 	"heal": "res://assets/audio/sfx/8_Buffs_Heals_SFX/02_Heal_02.wav",
 	"pause": "res://assets/audio/sfx/10_UI_Menu_SFX/092_Pause_04.wav",
-	"unpause": "res://assets/audio/sfx/10_UI_Menu_SFX/098_Unpause_04.wav"
+	"unpause": "res://assets/audio/sfx/10_UI_Menu_SFX/098_Unpause_04.wav",
+	"spell_fire": "res://assets/audio/sfx/9_Special_SFX/04_Fire_explosion_04_medium.wav",
+	"spell_ice": "res://assets/audio/sfx/9_Special_SFX/13_Ice_explosion_01.wav",
+	"spell_wind": "res://assets/audio/sfx/9_Special_SFX/25_Wind_01.wav",
+	"spell_earth": "res://assets/audio/sfx/9_Special_SFX/30_Earth_02.wav"
 }
 
 var _loaded_streams: Dictionary = {}
+var _last_played_time: Dictionary = {}
+var _sfx_cooldowns: Dictionary = {
+	"slash": 0.08,
+	"hit": 0.07,
+	"enemy_death": 0.08,
+	"gold": 0.06,
+	"buy": 0.06,
+	"spell_fire": 0.09,
+	"spell_ice": 0.09,
+	"spell_wind": 0.09,
+	"spell_earth": 0.09,
+	"confirm": 0.05
+}
 
 
 func _ready() -> void:
@@ -45,8 +63,8 @@ func _ready() -> void:
 	_bgm_player.bus = &"Music"
 	add_child(_bgm_player)
 
-	# Setup pool of SFX players
-	for i in range(8):
+	# Setup pool of SFX players (16 channels for clean overlap)
+	for i in range(16):
 		var p: AudioStreamPlayer = AudioStreamPlayer.new()
 		p.bus = &"SFX"
 		add_child(p)
@@ -131,20 +149,39 @@ func play_sfx(sfx_name: String) -> void:
 	if not _sfx_library.has(sfx_name):
 		return
 
+	# Debounce / rate limit duplicate sounds to avoid harsh stuttering
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var min_gap: float = _sfx_cooldowns.get(sfx_name, 0.04)
+	if _last_played_time.has(sfx_name):
+		if (now - _last_played_time[sfx_name]) < min_gap:
+			return
+	_last_played_time[sfx_name] = now
+
 	var path: String = _sfx_library[sfx_name]
 	var stream: AudioStream = _get_or_load_stream(path)
 	if stream == null:
 		return
 
+	# Find free player channel
 	for p: AudioStreamPlayer in _sfx_players:
 		if not p.playing:
 			p.stream = stream
+			p.pitch_scale = randf_range(0.95, 1.05)
 			p.play()
 			return
 
-	# Fallback to first player
-	_sfx_players[0].stream = stream
-	_sfx_players[0].play()
+	# If all 16 are busy, find player with furthest playback to replace smoothly
+	var best_p: AudioStreamPlayer = _sfx_players[0]
+	var max_pos: float = 0.0
+	for p: AudioStreamPlayer in _sfx_players:
+		var pos: float = p.get_playback_position()
+		if pos > max_pos:
+			max_pos = pos
+			best_p = p
+
+	best_p.stream = stream
+	best_p.pitch_scale = randf_range(0.95, 1.05)
+	best_p.play()
 
 
 func _on_wave_started(_floor_idx: int) -> void:

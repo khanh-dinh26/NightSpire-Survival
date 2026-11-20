@@ -8,7 +8,8 @@ const MAX_PICKS: int = 2
 
 @onready var title_label: Label = $Panel/Margin/VBox/Header/TitleLabel
 @onready var picks_label: Label = $Panel/Margin/VBox/Header/PicksLabel
-@onready var cards_container: HBoxContainer = $Panel/Margin/VBox/CardsScroll/CardsContainer
+@onready var row_top: HBoxContainer = $Panel/Margin/VBox/CardsLayout/RowTop
+@onready var row_bottom: HBoxContainer = $Panel/Margin/VBox/CardsLayout/RowBottom
 @onready var continue_btn: Button = $Panel/Margin/VBox/Footer/ContinueButton
 
 # Replace Modal
@@ -38,21 +39,27 @@ func open_draft(items: Array[ItemData]) -> void:
 	_hide_replace_modal()
 	get_tree().paused = true
 	_picks_left = MAX_PICKS
-	title_label.text = "MINI-BOSS DEFEATED — SPOILS OF WAR"
+	title_label.text = "CHIẾN THẮNG TRÙM — CHIẾN LỢI PHẨM"
 	_update_picks_label()
 	_populate_cards(items)
 	visible = true
 
 
 func _populate_cards(items: Array[ItemData]) -> void:
-	for child: Node in cards_container.get_children():
+	for child: Node in row_top.get_children():
+		child.queue_free()
+	for child: Node in row_bottom.get_children():
 		child.queue_free()
 	_cards.clear()
 
-	for item: ItemData in items:
+	for i: int in range(items.size()):
+		var item: ItemData = items[i]
 		var card: ItemCard = _card_scene.instantiate() as ItemCard
-		card.custom_minimum_size = Vector2(98, 155)
-		cards_container.add_child(card)
+		card.custom_minimum_size = Vector2(165, 115)
+		if i < 3:
+			row_top.add_child(card)
+		else:
+			row_bottom.add_child(card)
 		card.setup(item, true)
 		card.item_selected.connect(_on_card_selected)
 		_cards.append(card)
@@ -137,9 +144,9 @@ func _hide_replace_modal() -> void:
 
 
 func _update_picks_label() -> void:
-	picks_label.text = "Draft: %d / %d remaining" % [_picks_left, MAX_PICKS]
+	picks_label.text = "Chọn: %d / %d phần thưởng" % [_picks_left, MAX_PICKS]
 	if _picks_left <= 0:
-		picks_label.text = "All spoils claimed!"
+		picks_label.text = "Đã nhận hết phần thưởng!"
 
 
 func _on_continue_pressed() -> void:

@@ -10,6 +10,7 @@ type = 1
 rarity = 2
 price = 45
 level = 1
+custom_icon_path = "res://assets/sprites/relic_icons/relic_hermes.png"
 sprite_region = Rect2(160, 64, 32, 32)
 stats_modifier = {
 "dodge_chance": 0.15,
