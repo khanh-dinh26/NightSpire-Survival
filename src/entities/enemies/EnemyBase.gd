@@ -166,7 +166,10 @@ func die() -> void:
 	var p: Player = players[0] as Player if players.size() > 0 else null
 	var luck: float = p.luck_stat if p != null else 0.0
 
-	var drop_chance: float = 0.70 + (luck * 0.15)
+	# Càng lên tầng cao tỉ lệ rơi vàng giảm, nhưng có buff thì tăng theo buff
+	var current_floor: int = maxi(1, GameManager.current_floor_index)
+	var base_drop_chance: float = maxf(0.20, 0.80 - float(current_floor - 1) * 0.10)
+	var drop_chance: float = base_drop_chance + (luck * 0.25)
 	var drops_gold: bool = randf() <= drop_chance or is_elite
 	var gold_value: int = randi_range(data.gold_drop_min, data.gold_drop_max) if data != null else 1
 	if is_elite:

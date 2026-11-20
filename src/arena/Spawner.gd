@@ -315,9 +315,9 @@ func _spawn_miniboss() -> void:
 	if current_tower.miniboss_pool.is_empty():
 		return
 
-	# Floor 4 -> miniboss 1 (index 0); Floor 8 -> miniboss 2 (index 1 if exists)
+	# Floor 3 -> miniboss 1 (index 0); Floor 6+ -> miniboss 2 (index 1 if exists)
 	var boss_idx: int = 0
-	if current_floor_config.floor_index >= 8 and current_tower.miniboss_pool.size() > 1:
+	if current_floor_config.floor_index >= 6 and current_tower.miniboss_pool.size() > 1:
 		boss_idx = 1
 	var data: EnemyData = current_tower.miniboss_pool[boss_idx]
 

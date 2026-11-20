@@ -180,10 +180,11 @@ func _on_wave_started(floor_idx: int) -> void:
 	if GameManager.is_dark_night:
 		prefix = "[ĐÊM TỐI C%d] " % GameManager.dark_night_cycle
 
-	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 12
+	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 6
 	floor_label.text = "%sTầng %d/%d — %s" % [prefix, floor_idx, total_floors, type_str]
 	if spawner != null and not spawner.is_spawning and cfg != null and cfg.floor_type == FloorConfig.FloorType.COMBAT_WAVE:
-		floor_label.text = "%sTầng %d/%d — THÁNH ĐỊA" % [prefix, floor_idx, total_floors]
+		floor_label.text = "%sTầng %d/%d — THƯƠNG NHÂN" % [prefix, floor_idx, total_floors]
+		timer_label.text = "KHU VỰC AN TOÀN"
 	if cfg == null or (cfg.floor_type != FloorConfig.FloorType.MINIBOSS and cfg.floor_type != FloorConfig.FloorType.FINAL_BOSS):
 		hide_boss_bar()
 

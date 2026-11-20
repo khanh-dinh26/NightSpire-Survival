@@ -14,6 +14,7 @@ var all_floor_configs: Array[FloorConfig] = []
 var all_items_pool: Array[ItemData] = []
 var _current_sanctuary: Node2D = null
 var _random_sanctuary_floor: int = -1
+var _random_merchant_floor: int = -1
 var _boss_draft_opened_for_floor: int = -1
 var _shop_opened_for_floor: int = -1
 
@@ -34,7 +35,7 @@ func _ready() -> void:
 
 func _load_floor_configs() -> void:
 	all_floor_configs.clear()
-	for i: int in range(1, 13):
+	for i: int in range(1, 7):
 		var path: String = "res://src/data/floors/floor_%02d.tres" % i
 		if ResourceLoader.exists(path):
 			var config: FloorConfig = load(path) as FloorConfig
@@ -82,7 +83,13 @@ func _load_items_pool() -> void:
 
 
 func start_default_run() -> void:
+	# Có tỉ lệ xuất hiện 1 tầng thương nhân an toàn (không có quái, chỉ có thương nhân + cổng qua tầng)
 	_random_sanctuary_floor = -1
+	if randf() <= 0.65:
+		_random_merchant_floor = [2, 4, 5].pick_random()
+	else:
+		_random_merchant_floor = -1
+
 	if GameManager.current_tower == null:
 		GameManager.start_new_run(default_tower, all_floor_configs)
 	else:
@@ -114,7 +121,7 @@ func start_floor(floor_num: int) -> void:
 		if cam != null:
 			cam.reset_smoothing()
 
-	var is_sanctuary: bool = (config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY) or (floor_num == _random_sanctuary_floor)
+	var is_sanctuary: bool = (config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY) or (floor_num == _random_sanctuary_floor) or (floor_num == _random_merchant_floor)
 
 	# NPC Sanctuary: Safe haven without monsters
 	if is_sanctuary:

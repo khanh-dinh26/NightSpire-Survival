@@ -98,4 +98,4 @@ theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "Đóng / Rời Khỏi Shop [ESC]"
+text = "Thoát [ESC]"

@@ -131,9 +131,9 @@ func _on_embark_pressed() -> void:
 	var tower: TowerData = towers[selected_tower_index]
 	var character_class: ClassData = classes[selected_class_index]
 
-	# Load 12 floors
+	# Load 6 floors (every 3 floors is a boss)
 	var floors: Array[FloorConfig] = []
-	for i: int in range(1, 13):
+	for i: int in range(1, 7):
 		var path: String = "res://src/data/floors/floor_%02d.tres" % i
 		if ResourceLoader.exists(path):
 			floors.append(load(path) as FloorConfig)
