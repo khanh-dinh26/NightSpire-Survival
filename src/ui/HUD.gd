@@ -22,6 +22,7 @@ extends CanvasLayer
 @onready var endgame_panel: PanelContainer = $EndgamePanel
 @onready var endgame_menu_btn: Button = $EndgamePanel/Margin/VBox/Buttons/MenuButton
 @onready var endgame_darknight_btn: Button = $EndgamePanel/Margin/VBox/Buttons/DarkNightButton
+@onready var screen_border: NinePatchRect = $ScreenBorder
 
 var spawner: Spawner = null
 
@@ -50,6 +51,15 @@ func _ready() -> void:
 	_update_hp_display(GameManager.player_current_hp, GameManager.player_max_hp)
 	_on_gold_changed(GameManager.gold)
 	_update_buffs_display()
+	_update_screen_border()
+
+
+func _update_screen_border() -> void:
+	if screen_border != null:
+		if GameManager.is_dark_night:
+			screen_border.modulate = Color(0.85, 0.6, 1.0, 0.95)
+		else:
+			screen_border.modulate = Color(1.0, 1.0, 1.0, 0.9)
 
 
 func setup_spawner(p_spawner: Spawner) -> void:
@@ -156,6 +166,7 @@ func _on_player_died() -> void:
 
 
 func _on_wave_started(floor_idx: int) -> void:
+	_update_screen_border()
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	var type_str: String = "QUÁI VẬT"
 	if cfg != null:

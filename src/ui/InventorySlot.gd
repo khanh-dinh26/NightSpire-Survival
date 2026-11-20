@@ -11,6 +11,7 @@ signal slot_clicked(slot_index: int, item: ItemData)
 @onready var click_btn: Button = $ClickButton
 @onready var level_label: Label = $LevelLabel
 @onready var emblem_rect: TextureRect = $EmblemRect
+@onready var emblem_level_label: Label = $EmblemLevelLabel
 
 var current_item: ItemData = null
 var _slot_sheet: Texture2D = preload("res://assets/sprites/Sample-InventorySlotsSet.png")
@@ -61,11 +62,16 @@ func set_item(item: ItemData, idx: int) -> void:
 			if not item.embedded_spell.is_empty() and _spell_icons.has(item.embedded_spell):
 				emblem_rect.texture = _spell_icons[item.embedded_spell]
 				emblem_rect.visible = true
+				if emblem_level_label != null:
+					emblem_level_label.text = "L%d" % item.embedded_spell_level
+					emblem_level_label.visible = true
 				effect_text += "\n[Khảm Phép: %s Lv.%d (Tự Động Bắn)]" % [
 					item.embedded_spell.capitalize(), item.embedded_spell_level
 				]
 			else:
 				emblem_rect.visible = false
+				if emblem_level_label != null:
+					emblem_level_label.visible = false
 
 		click_btn.tooltip_text = "%s (Lv.%d | Damage: %d)%s\nClick to DROP" % [
 			item.item_name, item.level, item.base_damage, effect_text
@@ -82,6 +88,8 @@ func clear_slot() -> void:
 		level_label.visible = false
 	if emblem_rect != null:
 		emblem_rect.visible = false
+	if emblem_level_label != null:
+		emblem_level_label.visible = false
 	click_btn.tooltip_text = "Empty Slot"
 
 
