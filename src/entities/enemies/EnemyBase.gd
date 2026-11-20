@@ -8,6 +8,8 @@ var current_hp: int = 0
 var hp_mult: float = 1.0
 var dmg_mult: float = 1.0
 var speed_mult: float = 1.0
+var is_elite: bool = false
+var base_scale: Vector2 = Vector2.ONE
 
 # ── Preloaded textures ────────────────────────────────────────────────
 var _monsters_tex: Texture2D = preload("res://assets/sprites/monsters.png")
@@ -27,11 +29,12 @@ var _can_damage: bool = true
 var _knockback_velocity: Vector2 = Vector2.ZERO
 
 
-func setup(enemy_data: EnemyData, p_hp_mult: float = 1.0, p_dmg_mult: float = 1.0, p_spd_mult: float = 1.0) -> void:
+func setup(enemy_data: EnemyData, p_hp_mult: float = 1.0, p_dmg_mult: float = 1.0, p_spd_mult: float = 1.0, p_is_elite: bool = false) -> void:
 	data = enemy_data
 	hp_mult = p_hp_mult
 	dmg_mult = p_dmg_mult
 	speed_mult = p_spd_mult
+	is_elite = p_is_elite
 
 
 func _ready() -> void:
@@ -51,6 +54,15 @@ func _ready() -> void:
 	sprite.region_enabled = true
 	sprite.region_rect = data.sprite_region
 
+	# Elite setup: bigger, beefier, glowing aura
+	if is_elite:
+		base_scale = Vector2(1.65, 1.65)
+		scale = base_scale
+		current_hp = roundi(current_hp * 2.6)
+		dmg_mult *= 1.3
+		modulate = Color(1.35, 0.75, 0.5, 1.0)
+		_start_elite_aura()
+
 	# Connect hitbox
 	hitbox.body_entered.connect(_on_hitbox_body_entered)
 
@@ -59,6 +71,13 @@ func _ready() -> void:
 
 	# Start walk oscillation tween
 	_start_walk_animation()
+
+
+func _start_elite_aura() -> void:
+	var tw: Tween = create_tween()
+	tw.set_loops()
+	tw.tween_property(self, ^"modulate", Color(1.5, 0.55, 0.35, 1.0), 0.45)
+	tw.tween_property(self, ^"modulate", Color(1.3, 0.85, 0.55, 1.0), 0.45)
 
 
 func _physics_process(delta: float) -> void:
@@ -126,10 +145,11 @@ func _hit_flash() -> void:
 	tw.set_parallel(true)
 	# White flash
 	tw.tween_property(self, ^"modulate", Color(3.0, 3.0, 3.0, 1.0), 0.0)
-	tw.tween_property(self, ^"modulate", Color(1.0, 1.0, 1.0, 1.0), 0.08).set_delay(0.08)
-	# Squash
-	tw.tween_property(self, ^"scale", Vector2(1.3, 0.7), 0.04)
-	tw.tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.08).set_delay(0.04)
+	var restore_color: Color = Color(1.35, 0.75, 0.5, 1.0) if is_elite else Color(1.0, 1.0, 1.0, 1.0)
+	tw.tween_property(self, ^"modulate", restore_color, 0.08).set_delay(0.08)
+	# Squash relative to base_scale
+	tw.tween_property(self, ^"scale", base_scale * Vector2(1.25, 0.75), 0.04)
+	tw.tween_property(self, ^"scale", base_scale, 0.08).set_delay(0.04)
 
 
 # ── Death ─────────────────────────────────────────────────────────────
@@ -147,13 +167,23 @@ func die() -> void:
 	var luck: float = p.luck_stat if p != null else 0.0
 
 	var drop_chance: float = 0.70 + (luck * 0.15)
-	var drops_gold: bool = randf() <= drop_chance
+	var drops_gold: bool = randf() <= drop_chance or is_elite
 	var gold_value: int = randi_range(data.gold_drop_min, data.gold_drop_max) if data != null else 1
-	gold_value = clampi(gold_value, 1, 3)
+	if is_elite:
+		gold_value = randi_range(4, 7)
+	else:
+		gold_value = clampi(gold_value, 1, 3)
 
 	EventBus.enemy_killed.emit(global_position, gold_value if drops_gold else 0)
 	if drops_gold:
-		_spawn_gold(gold_value)
+		if is_elite:
+			var split_count: int = randi_range(2, 3)
+			var per_coin: int = maxi(1, gold_value / split_count)
+			for i: int in range(split_count):
+				var offset: Vector2 = Vector2(randf_range(-12.0, 12.0), randf_range(-12.0, 12.0))
+				_spawn_gold(per_coin, global_position + offset)
+		else:
+			_spawn_gold(gold_value, global_position)
 
 	# Check player buffs (Vampire chalice & Lucky drops)
 	if p != null:
@@ -168,7 +198,7 @@ func die() -> void:
 			if randf() <= 0.35:
 				p.heal(5)
 			else:
-				_spawn_gold(1)
+				_spawn_gold(1, global_position)
 
 	# Death tween: scale to 0 + fade
 	if _walk_tween != null and _walk_tween.is_valid():
@@ -180,10 +210,10 @@ func die() -> void:
 	tw.chain().tween_callback(queue_free)
 
 
-func _spawn_gold(gold_value: int) -> void:
+func _spawn_gold(gold_value: int, pos: Vector2 = Vector2.ZERO) -> void:
 	var gold_pickup: GoldPickup = _gold_pickup_scene.instantiate() as GoldPickup
 	gold_pickup.gold_amount = gold_value
-	gold_pickup.global_position = global_position
+	gold_pickup.global_position = pos if pos != Vector2.ZERO else global_position
 	get_tree().current_scene.add_child(gold_pickup)
 
 

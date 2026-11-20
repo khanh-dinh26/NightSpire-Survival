@@ -16,6 +16,7 @@ var _spawn_timer: Timer = null
 var _wave_timer: Timer = null
 var _enemy_scene: PackedScene = preload("res://src/entities/enemies/EnemyBase.tscn")
 var _boss_scene: PackedScene = preload("res://src/entities/enemies/BossBase.tscn")
+var _formation_tick_counter: int = 0
 
 
 func _ready() -> void:
@@ -93,7 +94,8 @@ func stop_spawning() -> void:
 func _on_spawn_tick() -> void:
 	if not is_spawning or current_tower == null or current_floor_config == null:
 		return
-	if active_enemies >= current_floor_config.max_concurrent_enemies:
+	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies, 26)
+	if active_enemies >= max_allowed:
 		return
 	_spawn_burst()
 
@@ -102,15 +104,118 @@ func _spawn_burst() -> void:
 	if current_tower.common_enemies.is_empty():
 		return
 
-	var burst_count: int = mini(
-		current_floor_config.enemies_per_burst,
-		current_floor_config.max_concurrent_enemies - active_enemies
-	)
+	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies, 26)
+	var available_slots: int = max_allowed - active_enemies
+	if available_slots <= 0:
+		return
+
+	_formation_tick_counter += 1
+	# Periodically trigger special tactical formations (Pincer lines, Surround circle, Elite vanguard)
+	if _formation_tick_counter >= 3 and available_slots >= 4:
+		_formation_tick_counter = 0
+		_spawn_special_formation(available_slots)
+		return
+
+	var burst_count: int = mini(current_floor_config.enemies_per_burst, available_slots)
+	var floor_idx: int = current_floor_config.floor_index if current_floor_config != null else 1
+	var elite_chance: float = clampf(0.08 + float(floor_idx) * 0.015, 0.08, 0.25)
 
 	for i: int in range(burst_count):
 		var enemy_data: EnemyData = _get_tiered_enemy()
 		if enemy_data != null:
-			_spawn_enemy(enemy_data)
+			var make_elite: bool = (randf() <= elite_chance)
+			_spawn_enemy(enemy_data, make_elite)
+
+
+func _spawn_special_formation(available_slots: int) -> void:
+	var pattern: int = randi() % 3
+	match pattern:
+		0:
+			_spawn_pincer_lines(available_slots)
+		1:
+			_spawn_surrounding_circle(available_slots)
+		2:
+			_spawn_elite_vanguard(available_slots)
+
+
+func _spawn_pincer_lines(available_slots: int) -> void:
+	if arena == null:
+		return
+	var bounds: Rect2 = arena.get_spawn_bounds()
+	var horizontal: bool = (randi() % 2 == 0)
+	var per_side: int = clampi(available_slots / 2, 2, 4)
+
+	if horizontal:
+		var y_top: float = bounds.position.y + 6.0
+		var y_bot: float = bounds.end.y - 6.0
+		var x_start: float = bounds.position.x + 36.0
+		var x_end: float = bounds.end.x - 36.0
+		var step_x: float = (x_end - x_start) / maxf(float(per_side - 1), 1.0)
+
+		for i: int in range(per_side):
+			var x_pos: float = x_start + float(i) * step_x
+			var data_top: EnemyData = _get_tiered_enemy()
+			if data_top != null:
+				var is_lead: bool = (i == per_side / 2 and randf() <= 0.45)
+				_spawn_enemy(data_top, is_lead, Vector2(x_pos, y_top))
+
+			var data_bot: EnemyData = _get_tiered_enemy()
+			if data_bot != null:
+				_spawn_enemy(data_bot, false, Vector2(x_pos, y_bot))
+	else:
+		var x_left: float = bounds.position.x + 6.0
+		var x_right: float = bounds.end.x - 6.0
+		var y_start: float = bounds.position.y + 24.0
+		var y_end: float = bounds.end.y - 24.0
+		var step_y: float = (y_end - y_start) / maxf(float(per_side - 1), 1.0)
+
+		for i: int in range(per_side):
+			var y_pos: float = y_start + float(i) * step_y
+			var data_left: EnemyData = _get_tiered_enemy()
+			if data_left != null:
+				var is_lead: bool = (i == per_side / 2 and randf() <= 0.45)
+				_spawn_enemy(data_left, is_lead, Vector2(x_left, y_pos))
+
+			var data_right: EnemyData = _get_tiered_enemy()
+			if data_right != null:
+				_spawn_enemy(data_right, false, Vector2(x_right, y_pos))
+
+
+func _spawn_surrounding_circle(available_slots: int) -> void:
+	if arena == null:
+		return
+	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+	var center: Vector2 = (players[0] as Node2D).global_position if players.size() > 0 else arena.get_center_position()
+	var bounds: Rect2 = arena.get_spawn_bounds()
+
+	var count: int = clampi(available_slots, 4, 6)
+	var radius: float = 125.0
+	var step_angle: float = TAU / float(count)
+
+	for i: int in range(count):
+		var angle: float = float(i) * step_angle
+		var pos: Vector2 = center + Vector2(cos(angle), sin(angle)) * radius
+		pos.x = clampf(pos.x, bounds.position.x + 8.0, bounds.end.x - 8.0)
+		pos.y = clampf(pos.y, bounds.position.y + 8.0, bounds.end.y - 8.0)
+		var data: EnemyData = _get_tiered_enemy()
+		if data != null:
+			var is_lead: bool = (i == 0 and randf() <= 0.35)
+			_spawn_enemy(data, is_lead, pos)
+
+
+func _spawn_elite_vanguard(available_slots: int) -> void:
+	var lead_data: EnemyData = _get_tiered_enemy()
+	if lead_data == null:
+		return
+	var lead_pos: Vector2 = _get_spawn_position()
+	_spawn_enemy(lead_data, true, lead_pos)
+
+	var flank_count: int = mini(available_slots - 1, 2)
+	for i: int in range(flank_count):
+		var flank_data: EnemyData = _get_tiered_enemy()
+		if flank_data != null:
+			var offset: Vector2 = Vector2(randf_range(-22.0, 22.0), randf_range(-22.0, 22.0))
+			_spawn_enemy(flank_data, false, lead_pos + offset)
 
 
 func _get_tiered_enemy() -> EnemyData:
@@ -143,7 +248,7 @@ func _get_tiered_enemy() -> EnemyData:
 	return pool[randi() % pool.size()]
 
 
-func _spawn_enemy(data: EnemyData) -> void:
+func _spawn_enemy(data: EnemyData, is_elite: bool = false, custom_pos: Vector2 = Vector2.ZERO) -> void:
 	var enemy: EnemyBase = _enemy_scene.instantiate() as EnemyBase
 	var hp_scale: float = current_floor_config.enemy_hp_multiplier
 	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
@@ -154,9 +259,14 @@ func _spawn_enemy(data: EnemyData) -> void:
 		dmg_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.35)
 		spd_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.12)
 
-	enemy.setup(data, hp_scale, dmg_scale, spd_scale)
+	enemy.setup(data, hp_scale, dmg_scale, spd_scale, is_elite)
 
-	var spawn_pos: Vector2 = _get_spawn_position()
+	var spawn_pos: Vector2 = custom_pos if custom_pos != Vector2.ZERO else _get_spawn_position()
+	if arena != null:
+		var bounds: Rect2 = arena.get_spawn_bounds()
+		spawn_pos.x = clampf(spawn_pos.x, bounds.position.x + 4.0, bounds.end.x - 4.0)
+		spawn_pos.y = clampf(spawn_pos.y, bounds.position.y + 4.0, bounds.end.y - 4.0)
+
 	enemy.global_position = spawn_pos
 
 	if entities_container != null:
@@ -179,11 +289,11 @@ func _spawn_miniboss() -> void:
 
 	_spawn_boss_instance(data)
 
-	# Spawn 2-3 supporting minions
+	# Spawn 2-3 supporting minions (one of which is an Elite minion)
 	for i: int in range(3):
 		if not current_tower.common_enemies.is_empty():
 			var minion_data: EnemyData = current_tower.common_enemies[i % current_tower.common_enemies.size()]
-			_spawn_enemy(minion_data)
+			_spawn_enemy(minion_data, (i == 0))
 
 
 func _spawn_final_boss() -> void:
@@ -191,11 +301,11 @@ func _spawn_final_boss() -> void:
 		return
 	_spawn_boss_instance(current_tower.final_boss)
 
-	# Spawn 2 minions
+	# Spawn 2 minions (one of which is an Elite minion)
 	for i: int in range(2):
 		if not current_tower.common_enemies.is_empty():
 			var minion_data: EnemyData = current_tower.common_enemies[i % current_tower.common_enemies.size()]
-			_spawn_enemy(minion_data)
+			_spawn_enemy(minion_data, (i == 0))
 
 
 func _spawn_boss_instance(boss_data: EnemyData) -> void:
