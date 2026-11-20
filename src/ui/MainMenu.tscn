@@ -85,44 +85,44 @@ theme_override_constants/separation = 8
 alignment = 1
 
 [node name="NewRunButton" type="Button" parent="Margin/VBox/MenuPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 28)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.05, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
 text = "Chuyến Đi Mới"
 
 [node name="ContinueButton" type="Button" parent="Margin/VBox/MenuPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 28)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.05, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
 text = "Tiếp Tục"
 
 [node name="SoundButton" type="Button" parent="Margin/VBox/MenuPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 28)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.05, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
 text = "Âm Thanh"
 
 [node name="ExitButton" type="Button" parent="Margin/VBox/MenuPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 28)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.1, 0.1, 1)
 theme_override_colors/font_hover_color = Color(0.6, 0.1, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
