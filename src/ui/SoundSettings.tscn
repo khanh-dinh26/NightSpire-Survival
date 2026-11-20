@@ -33,7 +33,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="PanelContainer" parent="Center"]
-custom_minimum_size = Vector2(440, 260)
+custom_minimum_size = Vector2(460, 290)
 layout_mode = 2
 
 [node name="FrameBG" type="NinePatchRect" parent="Center/Panel"]
@@ -47,21 +47,47 @@ patch_margin_bottom = 14
 [node name="Margin" type="MarginContainer" parent="Center/Panel"]
 layout_mode = 2
 theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 22
+theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 22
+theme_override_constants/margin_bottom = 20
 
 [node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 alignment = 1
 
 [node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 20
-text = "CÀI ĐẶT ÂM THANH"
+text = "CÀI ĐẶT HỆ THỐNG"
 horizontal_alignment = 1
+
+[node name="DisplaySection" type="VBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HeaderRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/DisplaySection"]
+layout_mode = 2
+alignment = 1
+
+[node name="DisplayLabel" type="Label" parent="Center/Panel/Margin/VBox/DisplaySection/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_font_sizes/font_size = 15
+text = "Chế Độ Màn Hình (Display)"
+
+[node name="FullscreenBtn" type="Button" parent="Center/Panel/Margin/VBox/DisplaySection/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+text = "Cửa Sổ (Windowed)"
 
 [node name="SFXSection" type="VBoxContainer" parent="Center/Panel/Margin/VBox"]
 layout_mode = 2

@@ -87,7 +87,7 @@ theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "Cài Đặt Âm Thanh (Sound)"
+text = "Cài Đặt / Âm Thanh (Settings)"
 
 [node name="MenuButton" type="Button" parent="Panel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 30)

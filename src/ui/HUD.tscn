@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bhud0001"]
+[gd_scene load_steps=11 format=3 uid="uid://bhud0001"]
 
 [ext_resource type="Script" path="res://src/ui/HUD.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://src/ui/InventoryBar.tscn" id="2_invbar"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/hp_bar/heart_icon.png" id="7_heart"]
 [ext_resource type="Texture2D" path="res://assets/ui/hp_bar/hp_bar_under.png" id="8_bar_under"]
 [ext_resource type="Texture2D" path="res://assets/ui/hp_bar/hp_bar_progress.png" id="9_bar_prog"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/screen_border_frame.png" id="10_border"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_script")
@@ -21,7 +22,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("3_ui")
+texture = ExtResource("10_border")
 draw_center = false
 patch_margin_left = 14
 patch_margin_top = 14
