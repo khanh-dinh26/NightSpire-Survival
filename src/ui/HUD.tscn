@@ -38,7 +38,7 @@ alignment = 0
 
 [node name="HeartIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/HPContainer"]
 texture_filter = 0
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("7_heart")
@@ -47,7 +47,7 @@ stretch_mode = 5
 
 [node name="HPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/HPContainer"]
 texture_filter = 0
-custom_minimum_size = Vector2(136, 21)
+custom_minimum_size = Vector2(108, 16)
 layout_mode = 2
 size_flags_vertical = 4
 value = 100.0
@@ -71,7 +71,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 8
 text = "100 / 100"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -122,7 +122,7 @@ horizontal_alignment = 1
 
 [node name="BossHPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/BossBarContainer"]
 texture_filter = 0
-custom_minimum_size = Vector2(260, 21)
+custom_minimum_size = Vector2(210, 16)
 layout_mode = 2
 size_flags_horizontal = 4
 value = 100.0
@@ -146,7 +146,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 8
 text = "200 / 200"
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -146,10 +146,10 @@ func die() -> void:
 	var p: Player = players[0] as Player if players.size() > 0 else null
 	var luck: float = p.luck_stat if p != null else 0.0
 
-	var drop_chance: float = 0.40 + (luck * 0.12)
+	var drop_chance: float = 0.70 + (luck * 0.15)
 	var drops_gold: bool = randf() <= drop_chance
 	var gold_value: int = randi_range(data.gold_drop_min, data.gold_drop_max) if data != null else 1
-	gold_value = clampi(gold_value, 1, 2)
+	gold_value = clampi(gold_value, 1, 3)
 
 	EventBus.enemy_killed.emit(global_position, gold_value if drops_gold else 0)
 	if drops_gold:

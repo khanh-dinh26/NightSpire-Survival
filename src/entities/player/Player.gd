@@ -201,6 +201,14 @@ func take_damage(amount: int) -> void:
 		_is_hit_animating = false
 		sprite.rotation_degrees = 90.0
 		sprite.modulate = Color(0.7, 0.2, 0.2, 0.7)
+
+		# Silence all attacking weapons and spells on player
+		if weapon_orbit != null:
+			weapon_orbit.set_process(false)
+			for w: Node in weapon_orbit.get_children():
+				w.set_process(false)
+				w.set_physics_process(false)
+
 		EventBus.player_died.emit()
 
 

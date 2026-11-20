@@ -27,6 +27,7 @@ var _es_frames: SpriteFrames = preload("res://src/entities/spells/earth_spike_fr
 
 
 func _ready() -> void:
+	scale = Vector2(0.75, 0.75)
 	collision_layer = 0
 	collision_mask = 5  # Enemies layer & hurtboxes
 	body_entered.connect(_on_body_entered)

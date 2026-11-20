@@ -222,3 +222,7 @@ func _on_player_died() -> void:
 	_clean_sanctuary()
 	if spawner != null:
 		spawner.stop_spawning()
+	for e: Node in get_tree().get_nodes_in_group(&"enemies"):
+		if is_instance_valid(e) and e is Node2D:
+			e.set_physics_process(false)
+			e.set_process(false)

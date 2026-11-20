@@ -38,6 +38,7 @@ var _sfx_library: Dictionary = {
 
 var _loaded_streams: Dictionary = {}
 var _last_played_time: Dictionary = {}
+var is_game_over: bool = false
 var _sfx_cooldowns: Dictionary = {
 	"slash": 0.08,
 	"hit": 0.07,
@@ -115,12 +116,20 @@ func is_bus_muted(bus_name: String) -> bool:
 
 func _connect_event_bus() -> void:
 	EventBus.player_hit.connect(func(_dmg): play_sfx("hit"))
-	EventBus.player_died.connect(func(): play_bgm("game_over", false))
+	EventBus.player_died.connect(_on_player_died)
 	EventBus.enemy_killed.connect(func(_pos, _gold): play_sfx("enemy_death"))
 	EventBus.item_bought.connect(func(_id): play_sfx("buy"))
 	EventBus.shop_opened.connect(func(_items): play_bgm("shop", true))
 	EventBus.draft_opened.connect(func(_items): play_bgm("boss", true))
 	EventBus.wave_started.connect(_on_wave_started)
+
+
+func _on_player_died() -> void:
+	is_game_over = true
+	# Silence all combat sound effects immediately
+	for p: AudioStreamPlayer in _sfx_players:
+		p.stop()
+	play_bgm("game_over", false)
 
 
 func play_bgm(track_name: String, _loop: bool = true) -> void:
@@ -147,6 +156,10 @@ func stop_bgm() -> void:
 
 func play_sfx(sfx_name: String) -> void:
 	if not _sfx_library.has(sfx_name):
+		return
+
+	# Silence combat sounds during game over
+	if is_game_over and sfx_name != "confirm":
 		return
 
 	# Debounce / rate limit duplicate sounds to avoid harsh stuttering
@@ -185,6 +198,7 @@ func play_sfx(sfx_name: String) -> void:
 
 
 func _on_wave_started(_floor_idx: int) -> void:
+	is_game_over = false
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	if cfg == null:
 		return
