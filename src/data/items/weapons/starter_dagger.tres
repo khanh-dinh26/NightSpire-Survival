@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "starter_dagger"
+item_name = "Rusty Dagger"
+type = 0
+rarity = 0
+price = 0
+sprite_region = Rect2(0, 0, 32, 32)
+weapon_style = 0
+base_damage = 10
+attack_speed = 3.2
+attack_range = 75.0
+projectile_speed = 200.0
+knockback = 50.0
+stats_modifier = {}
+description = "A trusty worn dagger that orbits the wielder."

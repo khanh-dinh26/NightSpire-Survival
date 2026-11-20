@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "flame_sword"
+item_name = "Flame Sword"
+type = 0
+rarity = 1
+price = 35
+sprite_region = Rect2(320, 0, 32, 32)
+weapon_style = 0
+base_damage = 22
+attack_speed = 1.5
+attack_range = 75.0
+projectile_speed = 200.0
+knockback = 80.0
+stats_modifier = {}
+description = "Imbued with hellfire. Heavy cleaving strikes."

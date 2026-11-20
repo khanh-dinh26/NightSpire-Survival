@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://projectile_001"]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/items.png" id="1_items"]
+[ext_resource type="Script" path="res://src/entities/weapons/Projectile.gd" id="2_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_proj"]
+radius = 6.0
+
+[node name="Projectile" type="Area2D"]
+collision_layer = 16
+collision_mask = 1
+script = ExtResource("2_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 0
+texture = ExtResource("1_items")
+region_enabled = true
+region_rect = Rect2(0, 736, 32, 32)
+scale = Vector2(0.5, 0.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_proj")
+
+[node name="LifetimeTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true

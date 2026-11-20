@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3 uid="uid://denemy_snake001"]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "snake"
+enemy_name = "Snake"
+enemy_type = 0
+max_hp = 20
+damage = 10
+speed = 65.0
+contact_knockback = 100.0
+gold_drop_min = 1
+gold_drop_max = 2
+sprite_sheet = "animals"
+sprite_region = Rect2(0, 256, 32, 32)

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "short_bow"
+item_name = "Short Bow"
+type = 0
+rarity = 0
+price = 20
+sprite_region = Rect2(32, 288, 32, 32)
+weapon_style = 1
+base_damage = 15
+attack_speed = 2.4
+attack_range = 160.0
+projectile_speed = 280.0
+knockback = 40.0
+stats_modifier = {}
+description = "Fires swift arrows at distant threats."

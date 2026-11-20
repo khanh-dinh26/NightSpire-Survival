@@ -1,0 +1,40 @@
+class_name ItemData
+extends Resource
+## Data definition for a weapon or passive buff item.
+
+enum ItemType { WEAPON, PASSIVE_BUFF }
+enum Rarity { COMMON, RARE, EPIC, LEGENDARY }
+enum WeaponStyle { MELEE_ORBIT, RANGED_PROJECTILE }
+
+@export var item_id: String = ""
+@export var item_name: String = ""
+@export var type: ItemType = ItemType.WEAPON
+@export var rarity: Rarity = Rarity.COMMON
+@export var price: int = 10
+
+## Sprite region in items.png
+@export var sprite_region: Rect2 = Rect2(0, 0, 32, 32)
+
+## Weapon stats (only if type == WEAPON)
+@export var weapon_style: WeaponStyle = WeaponStyle.MELEE_ORBIT
+@export var base_damage: int = 10
+@export var attack_speed: float = 1.0  # attacks per second
+@export var attack_range: float = 80.0  # detection range
+@export var projectile_speed: float = 200.0  # only for RANGED_PROJECTILE
+@export var knockback: float = 50.0
+
+## Passive buff stats (only if type == PASSIVE_BUFF)
+@export var stats_modifier: Dictionary = {}
+# Example: {"max_hp": 20, "speed": 10, "damage_percent": 0.1, "defense": 5}
+
+## Description for UI
+@export_multiline var description: String = ""
+
+## Rarity weights for item pool generation
+static func rarity_weight(r: Rarity) -> float:
+	match r:
+		Rarity.COMMON: return 50.0
+		Rarity.RARE: return 30.0
+		Rarity.EPIC: return 15.0
+		Rarity.LEGENDARY: return 5.0
+	return 50.0

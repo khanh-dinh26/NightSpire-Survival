@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FloorConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/FloorConfig.gd" id="1_floor"]
+
+[resource]
+script = ExtResource("1_floor")
+floor_index = 1
+floor_type = 0
+wave_duration = 25.0
+spawn_interval = 2.5
+enemies_per_burst = 1
+max_concurrent_enemies = 8
+enemy_hp_multiplier = 1.0
+enemy_damage_multiplier = 1.0
+enemy_speed_multiplier = 1.0
+gold_multiplier = 1.0

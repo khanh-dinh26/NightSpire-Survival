@@ -1,0 +1,46 @@
+[gd_scene load_steps=9 format=3 uid="uid://dbarena001"]
+
+[ext_resource type="Script" path="res://src/arena/Arena.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/tiles.png" id="2_tiles"]
+[ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://src/arena/Spawner.gd" id="4_spawner"]
+[ext_resource type="Script" path="res://src/arena/FloorManager.gd" id="5_floormgr"]
+[ext_resource type="PackedScene" path="res://src/ui/HUD.tscn" id="6_hud"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_atlas"]
+texture = ExtResource("2_tiles")
+texture_region_size = Vector2i(32, 32)
+
+[sub_resource type="TileSet" id="TileSet_arena"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_atlas")
+
+[node name="Arena" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="FloorLayer" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_arena")
+
+[node name="WallLayer" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_arena")
+
+[node name="Entities" type="Node2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(288, 192)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position_smoothing_enabled = false
+
+[node name="Spawner" type="Node" parent="." node_paths=PackedStringArray("arena", "entities_container")]
+script = ExtResource("4_spawner")
+arena = NodePath("..")
+entities_container = NodePath("../Entities")
+
+[node name="FloorManager" type="Node" parent="." node_paths=PackedStringArray("arena", "spawner", "player")]
+script = ExtResource("5_floormgr")
+arena = NodePath("..")
+spawner = NodePath("../Spawner")
+player = NodePath("../Player")
+
+[node name="HUD" parent="." instance=ExtResource("6_hud")]

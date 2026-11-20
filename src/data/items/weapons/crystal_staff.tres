@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "crystal_staff"
+item_name = "Crystal Staff"
+type = 0
+rarity = 1
+price = 40
+sprite_region = Rect2(0, 320, 32, 32)
+weapon_style = 1
+base_damage = 25
+attack_speed = 1.0
+attack_range = 160.0
+projectile_speed = 180.0
+knockback = 70.0
+stats_modifier = {}
+description = "Channels piercing arcane bolts across great distance."

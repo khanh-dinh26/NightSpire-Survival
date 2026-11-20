@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3 uid="uid://denemy_zombi001"]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "zombie"
+enemy_name = "Zombie"
+enemy_type = 0
+max_hp = 45
+damage = 15
+speed = 35.0
+contact_knockback = 100.0
+gold_drop_min = 2
+gold_drop_max = 4
+sprite_sheet = "monsters"
+sprite_region = Rect2(128, 128, 32, 32)

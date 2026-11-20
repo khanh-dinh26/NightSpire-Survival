@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://bplayer0001"]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/rogues.png" id="1_sprite"]
+[ext_resource type="Script" path="res://src/entities/player/Player.gd" id="2_script"]
+[ext_resource type="Script" path="res://src/entities/weapons/WeaponOrbit.gd" id="3_orbit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(12, 12)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt"]
+radius = 8.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("2_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 0
+texture = ExtResource("1_sprite")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_hurt")
+
+[node name="WeaponOrbit" type="Node2D" parent="."]
+script = ExtResource("3_orbit")
