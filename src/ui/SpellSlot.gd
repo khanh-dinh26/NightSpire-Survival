@@ -17,7 +17,7 @@ var _cooldown_timer: float = 0.0
 @onready var hotkey_label: Label = $HotkeyLabel
 @onready var cooldown_overlay: ColorRect = $CooldownOverlay
 @onready var cooldown_label: Label = $CooldownOverlay/CooldownLabel
-@onready var btn: Button = $Button
+@onready var btn: BaseButton = $Button
 
 
 func _ready() -> void:

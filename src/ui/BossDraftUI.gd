@@ -62,8 +62,15 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 	if _picks_left <= 0:
 		return
 
-	# If picking a weapon and weapons full (6/6), prompt to drop an old weapon
-	if item.type == ItemData.ItemType.WEAPON and GameManager.equipped_weapons.size() >= 6:
+	# If picking a weapon and weapons full (6/6) and not already owned, prompt to drop
+	var already_owned: bool = false
+	if item.type == ItemData.ItemType.WEAPON:
+		for eq: ItemData in GameManager.equipped_weapons:
+			if eq.item_id == item.item_id:
+				already_owned = true
+				break
+
+	if item.type == ItemData.ItemType.WEAPON and GameManager.equipped_weapons.size() >= 6 and not already_owned:
 		_pending_item = item
 		_pending_card = card
 		_show_replace_modal(item)

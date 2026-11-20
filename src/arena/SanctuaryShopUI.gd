@@ -288,10 +288,13 @@ func _create_item_card(item: ItemData) -> void:
 	tex_rect.custom_minimum_size = Vector2(32, 32)
 	tex_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tex_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var atlas: AtlasTexture = AtlasTexture.new()
-	atlas.atlas = _items_tex
-	atlas.region = item.sprite_region
-	tex_rect.texture = atlas
+	if not item.custom_icon_path.is_empty() and ResourceLoader.exists(item.custom_icon_path):
+		tex_rect.texture = load(item.custom_icon_path)
+	else:
+		var atlas: AtlasTexture = AtlasTexture.new()
+		atlas.atlas = _items_tex
+		atlas.region = item.sprite_region
+		tex_rect.texture = atlas
 	spr_center.add_child(tex_rect)
 	vbox.add_child(spr_center)
 
@@ -303,11 +306,19 @@ func _create_item_card(item: ItemData) -> void:
 	name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(name_lbl)
 
-	var type_str: String = "VŨ KHÍ" if item.type == ItemData.ItemType.WEAPON else "BUFF"
+	var type_str: String = "VŨ KHÍ"
+	var type_col: Color = Color(0.4, 0.8, 1.0)
+	if item.type == ItemData.ItemType.SPELL:
+		type_str = "PHÉP THUẬT"
+		type_col = Color(0.3, 0.8, 1.0)
+	elif item.type == ItemData.ItemType.PASSIVE_BUFF:
+		type_str = "BUFF"
+		type_col = Color(0.4, 1.0, 0.5)
+
 	var badge_lbl: Label = Label.new()
 	badge_lbl.text = "[ %s ]" % type_str
 	badge_lbl.add_theme_font_size_override(&"font_size", 12)
-	badge_lbl.add_theme_color_override(&"font_color", Color(0.4, 0.8, 1.0) if item.type == ItemData.ItemType.WEAPON else Color(0.4, 1.0, 0.5))
+	badge_lbl.add_theme_color_override(&"font_color", type_col)
 	badge_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(badge_lbl)
 
@@ -320,9 +331,10 @@ func _create_item_card(item: ItemData) -> void:
 	desc_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(desc_lbl)
 
+	var cost: int = item.price
 	var btn: Button = Button.new()
 	btn.custom_minimum_size = Vector2(0, 28)
-	btn.text = "Mua: %d G" % item.cost
+	btn.text = "Mua: %d G" % cost
 	btn.add_theme_font_size_override(&"font_size", 14)
 	btn.add_theme_color_override(&"font_color", Color(0.12, 0.1, 0.08))
 	btn.add_theme_stylebox_override(&"normal", _btn_normal)
@@ -331,17 +343,9 @@ func _create_item_card(item: ItemData) -> void:
 	vbox.add_child(btn)
 
 	btn.pressed.connect(func():
-		var cost: int = item.cost
 		if GameManager.gold >= cost:
 			GameManager.spend_gold(cost)
-			if item.type == ItemData.ItemType.WEAPON:
-				if GameManager.equipped_weapons.size() < 6:
-					GameManager.add_weapon(item)
-				else:
-					GameManager.remove_weapon_at(0)
-					GameManager.add_weapon(item)
-			else:
-				GameManager.add_passive(item)
+			GameManager.add_item(item)
 			AudioManager.play_sfx("buy")
 			btn.disabled = true
 			btn.text = "ĐÃ MUA"
