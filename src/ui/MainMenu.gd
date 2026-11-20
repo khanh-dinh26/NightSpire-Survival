@@ -8,9 +8,24 @@ extends Control
 @onready var exit_btn: Button = $Margin/VBox/MenuPanel/Margin/VBox/ExitButton
 @onready var sound_modal: SoundSettings = $SoundSettingsModal
 
+# Lively Background Nodes
+@onready var floor_layer: TileMapLayer = get_node_or_null("Background/FloorLayer") as TileMapLayer
+@onready var fire_left: Sprite2D = get_node_or_null("Background/Campfires/FireLeft") as Sprite2D
+@onready var fire_right: Sprite2D = get_node_or_null("Background/Campfires/FireRight") as Sprite2D
+@onready var rogue_left: Sprite2D = get_node_or_null("Background/Rogues/RogueLeft") as Sprite2D
+@onready var rogue_right: Sprite2D = get_node_or_null("Background/Rogues/RogueRight") as Sprite2D
+@onready var magic_circle: Sprite2D = get_node_or_null("Background/Decorations/MagicCircleBR") as Sprite2D
+
+var _fire_timer: float = 0.0
+var _fire_frame: int = 0
+const FIRE_FRAME_TIME: float = 0.12
+const FIRE_BASE_Y: int = 224
+
 
 func _ready() -> void:
 	AudioManager.play_bgm("title")
+	_setup_background()
+
 	new_run_btn.pressed.connect(func():
 		AudioManager.play_sfx("confirm")
 		_on_new_run_pressed()
@@ -33,6 +48,47 @@ func _ready() -> void:
 		continue_btn.text = "Tiếp Tục (Chưa có Save)"
 	else:
 		continue_btn.text = "Tiếp Tục Chuyến Đi"
+
+
+func _process(delta: float) -> void:
+	_fire_timer += delta
+	if _fire_timer >= FIRE_FRAME_TIME:
+		_fire_timer -= FIRE_FRAME_TIME
+		_fire_frame = (_fire_frame + 1) % 4
+		var frame_rect: Rect2 = Rect2(_fire_frame * 32, FIRE_BASE_Y, 32, 32)
+		if fire_left != null:
+			fire_left.region_rect = frame_rect
+		if fire_right != null:
+			fire_right.region_rect = frame_rect
+
+
+func _setup_background() -> void:
+	# 1. Pave dark dungeon brick floor
+	if floor_layer != null:
+		var floor_coords: Array[Vector2i] = [
+			Vector2i(1, 7), Vector2i(2, 7), Vector2i(3, 7),
+			Vector2i(1, 13), Vector2i(2, 13)
+		]
+		for y: int in range(12):
+			for x: int in range(20):
+				var tile_coord: Vector2i = floor_coords[(x * 7 + y * 13) % floor_coords.size()]
+				floor_layer.set_cell(Vector2i(x, y), 0, tile_coord)
+
+	# 2. Breathing / bobbing idle animation for rogues
+	if rogue_left != null:
+		var tw_left: Tween = create_tween().set_loops()
+		tw_left.tween_property(rogue_left, ^"scale", Vector2(1.5, 1.62), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw_left.tween_property(rogue_left, ^"scale", Vector2(1.5, 1.40), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	if rogue_right != null:
+		var tw_right: Tween = create_tween().set_loops()
+		tw_right.tween_property(rogue_right, ^"scale", Vector2(1.5, 1.40), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw_right.tween_property(rogue_right, ^"scale", Vector2(1.5, 1.62), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	# 3. Ambient slow rotating aura for magic circle
+	if magic_circle != null:
+		var tw_magic: Tween = create_tween().set_loops()
+		tw_magic.tween_property(magic_circle, ^"rotation", TAU, 18.0).from(0.0)
 
 
 func _on_new_run_pressed() -> void:

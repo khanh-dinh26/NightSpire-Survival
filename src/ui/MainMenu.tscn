@@ -5,6 +5,29 @@
 [ext_resource type="StyleBox" uid="uid://b3rca4i4umt01" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
 [ext_resource type="StyleBox" uid="uid://b3rcaxi8m481" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
 [ext_resource type="PackedScene" uid="uid://dxurlo6rb85ae" path="res://src/ui/SoundSettings.tscn" id="5_sound"]
+[ext_resource type="Texture2D" uid="uid://bbugk6lykyxyj" path="res://assets/sprites/tiles.png" id="6_tiles"]
+[ext_resource type="Texture2D" uid="uid://sd25dvr7adk3" path="res://assets/sprites/animated-tiles.png" id="7_anim_tiles"]
+[ext_resource type="Texture2D" uid="uid://cv5qt4112aq57" path="res://assets/sprites/rogues.png" id="8_rogues"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bg"]
+texture = ExtResource("6_tiles")
+texture_region_size = Vector2i(32, 32)
+
+[sub_resource type="TileSet" id="TileSet_bg"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_bg")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_embers"]
+emission_shape = 3
+emission_box_extents = Vector3(320, 8, 1)
+direction = Vector3(0, -1, 0)
+spread = 22.0
+initial_velocity_min = 25.0
+initial_velocity_max = 55.0
+gravity = Vector3(0, -15, 0)
+scale_min = 1.5
+scale_max = 3.5
+color = Color(1, 0.82, 0.35, 0.8)
 
 [node name="MainMenu" type="Control" unique_id=1110374970]
 layout_mode = 3
@@ -15,14 +38,115 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1708648582]
+[node name="Background" type="Control" parent="." unique_id=1708648582]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05, 0.04, 0.07, 1)
+mouse_filter = 2
+
+[node name="FloorLayer" type="TileMapLayer" parent="Background" unique_id=1801234567]
+tile_set = SubResource("TileSet_bg")
+
+[node name="Decorations" type="Node2D" parent="Background" unique_id=1801234568]
+
+[node name="TreeTL1" type="Sprite2D" parent="Background/Decorations" unique_id=1801234569]
+position = Vector2(30, 36)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(0, 800, 32, 32)
+
+[node name="TreeTL2" type="Sprite2D" parent="Background/Decorations" unique_id=1801234570]
+position = Vector2(62, 44)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(32, 800, 32, 32)
+
+[node name="TreeTR1" type="Sprite2D" parent="Background/Decorations" unique_id=1801234571]
+position = Vector2(610, 36)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(0, 800, 32, 32)
+
+[node name="TreeTR2" type="Sprite2D" parent="Background/Decorations" unique_id=1801234572]
+position = Vector2(578, 44)
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("6_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(32, 800, 32, 32)
+
+[node name="ChestBL" type="Sprite2D" parent="Background/Decorations" unique_id=1801234573]
+position = Vector2(44, 316)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(64, 544, 32, 32)
+
+[node name="MagicCircleBR" type="Sprite2D" parent="Background/Decorations" unique_id=1801234574]
+position = Vector2(592, 308)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("6_tiles")
+region_enabled = true
+region_rect = Rect2(448, 512, 32, 32)
+
+[node name="Campfires" type="Node2D" parent="Background" unique_id=1801234575]
+
+[node name="FireLeft" type="Sprite2D" parent="Background/Campfires" unique_id=1801234576]
+position = Vector2(138, 228)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("7_anim_tiles")
+region_enabled = true
+region_rect = Rect2(0, 224, 32, 32)
+
+[node name="FireRight" type="Sprite2D" parent="Background/Campfires" unique_id=1801234577]
+position = Vector2(502, 228)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("7_anim_tiles")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(0, 224, 32, 32)
+
+[node name="Rogues" type="Node2D" parent="Background" unique_id=1801234578]
+
+[node name="RogueLeft" type="Sprite2D" parent="Background/Rogues" unique_id=1801234579]
+position = Vector2(96, 230)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("8_rogues")
+offset = Vector2(0, -16)
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 32)
+
+[node name="RogueRight" type="Sprite2D" parent="Background/Rogues" unique_id=1801234580]
+position = Vector2(544, 230)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("8_rogues")
+offset = Vector2(0, -16)
+flip_h = true
+region_enabled = true
+region_rect = Rect2(32, 64, 32, 32)
+
+[node name="EmberParticles" type="GPUParticles2D" parent="Background" unique_id=1801234581]
+position = Vector2(320, 360)
+amount = 45
+lifetime = 4.0
+process_material = SubResource("ParticleProcessMaterial_embers")
+
+[node name="DarkOverlay" type="ColorRect" parent="Background" unique_id=1801234582]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.04, 0.03, 0.06, 0.4)
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=766717916]
 layout_mode = 1
