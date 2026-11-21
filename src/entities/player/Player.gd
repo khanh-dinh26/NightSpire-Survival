@@ -254,7 +254,7 @@ func _on_spell_cast_requested(spell_id: String, p_level: int, target_pos: Vector
 
 
 func _cast_fireball(lvl: int, base_dir: Vector2) -> void:
-	AudioManager.play_sfx("slash")
+	AudioManager.play_sfx("spell_fire")
 	var count: int = lvl
 	var spread_angle: float = 0.22 # ~12.5 degrees
 
@@ -274,7 +274,7 @@ func _cast_fireball(lvl: int, base_dir: Vector2) -> void:
 
 
 func _cast_molten_spear(lvl: int, base_dir: Vector2) -> void:
-	AudioManager.play_sfx("slash")
+	AudioManager.play_sfx("spell_fire")
 	var count: int = lvl
 	for i: int in range(count):
 		var offset_perp: Vector2 = base_dir.orthogonal() * ((float(i) - float(count - 1) / 2.0) * 14.0)
@@ -288,7 +288,7 @@ func _cast_molten_spear(lvl: int, base_dir: Vector2) -> void:
 
 
 func _cast_tornado(lvl: int, base_dir: Vector2) -> void:
-	AudioManager.play_sfx("slash")
+	AudioManager.play_sfx("spell_wind")
 	var count: int = mini(lvl, 3)
 	for i: int in range(count):
 		var angle_offset: float = 0.0
@@ -305,7 +305,7 @@ func _cast_tornado(lvl: int, base_dir: Vector2) -> void:
 
 
 func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
-	AudioManager.play_sfx("slash")
+	AudioManager.play_sfx("spell_earth")
 	var count: int = 1 + (lvl - 1) * 2
 	var offsets: Array[Vector2] = [Vector2.ZERO]
 
