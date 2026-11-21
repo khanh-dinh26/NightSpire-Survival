@@ -24,6 +24,8 @@ var floor_configs: Array[FloorConfig] = []
 # ---- Reroll ----
 var reroll_cost: int = 10
 var reroll_cost_increment: int = 5
+var shops_without_reroll_count: int = 0
+var has_used_reroll_ever: bool = false
 
 
 func _ready() -> void:
@@ -43,6 +45,8 @@ func start_new_run(tower: TowerData, floors: Array[FloorConfig], p_class: ClassD
 	passive_buffs.clear()
 	learned_spells.clear()
 	reroll_cost = 10
+	shops_without_reroll_count = 0
+	has_used_reroll_ever = false
 
 	if chosen_class != null:
 		player_max_hp = chosen_class.max_hp

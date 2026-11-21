@@ -106,7 +106,7 @@ func close_shop() -> void:
 
 func _update_gold_display(gold_val: int) -> void:
 	if gold_label != null:
-		gold_label.text = "Vàng: %d Gold" % gold_val
+		gold_label.text = "%d VÀNG" % gold_val
 
 
 func _clear_cards() -> void:

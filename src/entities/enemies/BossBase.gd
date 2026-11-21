@@ -33,10 +33,14 @@ var _state_timer: float = 0.0
 var _attack_cooldown_timer: float = 2.0
 var _walk_phase: float = 0.0
 var _is_dying: bool = false
+var base_scale: Vector2 = Vector2(2.4, 2.4)
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var hitbox: Area2D = $Hitbox
 @onready var damage_cooldown: Timer = $DamageCooldown
+@onready var boss_aura: BossAura = $BossAura
+@onready var badge_anchor: Node2D = $BadgeAnchor
+@onready var boss_badge: Label = $BadgeAnchor/BossBadge
 
 var _proj_scene: PackedScene = preload("res://src/entities/enemies/bosses/BossProjectile.tscn")
 var _enemy_base_scene: PackedScene = preload("res://src/entities/enemies/EnemyBase.tscn")
@@ -62,6 +66,32 @@ func _ready() -> void:
 		sprite.texture = preload("res://assets/sprites/monsters.png")
 		sprite.region_enabled = true
 		sprite.region_rect = data.sprite_region
+
+		if data.enemy_type == EnemyData.EnemyType.FINAL_BOSS:
+			base_scale = Vector2(2.9, 2.9)
+			if boss_badge != null:
+				boss_badge.text = "☠ TRÙM CUỐI"
+				boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.35, 0.9, 1.0))
+			if boss_aura != null:
+				boss_aura.is_final = true
+		else:
+			base_scale = Vector2(2.4, 2.4)
+			if boss_badge != null:
+				boss_badge.text = "👑 TRÙM"
+				boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.85, 0.2, 1.0))
+
+	scale = base_scale
+
+	# Floating badge animation
+	if badge_anchor != null:
+		var badge_tw: Tween = create_tween().set_loops()
+		badge_tw.tween_property(badge_anchor, ^"position:y", -28.0, 0.75).set_trans(Tween.TRANS_SINE)
+		badge_tw.tween_property(badge_anchor, ^"position:y", -23.0, 0.75).set_trans(Tween.TRANS_SINE)
+
+	# Subtle menacing breathing animation
+	var breath_tw: Tween = create_tween().set_loops()
+	breath_tw.tween_property(sprite, ^"scale", Vector2(1.03, 0.97), 0.55).set_trans(Tween.TRANS_SINE)
+	breath_tw.tween_property(sprite, ^"scale", Vector2(0.97, 1.03), 0.55).set_trans(Tween.TRANS_SINE)
 
 	current_hp = max_hp
 	boss_hp_changed.emit(current_hp, max_hp)
@@ -256,7 +286,7 @@ func _start_ground_slam(_player: Player) -> void:
 	var tw: Tween = create_tween()
 	tw.set_parallel(true)
 	tw.tween_property(sprite, ^"position:y", -16.0, 0.25).set_ease(Tween.EASE_OUT)
-	tw.tween_property(sprite, ^"scale", Vector2(1.5, 1.5), 0.25)
+	tw.tween_property(sprite, ^"scale", Vector2(1.25, 1.25), 0.25)
 	tw.tween_property(sprite, ^"modulate", Color(3.0, 1.0, 0.3, 1.0), 0.25)
 
 
@@ -274,8 +304,8 @@ func _execute_ground_slam(player: Player) -> void:
 	# Slam down impact animation
 	sprite.position.y = 0.0
 	var tw: Tween = create_tween()
-	tw.tween_property(sprite, ^"scale", Vector2(1.6, 0.8), 0.08)
-	tw.tween_property(sprite, ^"scale", Vector2(1.3, 1.3), 0.12)
+	tw.tween_property(sprite, ^"scale", Vector2(1.3, 0.7), 0.08)
+	tw.tween_property(sprite, ^"scale", Vector2.ONE, 0.12)
 	tw.parallel().tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.15)
 
 	AudioManager.play_sfx("explosion")
@@ -368,8 +398,8 @@ func _start_summon() -> void:
 	velocity = Vector2.ZERO
 
 	var tw: Tween = create_tween()
-	tw.tween_property(sprite, ^"scale", Vector2(1.8, 1.8), 0.3)
-	tw.tween_property(sprite, ^"scale", Vector2(1.3, 1.3), 0.3)
+	tw.tween_property(sprite, ^"scale", Vector2(1.25, 1.25), 0.3)
+	tw.tween_property(sprite, ^"scale", Vector2.ONE, 0.3)
 	tw.tween_callback(_spawn_minions)
 
 
@@ -429,13 +459,18 @@ func take_damage(amount: int) -> void:
 func _trigger_enrage() -> void:
 	is_enraged = true
 	speed *= 1.3
-	sprite.modulate = Color(1.3, 0.6, 0.6, 1.0)
+	sprite.modulate = Color(1.35, 0.55, 0.45, 1.0)
+	if boss_aura != null:
+		boss_aura.is_enraged = true
+	if boss_badge != null:
+		boss_badge.text = "🔥 NỔI GIẬN! 🔥"
+		boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.25, 0.1, 1.0))
 	AudioManager.play_sfx("explosion")
 
 	# Enrage roar pulse
 	var tw: Tween = create_tween()
-	tw.tween_property(self, ^"scale", Vector2(1.7, 1.7), 0.15)
-	tw.tween_property(self, ^"scale", Vector2(1.3, 1.3), 0.15)
+	tw.tween_property(self, ^"scale", base_scale * 1.3, 0.15)
+	tw.tween_property(self, ^"scale", base_scale, 0.15)
 
 
 # ── Death ───────────────────────────────────────────────────────────────
@@ -467,7 +502,7 @@ func die() -> void:
 	# Dramatic slow scale-down and explode
 	var tw: Tween = create_tween()
 	tw.set_parallel(true)
-	tw.tween_property(self, ^"scale", Vector2(2.0, 2.0), 0.2)
+	tw.tween_property(self, ^"scale", base_scale * 1.4, 0.2)
 	tw.tween_property(self, ^"modulate", Color(4.0, 4.0, 4.0, 1.0), 0.2)
 	tw.chain().tween_property(self, ^"scale", Vector2.ZERO, 0.3)
 	tw.parallel().tween_property(self, ^"modulate:a", 0.0, 0.3)

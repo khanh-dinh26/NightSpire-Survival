@@ -1,9 +1,33 @@
-[gd_scene load_steps=5 format=3 uid="uid://cwaveshopui01"]
+[gd_scene load_steps=7 format=3 uid="uid://cwaveshopui01"]
 
 [ext_resource type="Script" path="res://src/ui/WaveShopUI.gd" id="1_shop"]
 [ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_ui"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_goldbox"]
+bg_color = Color(0.12, 0.09, 0.04, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.22, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
+bg_color = Color(0.18, 0.14, 0.05, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.84, 0.3, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="WaveShopUI" type="CanvasLayer"]
 process_mode = 3
@@ -19,16 +43,16 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.65)
 
 [node name="Panel" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(520, 280)
+custom_minimum_size = Vector2(530, 296)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -140.0
-offset_right = 260.0
-offset_bottom = 140.0
+offset_left = -265.0
+offset_top = -148.0
+offset_right = 265.0
+offset_bottom = 148.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -53,6 +77,7 @@ theme_override_constants/separation = 6
 
 [node name="Header" type="HBoxContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/Margin/VBox/Header"]
 layout_mode = 2
@@ -60,18 +85,66 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 13
 text = "FLOOR CLEARED — ARMORY SHOP"
+vertical_alignment = 1
 
-[node name="GoldLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+[node name="GoldBox" type="PanelContainer" parent="Panel/Margin/VBox/Header"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
-theme_override_font_sizes/font_size = 13
-text = "Gold: 0"
+theme_override_styles/panel = SubResource("StyleBoxFlat_goldbox")
+
+[node name="GoldMargin" type="MarginContainer" parent="Panel/Margin/VBox/Header/GoldBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 3
+
+[node name="GoldHBox" type="HBoxContainer" parent="Panel/Margin/VBox/Header/GoldBox/GoldMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="GoldIcon" type="Label" parent="Panel/Margin/VBox/Header/GoldBox/GoldMargin/GoldHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "🪙"
+vertical_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="Panel/Margin/VBox/Header/GoldBox/GoldMargin/GoldHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.93, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+text = "0 VÀNG"
+vertical_alignment = 1
 
 [node name="CardsContainer" type="HBoxContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 alignment = 1
+
+[node name="RerollHint" type="PanelContainer" parent="Panel/Margin/VBox"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hint")
+
+[node name="HintMargin" type="MarginContainer" parent="Panel/Margin/VBox/RerollHint"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 3
+
+[node name="HintLabel" type="Label" parent="Panel/Margin/VBox/RerollHint/HintMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.94, 0.65, 1)
+theme_override_colors/font_outline_color = Color(0.18, 0.12, 0.02, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 11
+text = "💡 GỢI Ý: Bạn có 1 lượt Đổi Đồ (Reroll) bên dưới nếu chưa tìm thấy món ưng ý!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Footer" type="HBoxContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2

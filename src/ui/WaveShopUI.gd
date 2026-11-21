@@ -3,10 +3,11 @@ extends CanvasLayer
 ## Shop interface displayed after normal combat waves (floors 1-3, 5-7).
 
 @onready var title_label: Label = $Panel/Margin/VBox/Header/TitleLabel
-@onready var gold_label: Label = $Panel/Margin/VBox/Header/GoldLabel
+@onready var gold_label: Label = $Panel/Margin/VBox/Header/GoldBox/GoldMargin/GoldHBox/GoldLabel
 @onready var cards_container: HBoxContainer = $Panel/Margin/VBox/CardsContainer
 @onready var reroll_btn: Button = $Panel/Margin/VBox/Footer/RerollButton
 @onready var continue_btn: Button = $Panel/Margin/VBox/Footer/ContinueButton
+@onready var reroll_hint: PanelContainer = $Panel/Margin/VBox/RerollHint
 
 # Replace Modal
 @onready var replace_modal: PanelContainer = $ReplaceModal
@@ -23,6 +24,7 @@ var _pending_item: ItemData = null
 var _pending_card: ItemCard = null
 const MAX_REROLLS: int = 1
 var _rerolls_remaining: int = MAX_REROLLS
+var _rerolled_in_current_shop: bool = false
 
 
 func _ready() -> void:
@@ -94,14 +96,29 @@ func _load_all_items() -> void:
 func open_shop(items: Array[ItemData]) -> void:
 	if visible:
 		return
+	_rerolled_in_current_shop = false
 	_hide_replace_modal()
 	_rerolls_remaining = MAX_REROLLS
 	get_tree().paused = true
-	title_label.text = "FLOOR %d CLEARED — ARMORY SHOP" % GameManager.current_floor_index
+	title_label.text = "TẦNG %d HOÀN THÀNH — CỬA HÀNG VŨ KHÍ" % GameManager.current_floor_index
 	_refresh_gold()
 	_populate_cards(items)
 	_update_reroll_button()
+
+	var should_show_hint: bool = (not GameManager.has_used_reroll_ever) and (GameManager.shops_without_reroll_count >= 2)
+	_show_reroll_hint(should_show_hint)
+
 	visible = true
+
+
+func _show_reroll_hint(show_hint: bool) -> void:
+	if reroll_hint == null:
+		return
+	reroll_hint.visible = show_hint
+	if show_hint:
+		var tw: Tween = create_tween().set_loops(2)
+		tw.tween_property(reroll_btn, ^"scale", Vector2(1.06, 1.06), 0.2)
+		tw.tween_property(reroll_btn, ^"scale", Vector2.ONE, 0.2)
 
 
 func get_scaled_price(item: ItemData) -> int:
@@ -193,7 +210,10 @@ func _on_reroll_pressed() -> void:
 	if _rerolls_remaining <= 0:
 		return
 	if GameManager.do_reroll():
+		_rerolled_in_current_shop = true
+		GameManager.has_used_reroll_ever = true
 		_rerolls_remaining -= 1
+		_show_reroll_hint(false)
 		var new_items: Array[ItemData] = ItemPool.get_random_items(3, _all_items_pool)
 		_populate_cards(new_items)
 		_refresh_gold()
@@ -201,6 +221,8 @@ func _on_reroll_pressed() -> void:
 
 
 func _on_continue_pressed() -> void:
+	if not _rerolled_in_current_shop and not GameManager.has_used_reroll_ever:
+		GameManager.shops_without_reroll_count += 1
 	_hide_replace_modal()
 	visible = false
 	get_tree().paused = false
@@ -208,7 +230,7 @@ func _on_continue_pressed() -> void:
 
 
 func _refresh_gold() -> void:
-	gold_label.text = "Gold: %d" % GameManager.gold
+	gold_label.text = "%d VÀNG" % GameManager.gold
 
 
 func _update_reroll_button() -> void:

@@ -5,6 +5,18 @@
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_goldbox"]
+bg_color = Color(0.12, 0.09, 0.04, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.22, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="SanctuaryShopUI" type="CanvasLayer"]
 process_mode = 3
 layer = 22
@@ -71,12 +83,36 @@ theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 13
 text = "Giao dịch vật phẩm & nâng cấp"
 
-[node name="GoldLabel" type="Label" parent="Center/Panel/Margin/VBox/Header"]
+[node name="GoldBox" type="PanelContainer" parent="Center/Panel/Margin/VBox/Header"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_goldbox")
+
+[node name="GoldMargin" type="MarginContainer" parent="Center/Panel/Margin/VBox/Header/GoldBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 4
+
+[node name="GoldHBox" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Header/GoldBox/GoldMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="GoldIcon" type="Label" parent="Center/Panel/Margin/VBox/Header/GoldBox/GoldMargin/GoldHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "🪙"
+vertical_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="Center/Panel/Margin/VBox/Header/GoldBox/GoldMargin/GoldHBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_colors/font_color = Color(1, 0.93, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.0, 1)
+theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 16
-text = "Vàng: 0 Gold"
+text = "0 VÀNG"
 vertical_alignment = 1
 
 [node name="CardsContainer" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
