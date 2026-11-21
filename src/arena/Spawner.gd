@@ -350,7 +350,7 @@ func _spawn_miniboss() -> void:
 	# Randomize miniboss from diverse pool
 	var data: EnemyData = pool.pick_random()
 	_last_spawned_miniboss_id = data.enemy_id
-	_spawn_boss_instance(data)
+	_spawn_boss_instance(data, false)
 
 	# Spawn 2 supporting minions (one of which is an Elite minion)
 	for i: int in range(2):
@@ -373,14 +373,13 @@ func spawn_second_miniboss() -> void:
 
 	var second_boss: EnemyData = candidates.pick_random()
 	_last_spawned_miniboss_id = second_boss.enemy_id
-	_spawn_boss_instance(second_boss)
-	AudioManager.play_sfx("explosion")
+	_spawn_boss_instance(second_boss, true)
 
 
 func _spawn_final_boss() -> void:
 	if current_tower.final_boss == null:
 		return
-	_spawn_boss_instance(current_tower.final_boss)
+	_spawn_boss_instance(current_tower.final_boss, false)
 
 	# Spawn 2 minions (one of which is an Elite minion)
 	for i: int in range(2):
@@ -389,7 +388,7 @@ func _spawn_final_boss() -> void:
 			_spawn_enemy(minion_data, (i == 0))
 
 
-func _spawn_boss_instance(boss_data: EnemyData) -> void:
+func _spawn_boss_instance(boss_data: EnemyData, is_second_boss: bool = false) -> void:
 	var boss: BossBase = _boss_scene.instantiate() as BossBase
 	var hp_scale: float = current_floor_config.enemy_hp_multiplier
 	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
@@ -414,11 +413,17 @@ func _spawn_boss_instance(boss_data: EnemyData) -> void:
 	else:
 		get_tree().current_scene.add_child(boss)
 
-	# Connect Boss HP bar on HUD
+	# Connect Boss HP bar on HUD and trigger dramatic boss alert
 	var hud: HUD = get_tree().current_scene.get_node_or_null("HUD") as HUD
+	if hud == null:
+		var hud_nodes: Array[Node] = get_tree().get_nodes_in_group(&"hud")
+		if hud_nodes.size() > 0:
+			hud = hud_nodes[0] as HUD
 	if hud != null:
 		hud.show_boss_bar(boss_data.enemy_name, boss.max_hp)
 		boss.boss_hp_changed.connect(hud.update_boss_hp)
+		var is_final: bool = (boss_data.enemy_type == EnemyData.EnemyType.FINAL_BOSS)
+		hud.trigger_boss_alert(boss_data.enemy_name, is_final, is_second_boss)
 
 
 func _get_spawn_position() -> Vector2:

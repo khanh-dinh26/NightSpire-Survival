@@ -23,14 +23,20 @@ extends CanvasLayer
 @onready var endgame_menu_btn: Button = $EndgamePanel/Margin/VBox/Buttons/MenuButton
 @onready var endgame_darknight_btn: Button = $EndgamePanel/Margin/VBox/Buttons/DarkNightButton
 @onready var screen_border: NinePatchRect = $ScreenBorder
+@onready var boss_alert_panel: PanelContainer = $BossAlertPanel
+@onready var alert_header_label: Label = $BossAlertPanel/Margin/VBox/AlertHeader
+@onready var alert_sub_label: Label = $BossAlertPanel/Margin/VBox/AlertSubtitle
 
 var spawner: Spawner = null
+var _alert_tween: Tween = null
 
 
 func _ready() -> void:
 	game_over_panel.visible = false
 	endgame_panel.visible = false
 	boss_bar_container.visible = false
+	if boss_alert_panel != null:
+		boss_alert_panel.visible = false
 	if restart_button != null:
 		restart_button.pressed.connect(_on_restart_pressed)
 	if endgame_menu_btn != null:
@@ -88,7 +94,68 @@ func _update_hp_display(current: int, max_val: int) -> void:
 			heart_icon.modulate = Color.WHITE
 
 
-# ── Boss Bar ────────────────────────────────────────────────────────────
+# ── Boss Bar & Alerts ───────────────────────────────────────────────────
+func trigger_boss_alert(boss_name: String, is_final: bool = false, is_second_boss: bool = false) -> void:
+	if boss_alert_panel == null:
+		return
+
+	if _alert_tween != null and _alert_tween.is_valid():
+		_alert_tween.kill()
+
+	if is_second_boss:
+		alert_header_label.text = "⚠ CẢNH BÁO: TRÙM THỨ 2 XUẤT HIỆN! ⚠"
+		alert_header_label.set("theme_override_colors/font_color", Color(1.0, 0.2, 0.15, 1.0))
+		alert_sub_label.text = "SONG ĐẤU MA VƯƠNG — %s" % boss_name.to_upper()
+	elif is_final:
+		alert_header_label.text = "☠ TỐI HẬU CẢNH BÁO: TRÙM CUỐI GIÁNG LÂM! ☠"
+		alert_header_label.set("theme_override_colors/font_color", Color(1.0, 0.35, 0.9, 1.0))
+		alert_sub_label.text = "%s" % boss_name.to_upper()
+	else:
+		alert_header_label.text = "⚠ CẢNH BÁO: ĐẠI MA VƯƠNG XUẤT HIỆN! ⚠"
+		alert_header_label.set("theme_override_colors/font_color", Color(1.0, 0.25, 0.15, 1.0))
+		alert_sub_label.text = "%s" % boss_name.to_upper()
+
+	if timer_label != null:
+		timer_label.text = alert_header_label.text
+
+	AudioManager.play_sfx("explosion")
+	_shake_screen(6.0, 0.35)
+
+	boss_alert_panel.visible = true
+	boss_alert_panel.modulate.a = 0.0
+	boss_alert_panel.scale = Vector2(1.25, 1.25)
+	boss_alert_panel.pivot_offset = Vector2(190, 28)
+
+	_alert_tween = create_tween()
+	# Zoom & fade in with punch
+	_alert_tween.parallel().tween_property(boss_alert_panel, ^"modulate:a", 1.0, 0.18)
+	_alert_tween.parallel().tween_property(boss_alert_panel, ^"scale", Vector2.ONE, 0.25).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	# Pulsing alert flash twice
+	_alert_tween.tween_property(alert_header_label, ^"modulate", Color(2.0, 2.0, 2.0, 1.0), 0.15)
+	_alert_tween.tween_property(alert_header_label, ^"modulate", Color.WHITE, 0.15)
+	_alert_tween.tween_property(alert_header_label, ^"modulate", Color(2.0, 2.0, 2.0, 1.0), 0.15)
+	_alert_tween.tween_property(alert_header_label, ^"modulate", Color.WHITE, 0.15)
+	# Hold visible
+	_alert_tween.tween_interval(1.4)
+	# Fade out
+	_alert_tween.tween_property(boss_alert_panel, ^"modulate:a", 0.0, 0.35)
+	_alert_tween.tween_callback(func(): boss_alert_panel.visible = false)
+
+
+func _shake_screen(amount: float, duration: float) -> void:
+	var cam: Camera2D = get_viewport().get_camera_2d()
+	if cam == null:
+		return
+	var orig_offset: Vector2 = cam.offset
+	var tw: Tween = create_tween()
+	var steps: int = int(duration / 0.05)
+	for i: int in range(steps):
+		var damp: float = 1.0 - (float(i) / float(steps))
+		var shake_vec: Vector2 = orig_offset + Vector2(randf_range(-amount, amount), randf_range(-amount, amount)) * damp
+		tw.tween_property(cam, ^"offset", shake_vec, 0.05)
+	tw.tween_property(cam, ^"offset", orig_offset, 0.05)
+
+
 func show_boss_bar(boss_name: String, max_hp_val: int) -> void:
 	boss_name_label.text = "BOSS: %s" % boss_name
 	boss_hp_bar.max_value = max_hp_val
