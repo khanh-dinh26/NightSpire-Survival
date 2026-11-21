@@ -27,6 +27,7 @@ var _gold_pickup_scene: PackedScene = preload("res://src/entities/pickups/GoldPi
 var _walk_tween: Tween = null
 var _can_damage: bool = true
 var _knockback_velocity: Vector2 = Vector2.ZERO
+var _is_dying: bool = false
 
 
 func setup(enemy_data: EnemyData, p_hp_mult: float = 1.0, p_dmg_mult: float = 1.0, p_spd_mult: float = 1.0, p_is_elite: bool = false) -> void:
@@ -81,6 +82,8 @@ func _start_elite_aura() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _is_dying:
+		return
 	# Decay knockback
 	if _knockback_velocity.length() > 5.0:
 		_knockback_velocity = _knockback_velocity.lerp(Vector2.ZERO, 10.0 * delta)
@@ -109,12 +112,14 @@ func apply_knockback(force: Vector2) -> void:
 
 # ── Contact Damage ────────────────────────────────────────────────────
 func _on_hitbox_body_entered(body: Node2D) -> void:
+	if _is_dying:
+		return
 	if body is Player and _can_damage:
 		_deal_contact_damage(body as Player)
 
 
 func _deal_contact_damage(player: Player) -> void:
-	if not _can_damage:
+	if _is_dying or not _can_damage:
 		return
 	var final_damage: int = roundi(data.damage * dmg_mult)
 	player.take_damage(final_damage)
@@ -135,6 +140,8 @@ func _on_damage_cooldown_timeout() -> void:
 
 # ── Take Damage ───────────────────────────────────────────────────────
 func take_damage(amount: int) -> void:
+	if _is_dying:
+		return
 	current_hp -= amount
 	_hit_flash()
 	if current_hp <= 0:
