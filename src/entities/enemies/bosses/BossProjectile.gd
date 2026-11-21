@@ -5,6 +5,7 @@ extends Area2D
 var damage: int = 15
 var speed: float = 140.0
 var direction: Vector2 = Vector2.RIGHT
+var _consumed: bool = false
 
 
 func _ready() -> void:
@@ -18,12 +19,22 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
+	if _consumed:
+		return
 	if body is Player:
+		_consumed = true
 		(body as Player).take_damage(damage)
+		set_deferred(&"monitoring", false)
+		set_deferred(&"monitorable", false)
 		queue_free()
 
 
 func _on_area_entered(area: Area2D) -> void:
+	if _consumed:
+		return
 	if area.name == "Hurtbox" and area.get_parent() is Player:
+		_consumed = true
 		(area.get_parent() as Player).take_damage(damage)
+		set_deferred(&"monitoring", false)
+		set_deferred(&"monitorable", false)
 		queue_free()

@@ -28,7 +28,12 @@ func _ready() -> void:
 		hud.setup_spawner(spawner_node)
 
 
+var _tileset_initialized: bool = false
+
+
 func _ensure_tileset_source() -> void:
+	if _tileset_initialized:
+		return
 	if floor_layer == null:
 		floor_layer = get_node_or_null("FloorLayer") as TileMapLayer
 	if decor_layer == null:
@@ -39,10 +44,12 @@ func _ensure_tileset_source() -> void:
 		return
 	var source: TileSetAtlasSource = floor_layer.tile_set.get_source(ATLAS_SOURCE_ID) as TileSetAtlasSource
 	if source != null:
+		# tiles.png is 544x832 -> exactly 17x26 tiles of 32x32
 		for x: int in range(17):
-			for y: int in range(27):
+			for y: int in range(26):
 				if not source.has_tile(Vector2i(x, y)):
 					source.create_tile(Vector2i(x, y))
+	_tileset_initialized = true
 
 
 func _setup_camera_limits() -> void:

@@ -483,8 +483,8 @@ func die() -> void:
 	remove_from_group(&"bosses")
 	set_physics_process(false)
 	hitbox.set_deferred(&"monitoring", false)
-	collision_layer = 0
-	collision_mask = 0
+	set_deferred(&"collision_layer", 0)
+	set_deferred(&"collision_mask", 0)
 
 	var boss_id: String = data.enemy_id if data != null else "boss"
 	EventBus.boss_killed.emit(boss_id)
@@ -497,7 +497,7 @@ func die() -> void:
 		gold_pickup.gold_amount = 3
 		var offset: Vector2 = Vector2(randf_range(-25, 25), randf_range(-25, 25))
 		gold_pickup.global_position = global_position + offset
-		get_tree().current_scene.add_child(gold_pickup)
+		get_tree().current_scene.call_deferred(&"add_child", gold_pickup)
 
 	# Dramatic slow scale-down and explode
 	var tw: Tween = create_tween()

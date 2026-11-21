@@ -62,4 +62,6 @@ func _on_body_entered(body: Node2D) -> void:
 		if body.has_method("apply_knockback"):
 			var kb_dir: Vector2 = direction.normalized()
 			body.apply_knockback(kb_dir * knockback_force)
+		set_deferred(&"monitoring", false)
+		set_deferred(&"monitorable", false)
 		queue_free()

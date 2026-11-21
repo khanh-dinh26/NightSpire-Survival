@@ -123,6 +123,8 @@ func _deal_contact_damage(player: Player) -> void:
 
 
 func _on_damage_cooldown_timeout() -> void:
+	if _is_dying or not hitbox.monitoring:
+		return
 	_can_damage = true
 	# Check if player is still overlapping the hitbox
 	for body: Node2D in hitbox.get_overlapping_bodies():
@@ -154,12 +156,15 @@ func _hit_flash() -> void:
 
 # ── Death ─────────────────────────────────────────────────────────────
 func die() -> void:
+	if _is_dying:
+		return
+	_is_dying = true
 	remove_from_group(&"enemies")
 	# Disable further interactions
 	set_physics_process(false)
 	hitbox.set_deferred(&"monitoring", false)
-	collision_layer = 0
-	collision_mask = 0
+	set_deferred(&"collision_layer", 0)
+	set_deferred(&"collision_mask", 0)
 
 	# Emit signal & spawn gold with balanced drop chance
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
@@ -217,7 +222,7 @@ func _spawn_gold(gold_value: int, pos: Vector2 = Vector2.ZERO) -> void:
 	var gold_pickup: GoldPickup = _gold_pickup_scene.instantiate() as GoldPickup
 	gold_pickup.gold_amount = gold_value
 	gold_pickup.global_position = pos if pos != Vector2.ZERO else global_position
-	get_tree().current_scene.add_child(gold_pickup)
+	get_tree().current_scene.call_deferred(&"add_child", gold_pickup)
 
 
 # ── Walk Animation ────────────────────────────────────────────────────
