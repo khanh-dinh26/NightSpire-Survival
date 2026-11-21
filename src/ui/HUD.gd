@@ -103,15 +103,15 @@ func trigger_boss_alert(boss_name: String, is_final: bool = false, is_second_bos
 		_alert_tween.kill()
 
 	if is_second_boss:
-		alert_header_label.text = "⚠ CẢNH BÁO: TRÙM THỨ 2 XUẤT HIỆN! ⚠"
+		alert_header_label.text = "CẢNH BÁO: TRÙM THỨ 2 XUẤT HIỆN!"
 		alert_header_label.set("theme_override_colors/font_color", Color(1.0, 0.2, 0.15, 1.0))
 		alert_sub_label.text = "SONG ĐẤU MA VƯƠNG — %s" % boss_name.to_upper()
 	elif is_final:
-		alert_header_label.text = "☠ TỐI HẬU CẢNH BÁO: TRÙM CUỐI GIÁNG LÂM! ☠"
+		alert_header_label.text = "TỐI HẬU CẢNH BÁO: TRÙM CUỐI GIÁNG LÂM!"
 		alert_header_label.set("theme_override_colors/font_color", Color(1.0, 0.35, 0.9, 1.0))
 		alert_sub_label.text = "%s" % boss_name.to_upper()
 	else:
-		alert_header_label.text = "⚠ CẢNH BÁO: ĐẠI MA VƯƠNG XUẤT HIỆN! ⚠"
+		alert_header_label.text = "CẢNH BÁO: ĐẠI MA VƯƠNG XUẤT HIỆN!"
 		alert_header_label.set("theme_override_colors/font_color", Color(1.0, 0.25, 0.15, 1.0))
 		alert_sub_label.text = "%s" % boss_name.to_upper()
 

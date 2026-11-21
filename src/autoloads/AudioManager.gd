@@ -101,6 +101,9 @@ func _ready() -> void:
 	# Ensure audio buses exist
 	_ensure_buses()
 
+	# Set default music volume to 50%
+	set_bus_volume("Music", 0.5)
+
 	# Setup BGM player
 	_bgm_player = AudioStreamPlayer.new()
 	_bgm_player.bus = &"Music"
