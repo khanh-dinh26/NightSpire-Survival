@@ -1,4 +1,4 @@
-# 🏰 NightSpire: Survival
+# NightSpire: Survival
 
 Game 2D hành động sinh tồn Roguelite leo tháp cổ kính, phát triển trên nền tảng **Godot Engine 4.x**.
 
@@ -6,7 +6,7 @@ Người chơi chọn anh hùng, vượt qua 10 tầng ngục tối ngập tràn
 
 ---
 
-## 🎮 Lối chơi & Tính năng nổi bật
+## Lối chơi & Tính năng nổi bật
 
 - **Tiến trình 10 Tầng Tháp:**
   - Mỗi tầng là một đợt quái dồn dập với độ khó và mật độ tăng dần.
@@ -27,7 +27,7 @@ Người chơi chọn anh hùng, vượt qua 10 tầng ngục tối ngập tràn
 
 ---
 
-## 🕹️ Hướng dẫn điều khiển
+## Hướng dẫn điều khiển
 
 | Phím | Hành động |
 | :--- | :--- |
@@ -37,12 +37,11 @@ Người chơi chọn anh hùng, vượt qua 10 tầng ngục tối ngập tràn
 
 ---
 
-## 🚀 Cách cài đặt & Trải nghiệm
+## Cài đặt & Trải nghiệm
 
 ### Cách 1: Chơi trực tiếp bản Export (Releases)
-1. Tải file nén `.zip` của game từ mục **[Releases](../../releases)** trên GitHub.
-2. Giải nén vào thư mục bất kỳ.
-3. Chạy file `NightSpire-Survival.exe` để chơi ngay!
+1. Tải file `NightSpire-Survival.exe` từ mục **[Releases](https://github.com/khanh-dinh26/NightSpire-Survival/releases)** trên GitHub.
+2. Mở file `NightSpire-Survival.exe` để chơi ngay (tài nguyên game đã được nhúng sẵn trực tiếp vào file exe, không cần giải nén hay cài đặt thêm).
 
 ### Cách 2: Mở dự án bằng Godot Engine
 1. Tải và cài đặt **Godot Engine 4.x** (bản Standard).
@@ -55,7 +54,7 @@ Người chơi chọn anh hùng, vượt qua 10 tầng ngục tối ngập tràn
 
 ---
 
-## 🛠️ Công nghệ sử dụng
+## Công nghệ sử dụng
 - **Engine:** Godot Engine 4.7
 - **Ngôn ngữ:** GDScript
 - **Renderer:** GL Compatibility
