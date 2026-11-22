@@ -42,6 +42,11 @@ var base_scale: Vector2 = Vector2(2.4, 2.4)
 @onready var badge_anchor: Node2D = $BadgeAnchor
 @onready var boss_badge: Label = $BadgeAnchor/BossBadge
 
+# ── Preloaded textures ────────────────────────────────────────────────
+var _monsters_tex: Texture2D = preload("res://assets/sprites/monsters.png")
+var _animals_tex: Texture2D = preload("res://assets/sprites/animals.png")
+
+# ── Scenes ─────────────────────────────────────────────────────────────
 var _proj_scene: PackedScene = preload("res://src/entities/enemies/bosses/BossProjectile.tscn")
 var _enemy_base_scene: PackedScene = preload("res://src/entities/enemies/EnemyBase.tscn")
 var _gold_pickup_scene: PackedScene = preload("res://src/entities/pickups/GoldPickup.tscn")
@@ -53,34 +58,15 @@ func setup(enemy_data: EnemyData, p_hp_mult: float = 1.0, p_dmg_mult: float = 1.
 	hp_mult = p_hp_mult
 	dmg_mult = p_dmg_mult
 	spd_mult = p_spd_mult
+	if is_node_ready():
+		_apply_boss_data()
 
 
 func _ready() -> void:
 	add_to_group(&"enemies")
 	add_to_group(&"bosses")
 
-	if data != null:
-		max_hp = roundi(data.max_hp * hp_mult)
-		damage = roundi(data.damage * dmg_mult)
-		speed = data.speed * spd_mult
-		sprite.texture = preload("res://assets/sprites/monsters.png")
-		sprite.region_enabled = true
-		sprite.region_rect = data.sprite_region
-
-		if data.enemy_type == EnemyData.EnemyType.FINAL_BOSS:
-			base_scale = Vector2(2.9, 2.9)
-			if boss_badge != null:
-				boss_badge.text = "☠ TRÙM CUỐI"
-				boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.35, 0.9, 1.0))
-			if boss_aura != null:
-				boss_aura.is_final = true
-		else:
-			base_scale = Vector2(2.4, 2.4)
-			if boss_badge != null:
-				boss_badge.text = "👑 TRÙM"
-				boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.85, 0.2, 1.0))
-
-	scale = base_scale
+	_apply_boss_data()
 
 	# Floating badge animation
 	if badge_anchor != null:
@@ -93,11 +79,47 @@ func _ready() -> void:
 	breath_tw.tween_property(sprite, ^"scale", Vector2(1.03, 0.97), 0.55).set_trans(Tween.TRANS_SINE)
 	breath_tw.tween_property(sprite, ^"scale", Vector2(0.97, 1.03), 0.55).set_trans(Tween.TRANS_SINE)
 
-	current_hp = max_hp
-	boss_hp_changed.emit(current_hp, max_hp)
-
 	hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_attack_cooldown_timer = 2.0
+
+
+func _apply_boss_data() -> void:
+	if sprite == null:
+		return
+
+	if data != null:
+		max_hp = roundi(data.max_hp * hp_mult)
+		damage = roundi(data.damage * dmg_mult)
+		speed = data.speed * spd_mult
+
+		if data.sprite_sheet == "animals":
+			sprite.texture = _animals_tex
+		else:
+			sprite.texture = _monsters_tex
+		sprite.region_enabled = true
+		sprite.region_rect = data.sprite_region
+
+		if data.enemy_type == EnemyData.EnemyType.FINAL_BOSS:
+			base_scale = Vector2(2.9, 2.9)
+			if boss_badge != null:
+				boss_badge.text = "TRÙM CUỐI"
+				boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.35, 0.9, 1.0))
+			if boss_aura != null:
+				boss_aura.is_final = true
+		else:
+			base_scale = Vector2(2.4, 2.4)
+			if boss_badge != null:
+				boss_badge.text = "TRÙM"
+				boss_badge.set("theme_override_colors/font_color", Color(1.0, 0.85, 0.2, 1.0))
+	else:
+		sprite.texture = _monsters_tex
+		sprite.region_enabled = true
+		sprite.region_rect = Rect2(64, 224, 32, 32)
+		base_scale = Vector2(2.4, 2.4)
+
+	scale = base_scale
+	current_hp = max_hp
+	boss_hp_changed.emit(current_hp, max_hp)
 
 
 func _physics_process(delta: float) -> void:
