@@ -129,35 +129,10 @@ func add_item(item: ItemData) -> void:
 			var s_id: String = item.spell_id if not item.spell_id.is_empty() else item.item_id
 			if learned_spells.has(s_id):
 				learned_spells[s_id] += 1
-			else:
+			elif learned_spells.size() < 5:
 				learned_spells[s_id] = 1
 
-			# Emblem infusion into equipped weapons!
-			var socketed: bool = false
-			for w: ItemData in equipped_weapons:
-				if w.embedded_spell == s_id:
-					w.embedded_spell_level += 1
-					socketed = true
-					break
-			if not socketed:
-				for w: ItemData in equipped_weapons:
-					if w.embedded_spell.is_empty():
-						w.embedded_spell = s_id
-						w.embedded_spell_level = 1
-						socketed = true
-						break
-			if not socketed and not equipped_weapons.is_empty():
-				equipped_weapons[0].embedded_spell = s_id
-				equipped_weapons[0].embedded_spell_level = 1
-
-			var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
-			if players.size() > 0:
-				var p: Player = players[0] as Player
-				if p != null and p.weapon_orbit != null:
-					p.weapon_orbit.sync_weapons(equipped_weapons)
-
 			EventBus.spell_learned.emit(s_id, learned_spells[s_id])
-			EventBus.weapons_changed.emit()
 
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 	if players.size() > 0:

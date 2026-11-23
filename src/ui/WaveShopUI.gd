@@ -173,13 +173,6 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 		_show_replace_modal(item)
 		return
 
-	# If item is SPELL and player has equipped weapons, prompt to choose weapon to inlay!
-	if item.type == ItemData.ItemType.SPELL and not GameManager.equipped_weapons.is_empty():
-		_pending_item = item
-		_pending_card = card
-		_show_inlay_modal(item)
-		return
-
 	# Standard purchase
 	if GameManager.spend_gold(cost):
 		GameManager.add_item(item)

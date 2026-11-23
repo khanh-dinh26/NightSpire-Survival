@@ -43,8 +43,20 @@ func setup(data: ItemData, p_is_free: bool = false, price_override: int = -1) ->
 
 func _ready() -> void:
 	action_btn.pressed.connect(_on_action_pressed)
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
 	if item_data != null:
 		_refresh_display()
+
+
+func _on_mouse_entered() -> void:
+	if not is_bought:
+		modulate = Color(1.15, 1.15, 1.1, 1.0)
+
+
+func _on_mouse_exited() -> void:
+	if not is_bought:
+		modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 
 func _refresh_display() -> void:
@@ -69,7 +81,7 @@ func _refresh_display() -> void:
 			emblem_rect.visible = false
 
 	# Name & Rarity Color
-	name_label.text = item_data.item_name
+	name_label.text = item_data.item_name.replace("Khảm Phép:", "Phép:").strip_edges()
 	var rarity_color: Color = _get_rarity_color(item_data.rarity)
 	name_label.add_theme_color_override(&"font_color", rarity_color)
 	if frame_bg != null:
@@ -94,10 +106,10 @@ func _refresh_display() -> void:
 		var s_id: String = item_data.spell_id if not item_data.spell_id.is_empty() else item_data.item_id
 		var lvl: int = GameManager.learned_spells.get(s_id, 0)
 		if lvl > 0:
-			type_badge.text = "[ KHẢM PHÉP -> Lv.%d ]" % (lvl + 1)
+			type_badge.text = "[ PHÉP THUẬT -> Lv.%d ]" % (lvl + 1)
 			type_badge.add_theme_color_override(&"font_color", Color(1.0, 0.7, 0.2))
 		else:
-			type_badge.text = "[ KHẢM PHÉP ]"
+			type_badge.text = "[ PHÉP THUẬT ]"
 			type_badge.add_theme_color_override(&"font_color", Color(0.3, 0.8, 1.0))
 	elif item_data.type == ItemData.ItemType.PASSIVE_BUFF:
 		var existing_lvl: int = 1
@@ -130,7 +142,7 @@ func _refresh_display() -> void:
 			item_data.description
 		]
 	elif item_data.type == ItemData.ItemType.SPELL:
-		desc_label.text = "Tự động bắn mỗi %.1fs\n%s" % [
+		desc_label.text = "Trang bị vào ô Phép (Tự động bắn mỗi %.1fs)\n%s" % [
 			item_data.cooldown,
 			item_data.description
 		]
@@ -159,14 +171,15 @@ func get_effective_price() -> int:
 
 func update_button_state() -> void:
 	if is_bought:
-		action_btn.text = "ĐÃ CHỌN"
+		action_btn.text = "✔ ĐÃ CHỌN" if is_free else "✔ ĐÃ MUA"
 		action_btn.disabled = true
-		modulate = Color(0.6, 0.6, 0.6, 0.8)
+		action_btn.add_theme_color_override(&"font_disabled_color", Color(0.25, 0.95, 0.45, 1.0))
+		modulate = Color(0.92, 0.95, 0.92, 0.95)
 		return
 
 	modulate = Color.WHITE
 	if is_free:
-		action_btn.text = "CHỌN MIỄN PHÍ"
+		action_btn.text = "CHỌN NHẬN"
 		action_btn.disabled = false
 	else:
 		var price_val: int = get_effective_price()

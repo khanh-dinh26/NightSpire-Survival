@@ -84,7 +84,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if shop_ui != null and shop_ui.visible:
 		return
 
-	if event is InputEventKey and event.pressed and event.keycode == KEY_E:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F:
 		if player_in_bs:
 			_interact_blacksmith()
 			get_viewport().set_input_as_handled()

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_tornado"
-item_name = "Khảm Phép: Lốc Xoáy"
+item_name = "Phép: Lốc Xoáy Cuồng Phong"
 type = 2
 rarity = 2
 price = 35

@@ -1,9 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbossdraftui01"]
+[gd_scene load_steps=6 format=3 uid="uid://cbossdraftui01"]
 
 [ext_resource type="Script" path="res://src/ui/BossDraftUI.gd" id="1_draft"]
 [ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_ui"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
 [ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.07, 0.03, 0.06, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.75, 0.22, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.9, 0.5, 0.1, 0.3)
+shadow_size = 12
 
 [node name="BossDraftUI" type="CanvasLayer"]
 process_mode = 3
@@ -16,29 +30,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.7)
+color = Color(0.02, 0.01, 0.04, 0.82)
 
 [node name="Panel" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(580, 250)
+custom_minimum_size = Vector2(580, 270)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -290.0
-offset_top = -125.0
+offset_top = -135.0
 offset_right = 290.0
-offset_bottom = 125.0
+offset_bottom = 135.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="FrameBG" type="NinePatchRect" parent="Panel"]
-layout_mode = 2
-texture = ExtResource("2_ui")
-patch_margin_left = 14
-patch_margin_top = 14
-patch_margin_right = 14
-patch_margin_bottom = 14
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 layout_mode = 2
@@ -51,21 +58,38 @@ theme_override_constants/margin_bottom = 8
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Header" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="Header" type="VBoxContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/Margin/VBox/Header"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
-theme_override_font_sizes/font_size = 13
-text = "CHIẾN THẮNG TRÙM — CHỌN 2 BUFF HIẾM"
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_colors/font_shadow_color = Color(0.4, 0.1, 0, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.05, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "👑 CHIẾN LỢI PHẨM HOÀNG KIM 👑"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 9
+text = "Hạ gục Thủ Lĩnh — Chọn 2 trong 3 Phần Thưởng Cổ Đại Miễn Phí"
+horizontal_alignment = 1
 
 [node name="PicksLabel" type="Label" parent="Panel/Margin/VBox/Header"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-text = "Chọn: 2 / 2 Buff Hiếm (Miễn phí)"
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 11
+text = "[ ★ CÒN 2 LẦN CHỌN ★ ]"
+horizontal_alignment = 1
 
 [node name="CardsLayout" type="VBoxContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
@@ -76,27 +100,28 @@ alignment = 1
 [node name="RowTop" type="HBoxContainer" parent="Panel/Margin/VBox/CardsLayout"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
 alignment = 1
 
 [node name="RowBottom" type="HBoxContainer" parent="Panel/Margin/VBox/CardsLayout"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
 alignment = 1
 
 [node name="Footer" type="CenterContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
 
 [node name="ContinueButton" type="Button" parent="Panel/Margin/VBox/Footer"]
-custom_minimum_size = Vector2(170, 26)
+custom_minimum_size = Vector2(210, 28)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "Tiếp Tục Leo Tháp"
+text = "Bỏ Qua Còn Lại & Tiếp Tục"
 
 [node name="ReplaceModal" type="PanelContainer" parent="."]
 visible = false
@@ -137,7 +162,7 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.5, 0.3, 1)
 theme_override_font_sizes/font_size = 11
-text = "INVENTORY FULL (6/6) — Chọn Weapon muốn Drop:"
+text = "TÚI ĐỒ ĐẦY — Chọn Vũ Khí muốn Đổi:"
 horizontal_alignment = 1
 
 [node name="SlotsContainer" type="HBoxContainer" parent="ReplaceModal/Margin/VBox"]

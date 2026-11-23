@@ -68,7 +68,7 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "[E] Thợ Rèn (Nâng Cấp)"
+text = "[F] Thợ Rèn (Giao Kèo Cường Hóa)"
 
 [node name="Alchemist" type="Node2D" parent="."]
 position = Vector2(80, 0)
@@ -112,7 +112,7 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "[E] Giả Kim (Mua Effect)"
+text = "[F] Giả Kim (Giao Kèo Cổ Thuật)"
 
 [node name="Smuggler" type="Node2D" parent="."]
 position = Vector2(0, -65)
@@ -156,7 +156,7 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "[E] Thương Nhân (Mua Đồ)"
+text = "[F] Thương Nhân (Giao Kèo Hắc Điếm)"
 
 [node name="Portal" type="Node2D" parent="."]
 position = Vector2(0, 70)
@@ -192,6 +192,6 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = ExtResource("3_btn_normal")
 theme_override_styles/hover = ExtResource("4_btn_hover")
 theme_override_styles/pressed = ExtResource("4_btn_hover")
-text = "[E] Vào Cổng (Qua Tầng)"
+text = "[F] Vào Cổng (Đỉnh Tháp)"
 
 [node name="SanctuaryShopUI" parent="." instance=ExtResource("2_shop_ui")]

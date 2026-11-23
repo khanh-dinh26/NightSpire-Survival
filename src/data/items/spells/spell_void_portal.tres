@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_void_portal"
-item_name = "Khảm Phép: Hố Đen Hư Không"
+item_name = "Phép: Hố Đen Hư Không"
 type = 2
 rarity = 3
 price = 45

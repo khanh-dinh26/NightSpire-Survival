@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_molten_spear"
-item_name = "Khảm Phép: Thương Dung Nham"
+item_name = "Phép: Thương Dung Nham"
 type = 2
 rarity = 1
 price = 25

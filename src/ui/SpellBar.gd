@@ -1,12 +1,11 @@
 class_name SpellBar
 extends Control
-## Vertical Spell Bar positioned along the right edge of the screen.
-## Holds learned active spells, allows mouse click or hotkeys to cast towards mouse cursor.
+## Vertical Spell Bar positioned along the left edge of the screen with 5 slots.
+## Holds learned active spells, auto-casts on cooldown, and supports 1-5 keys or click.
 
 @onready var container: VBoxContainer = $MarginContainer/VBoxContainer
 
-var _slot_scene: PackedScene = preload("res://src/ui/SpellSlot.tscn")
-var _slots: Dictionary = {} # spell_id: String -> SpellSlot
+var _slots: Array[SpellSlot] = []
 
 # Spell icon preloads
 var _spell_icons: Dictionary = {
@@ -21,56 +20,45 @@ var _spell_icons: Dictionary = {
 
 
 func _ready() -> void:
+	_slots.clear()
+	for child: Node in container.get_children():
+		if child is SpellSlot:
+			var slot: SpellSlot = child as SpellSlot
+			_slots.append(slot)
+			slot.cast_requested.connect(_on_slot_cast_requested)
+
 	EventBus.spell_learned.connect(_on_spell_learned)
-
-	# Populate any currently learned spells
-	for s_id: String in GameManager.learned_spells:
-		learn_spell(s_id, GameManager.learned_spells[s_id])
+	refresh_spell_slots()
 
 
-func _on_spell_learned(spell_id: String, level: int) -> void:
-	learn_spell(spell_id, level)
+func _on_spell_learned(_spell_id: String, _level: int) -> void:
+	refresh_spell_slots()
 
 
-func learn_spell(spell_id: String, level: int) -> void:
-	if _slots.has(spell_id):
-		var existing_slot: Control = _slots[spell_id] as Control
-		if existing_slot != null and existing_slot.has_method("set_level"):
-			existing_slot.set_level(level)
-		return
+func refresh_spell_slots() -> void:
+	var learned_ids: Array = GameManager.learned_spells.keys()
+	for i: int in range(_slots.size()):
+		if i < learned_ids.size():
+			var s_id: String = str(learned_ids[i])
+			var lvl: int = int(GameManager.learned_spells[s_id])
+			var icon: Texture2D = _spell_icons.get(s_id, _spell_icons["fireball"])
+			var cd: float = _get_spell_cooldown(s_id)
+			_slots[i].setup_spell(s_id, lvl, icon, cd)
+		else:
+			_slots[i].clear_slot()
 
-	# Add new spell slot
-	var slot: Control = _slot_scene.instantiate() as Control
-	var hotkey_idx: int = _slots.size() + 1
-	if "hotkey_index" in slot:
-		slot.hotkey_index = hotkey_idx
 
-	var icon: Texture2D = _spell_icons.get(spell_id, _spell_icons["fireball"])
-	var cd: float = 3.5
+func _get_spell_cooldown(spell_id: String) -> float:
 	match spell_id:
-		"fireball": cd = 3.0
-		"water_geyser": cd = 3.2
-		"void_portal": cd = 4.0
-		"molten_spear": cd = 2.5
-		"earth_spike": cd = 4.0
-		"meteor_rock": cd = 3.5
-		"tornado": cd = 5.0
-
-	container.add_child(slot)
-	if slot.has_method("setup_spell"):
-		slot.setup_spell(spell_id, level, icon, cd)
-	if slot.has_signal("cast_requested"):
-		slot.cast_requested.connect(_on_slot_cast_requested)
-	_slots[spell_id] = slot
+		"fireball": return 3.0
+		"molten_spear": return 2.5
+		"water_geyser": return 3.2
+		"earth_spike": return 3.5
+		"meteor_rock": return 3.5
+		"void_portal": return 4.0
+		"tornado": return 4.5
+		_: return 3.5
 
 
-func _on_slot_cast_requested(spell_id: String, level: int) -> void:
-	var mouse_world_pos: Vector2 = get_global_mouse_position()
-	# If we have a player, get world mouse position accurately via player's canvas
-	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
-	if players.size() > 0:
-		var p: Node2D = players[0] as Node2D
-		if p != null:
-			mouse_world_pos = p.get_global_mouse_position()
-
-	EventBus.spell_cast_requested.emit(spell_id, level, mouse_world_pos)
+func _on_slot_cast_requested(spell_id: String, level: int, target_pos: Vector2) -> void:
+	EventBus.spell_cast_requested.emit(spell_id, level, target_pos)

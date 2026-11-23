@@ -32,6 +32,8 @@ var charge_speed: float = 290.0
 var _state_timer: float = 0.0
 var _attack_cooldown_timer: float = 2.0
 var _walk_phase: float = 0.0
+var _surge_timer: float = 2.2
+var _surge_duration: float = 0.0
 var _is_dying: bool = false
 var base_scale: Vector2 = Vector2(2.4, 2.4)
 
@@ -172,13 +174,26 @@ func _process_chase(delta: float, player: Player, to_player: Vector2) -> void:
 		data.enemy_id in ["lich", "shadow_fiend", "necromancer_lord", "void_overlord", "venom_manticore"]
 	))
 
-	if is_caster:
+	# Surge / Aggressive Gap-closer timer
+	if _surge_timer > 0.0:
+		_surge_timer -= delta
+	elif dist > 130.0:
+		_surge_timer = randf_range(2.6, 3.8)
+		_surge_duration = 0.38
+
+	if _surge_duration > 0.0:
+		_surge_duration -= delta
+		velocity = to_player * speed * (1.85 if not is_enraged else 2.25)
+	elif is_caster:
 		# Caster bosses maintain strategic combat distance (110 - 180px)
-		if dist < 110.0:
-			# Backstep away with lateral evasive strafing
+		if dist < 85.0:
+			# Fast defensive backstep when player rushes in
+			var retreat_dir: Vector2 = (-to_player * 0.9 + to_player.orthogonal() * sin(_walk_phase) * 0.45).normalized()
+			velocity = retreat_dir * speed * 1.5
+		elif dist < 120.0:
 			var retreat_dir: Vector2 = (-to_player * 0.8 + to_player.orthogonal() * sin(_walk_phase) * 0.6).normalized()
-			velocity = retreat_dir * speed * 1.1
-		elif dist > 190.0:
+			velocity = retreat_dir * speed * 1.15
+		elif dist > 195.0:
 			# Advance with weaving motion
 			var advance_dir: Vector2 = (to_player * 0.85 + to_player.orthogonal() * sin(_walk_phase) * 0.5).normalized()
 			velocity = advance_dir * speed
@@ -189,10 +204,10 @@ func _process_chase(delta: float, player: Player, to_player: Vector2) -> void:
 			velocity = orbit_dir * speed * 0.95
 	else:
 		# Melee bruiser: Weave and flank dynamically rather than walking straight
-		var flank_dir: Vector2 = (to_player * 0.85 + to_player.orthogonal() * sin(_walk_phase * 2.0) * 0.45).normalized()
+		var flank_dir: Vector2 = (to_player * 0.85 + to_player.orthogonal() * sin(_walk_phase * 2.2) * 0.55).normalized()
 		velocity = flank_dir * speed
 
-	_walk_phase += delta * (8.0 if not is_enraged else 11.0)
+	_walk_phase += delta * (8.0 if not is_enraged else 12.0)
 	sprite.position.y = -roundf(abs(sin(_walk_phase)) * 2.0)
 
 	# Special attack check

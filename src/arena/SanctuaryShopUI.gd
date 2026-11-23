@@ -21,6 +21,10 @@ var _current_shop_type: ShopType = ShopType.BLACKSMITH
 var _merchant_items: Array[ItemData] = []
 var _all_items_pool: Array[ItemData] = []
 
+var blacksmith_done: bool = false
+var alchemist_done: bool = false
+var merchant_done: bool = false
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -32,7 +36,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if visible and (event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_E)):
+	if visible and (event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_F)):
 		close_shop()
 		get_viewport().set_input_as_handled()
 
@@ -74,19 +78,28 @@ func _load_items_pool() -> void:
 
 func open_blacksmith() -> void:
 	_current_shop_type = ShopType.BLACKSMITH
-	_show_ui("THỢ RÈN (BLACKSMITH)", "Cường hóa vũ khí & phục hồi trang bị", Color(1.0, 0.85, 0.3))
+	var sub: String = "Chọn 1 giao kèo rèn đúc (Mỗi NPC chỉ chọn đúng 1 lần - Kèm điều kiện đánh đổi)"
+	if blacksmith_done:
+		sub = "[GIAO KÈO ĐÃ HOÀN TẤT] Bạn đã chọn 1 thỏa thuận từ Thợ Rèn."
+	_show_ui("THỢ RÈN — GIAO KÈO RÈN ĐÚC", sub, Color(1.0, 0.85, 0.3))
 	_build_blacksmith_cards()
 
 
 func open_alchemist() -> void:
 	_current_shop_type = ShopType.ALCHEMIST
-	_show_ui("NHÀ GIẢ KIM (ALCHEMIST - BÁN EFFECT)", "Dược phẩm cổ xưa & bùa chú cường hóa vĩnh viễn", Color(0.4, 1.0, 0.6))
+	var sub: String = "Chọn 1 cấm thuật dược liệu (Mỗi NPC chỉ chọn đúng 1 lần - Kèm điều kiện đánh đổi)"
+	if alchemist_done:
+		sub = "[GIAO KÈO ĐÃ HOÀN TẤT] Bạn đã chọn 1 cấm thuật từ Giả Kim."
+	_show_ui("NHÀ GIẢ KIM — CẤM THUẬT DƯỢC LIỆU", sub, Color(0.4, 1.0, 0.6))
 	_build_alchemist_cards()
 
 
 func open_merchant() -> void:
 	_current_shop_type = ShopType.MERCHANT
-	_show_ui("THƯƠNG NHÂN (MERCHANT - BÁN ĐỒ)", "Vũ khí quý hiếm & thần binh tháp cổ", Color(0.4, 0.8, 1.0))
+	var sub: String = "Chọn duy nhất 1 món quý hiếm (Khế ước máu: giảm 15 Máu tối đa khi nhận)"
+	if merchant_done:
+		sub = "[GIAO KÈO ĐÃ HOÀN TẤT] Bạn đã nhận 1 món từ Thương Nhân."
+	_show_ui("THƯƠNG NHÂN — KHẾ ƯỚC HẮC ĐIẾM", sub, Color(0.4, 0.8, 1.0))
 	_build_merchant_cards()
 
 
@@ -120,54 +133,78 @@ func _clear_cards() -> void:
 # ── BLACKSMITH CARDS ───────────────────────────────────────────────────
 func _build_blacksmith_cards() -> void:
 	_clear_cards()
-	_create_service_card("Mài Sắc Lưỡi Kiếm", "NÂNG CẤP", "Tôi luyện bén nhọn, tăng +25% Sát thương cơ bản cho toàn bộ vũ khí.", 30, Color(1.0, 0.45, 0.35), 0)
-	_create_service_card("Cân Chỉnh Tốc Độ", "TỐC ĐỘ", "Giảm 20% Cooldown (hồi chiêu), giúp vũ khí vung chém và bắn nhanh hơn.", 25, Color(1.0, 0.85, 0.3), 1)
-	_create_service_card("Nghỉ Ngơi Bên Lửa", "HỒI MÁU", "Băng bó vết thương và ngồi sưởi ấm, hồi phục ngay 100% Máu tối đa.", 15, Color(0.4, 1.0, 0.5), 2)
+	_create_service_card("Huyết Luyện Binh", "SÁT THƯƠNG", "+40% Sát thương toàn bộ vũ khí.\n\n[ĐÁNH ĐỔI]: -25 Máu Tối Đa.", 25, Color(1.0, 0.45, 0.35), 0, blacksmith_done)
+	_create_service_card("Gió Lốc Bạt Mạng", "TỐC ĐÁNH", "+40% Tốc đánh vũ khí (Giảm 40% Cooldown).\n\n[ĐÁNH ĐỔI]: -15 Tốc Độ Chạy.", 20, Color(1.0, 0.85, 0.3), 1, blacksmith_done)
+	_create_service_card("Kính Giáp Liều Mạng", "THỦ PHỦ", "+4 Giáp vĩnh viễn & Hồi 100% Máu.\n\n[ĐÁNH ĐỔI]: -15% Sát Thương.", 30, Color(0.4, 1.0, 0.5), 2, blacksmith_done)
 
 
 func _apply_blacksmith(idx: int) -> void:
+	blacksmith_done = true
+	var p: Player = _get_player()
 	match idx:
 		0:
 			for w: ItemData in GameManager.equipped_weapons:
-				w.base_damage = ceili(w.base_damage * 1.25)
+				w.base_damage = ceili(w.base_damage * 1.40)
+			if p != null:
+				p.max_hp = maxi(p.max_hp - 25, 20)
+				p.current_hp = mini(p.current_hp, p.max_hp)
+				GameManager.player_max_hp = p.max_hp
+				GameManager.player_current_hp = p.current_hp
 			EventBus.weapons_changed.emit()
 		1:
 			for w: ItemData in GameManager.equipped_weapons:
-				w.cooldown = maxf(w.cooldown * 0.8, 0.1)
+				w.attack_speed *= 1.40
+				w.cooldown = maxf(w.cooldown * 0.6, 0.1)
+			if p != null:
+				p.speed = maxf(p.speed - 15.0, 60.0)
 			EventBus.weapons_changed.emit()
 		2:
-			var p: Player = _get_player()
 			if p != null:
+				p.defense += 4
 				p.heal(p.max_hp)
+			for w: ItemData in GameManager.equipped_weapons:
+				w.base_damage = maxi(ceili(w.base_damage * 0.85), 1)
+			EventBus.weapons_changed.emit()
+	_update_gold_display(GameManager.gold)
+	_build_blacksmith_cards()
 
 
 # ── ALCHEMIST CARDS ────────────────────────────────────────────────────
 func _build_alchemist_cards() -> void:
 	_clear_cards()
-	_create_service_card("Thuốc Sinh Mệnh", "HIỆU ỨNG", "Tăng vĩnh viễn +30 Máu tối đa và hồi đầy bình máu ngay lập tức.", 25, Color(1.0, 0.35, 0.4), 10)
-	_create_service_card("Thuốc Tốc Biến", "HIỆU ỨNG", "Tăng vĩnh viễn +25 Tốc độ di chuyển, lướt qua đàn quái cực kỳ thanh thoát.", 20, Color(0.4, 0.85, 1.0), 11)
-	_create_service_card("Thuốc Thiết Giáp", "HIỆU ỨNG", "Tăng vĩnh viễn +2 Giáp (Defense), trực tiếp giảm sát thương từ mọi đòn đánh.", 25, Color(0.8, 0.85, 0.9), 12)
-	_create_service_card("Thuốc Cuồng Nộ", "HIỆU ỨNG", "Kích thích cuồng bạo, tăng vĩnh viễn +25% Sát thương cho toàn bộ vũ khí.", 30, Color(1.0, 0.6, 0.2), 13)
+	_create_service_card("Dược Huyết Cuồng Loạn", "SINH MỆNH", "+45 Máu Tối Đa & Hồi Đầy Máu.\n\n[ĐÁNH ĐỔI]: -2 Giáp (Defense).", 20, Color(1.0, 0.35, 0.4), 10, alchemist_done)
+	_create_service_card("Ma Dược Thần Tốc", "TỐC ĐỘ", "+45 Tốc Độ Di Chuyển.\n\n[ĐÁNH ĐỔI]: -20 Máu Tối Đa.", 20, Color(0.4, 0.85, 1.0), 11, alchemist_done)
+	_create_service_card("Cổ Dược Đột Phá", "PHÉP THUẬT", "+1 Cấp cho TẤT CẢ Phép Thuật đang có.\n\n[ĐÁNH ĐỔI]: -20 Máu Tối Đa.", 25, Color(1.0, 0.6, 0.2), 12, alchemist_done)
 
 
 func _apply_alchemist(idx: int) -> void:
+	alchemist_done = true
 	var p: Player = _get_player()
 	match idx:
 		10:
 			if p != null:
-				p.max_hp += 30
+				p.max_hp += 45
+				p.defense = maxi(p.defense - 2, 0)
 				GameManager.player_max_hp = p.max_hp
 				p.heal(p.max_hp)
 		11:
 			if p != null:
-				p.speed += 25.0
+				p.speed += 45.0
+				p.max_hp = maxi(p.max_hp - 20, 20)
+				p.current_hp = mini(p.current_hp, p.max_hp)
+				GameManager.player_max_hp = p.max_hp
+				GameManager.player_current_hp = p.current_hp
 		12:
+			for s_id: String in GameManager.learned_spells.keys():
+				GameManager.learned_spells[s_id] += 1
+				EventBus.spell_learned.emit(s_id, GameManager.learned_spells[s_id])
 			if p != null:
-				p.defense += 2
-		13:
-			for w: ItemData in GameManager.equipped_weapons:
-				w.base_damage = ceili(w.base_damage * 1.25)
-			EventBus.weapons_changed.emit()
+				p.max_hp = maxi(p.max_hp - 20, 20)
+				p.current_hp = mini(p.current_hp, p.max_hp)
+				GameManager.player_max_hp = p.max_hp
+				GameManager.player_current_hp = p.current_hp
+	_update_gold_display(GameManager.gold)
+	_build_alchemist_cards()
 
 
 # ── MERCHANT CARDS ─────────────────────────────────────────────────────
@@ -182,9 +219,12 @@ func _build_merchant_cards() -> void:
 	for item: ItemData in _merchant_items:
 		_create_item_card(item)
 
+	for item: ItemData in _merchant_items:
+		_create_item_card(item)
+
 
 # ── CARD CREATION HELPERS ──────────────────────────────────────────────
-func _create_service_card(p_name: String, p_type: String, p_desc: String, p_cost: int, p_col: Color, p_action_id: int) -> void:
+func _create_service_card(p_name: String, p_type: String, p_desc: String, p_cost: int, p_col: Color, p_action_id: int, is_already_done: bool = false) -> void:
 	var panel: PanelContainer = PanelContainer.new()
 	panel.custom_minimum_size = Vector2(115, 180)
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -212,7 +252,7 @@ func _create_service_card(p_name: String, p_type: String, p_desc: String, p_cost
 
 	var name_lbl: Label = Label.new()
 	name_lbl.text = p_name
-	name_lbl.add_theme_font_size_override(&"font_size", 16)
+	name_lbl.add_theme_font_size_override(&"font_size", 15)
 	name_lbl.add_theme_color_override(&"font_color", p_col)
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -220,15 +260,15 @@ func _create_service_card(p_name: String, p_type: String, p_desc: String, p_cost
 
 	var badge_lbl: Label = Label.new()
 	badge_lbl.text = "[ %s ]" % p_type
-	badge_lbl.add_theme_font_size_override(&"font_size", 12)
+	badge_lbl.add_theme_font_size_override(&"font_size", 11)
 	badge_lbl.add_theme_color_override(&"font_color", Color(0.7, 0.7, 0.7))
 	badge_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(badge_lbl)
 
 	var desc_lbl: Label = Label.new()
 	desc_lbl.text = p_desc
-	desc_lbl.add_theme_font_size_override(&"font_size", 13)
-	desc_lbl.add_theme_color_override(&"font_color", Color(0.85, 0.85, 0.85))
+	desc_lbl.add_theme_font_size_override(&"font_size", 12)
+	desc_lbl.add_theme_color_override(&"font_color", Color(0.9, 0.9, 0.9))
 	desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	desc_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -236,15 +276,24 @@ func _create_service_card(p_name: String, p_type: String, p_desc: String, p_cost
 
 	var btn: Button = Button.new()
 	btn.custom_minimum_size = Vector2(0, 28)
-	btn.text = "Mua: %d G" % p_cost
-	btn.add_theme_font_size_override(&"font_size", 14)
+	btn.add_theme_font_size_override(&"font_size", 13)
 	btn.add_theme_color_override(&"font_color", Color(0.12, 0.1, 0.08))
 	btn.add_theme_stylebox_override(&"normal", _btn_normal)
 	btn.add_theme_stylebox_override(&"hover", _btn_hover)
 	btn.add_theme_stylebox_override(&"pressed", _btn_hover)
+
+	if is_already_done:
+		btn.text = "ĐÃ KÝ GIAO KÈO"
+		btn.disabled = true
+		btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
+	else:
+		btn.text = "Giao Kèo: %d G" % p_cost
+
 	vbox.add_child(btn)
 
 	btn.pressed.connect(func():
+		if is_already_done:
+			return
 		if GameManager.gold >= p_cost:
 			GameManager.spend_gold(p_cost)
 			if p_action_id < 10:
@@ -252,14 +301,11 @@ func _create_service_card(p_name: String, p_type: String, p_desc: String, p_cost
 			else:
 				_apply_alchemist(p_action_id)
 			AudioManager.play_sfx("buy")
-			btn.disabled = true
-			btn.text = "ĐÃ MUA"
-			btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
 		else:
 			btn.text = "Không đủ Vàng!"
 			var tw: Tween = create_tween()
 			tw.tween_interval(1.0)
-			tw.tween_callback(func(): btn.text = "Mua: %d G" % p_cost)
+			tw.tween_callback(func(): btn.text = "Giao Kèo: %d G" % p_cost)
 	)
 
 	cards_container.add_child(panel)
@@ -308,7 +354,7 @@ func _create_item_card(item: ItemData) -> void:
 
 	var name_lbl: Label = Label.new()
 	name_lbl.text = item.item_name
-	name_lbl.add_theme_font_size_override(&"font_size", 16)
+	name_lbl.add_theme_font_size_override(&"font_size", 15)
 	name_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.4))
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -325,14 +371,14 @@ func _create_item_card(item: ItemData) -> void:
 
 	var badge_lbl: Label = Label.new()
 	badge_lbl.text = "[ %s ]" % type_str
-	badge_lbl.add_theme_font_size_override(&"font_size", 12)
+	badge_lbl.add_theme_font_size_override(&"font_size", 11)
 	badge_lbl.add_theme_color_override(&"font_color", type_col)
 	badge_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(badge_lbl)
 
 	var desc_lbl: Label = Label.new()
-	desc_lbl.text = item.description
-	desc_lbl.add_theme_font_size_override(&"font_size", 13)
+	desc_lbl.text = "%s\n\n[ĐÁNH ĐỔI]: -15 Máu Tối Đa." % item.description
+	desc_lbl.add_theme_font_size_override(&"font_size", 11)
 	desc_lbl.add_theme_color_override(&"font_color", Color(0.85, 0.85, 0.85))
 	desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -342,71 +388,47 @@ func _create_item_card(item: ItemData) -> void:
 	var cost: int = item.price
 	var btn: Button = Button.new()
 	btn.custom_minimum_size = Vector2(0, 28)
-	btn.text = "Mua: %d G" % cost
-	btn.add_theme_font_size_override(&"font_size", 14)
+	btn.add_theme_font_size_override(&"font_size", 12)
 	btn.add_theme_color_override(&"font_color", Color(0.12, 0.1, 0.08))
 	btn.add_theme_stylebox_override(&"normal", _btn_normal)
 	btn.add_theme_stylebox_override(&"hover", _btn_hover)
 	btn.add_theme_stylebox_override(&"pressed", _btn_hover)
+
+	if merchant_done:
+		btn.text = "ĐÃ KÝ GIAO KÈO"
+		btn.disabled = true
+		btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
+	else:
+		btn.text = "Khế Ước: %d G (-15 HP)" % cost
+
 	vbox.add_child(btn)
 
 	btn.pressed.connect(func():
+		if merchant_done:
+			return
 		if GameManager.gold >= cost:
-			if item.type == ItemData.ItemType.SPELL and not GameManager.equipped_weapons.is_empty():
-				_show_inlay_popup(item, cost, btn)
-			else:
-				GameManager.spend_gold(cost)
-				GameManager.add_item(item)
-				AudioManager.play_sfx("buy")
-				btn.disabled = true
-				btn.text = "ĐÃ MUA"
-				btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
+			merchant_done = true
+			GameManager.spend_gold(cost)
+			var p: Player = _get_player()
+			if p != null:
+				p.max_hp = maxi(p.max_hp - 15, 20)
+				p.current_hp = mini(p.current_hp, p.max_hp)
+				GameManager.player_max_hp = p.max_hp
+				GameManager.player_current_hp = p.current_hp
+			GameManager.add_item(item)
+			AudioManager.play_sfx("buy")
+			_update_gold_display(GameManager.gold)
+			_build_merchant_cards()
 		else:
 			btn.text = "Không đủ Vàng!"
 			var tw: Tween = create_tween()
 			tw.tween_interval(1.0)
-			tw.tween_callback(func(): btn.text = "Mua: %d G" % cost)
+			tw.tween_callback(func(): btn.text = "Khế Ước: %d G (-15 HP)" % cost)
 	)
 
 	cards_container.add_child(panel)
 
-
-func _show_inlay_popup(item: ItemData, cost: int, buy_btn: Button) -> void:
-	var popup: ConfirmationDialog = ConfirmationDialog.new()
-	popup.title = "Khảm Phép: %s" % item.item_name
-	popup.ok_button_text = "Đóng"
-	popup.get_cancel_button().visible = false
-
-	var vbox: VBoxContainer = VBoxContainer.new()
-	vbox.add_theme_constant_override(&"separation", 6)
-	var lbl: Label = Label.new()
-	lbl.text = "Chọn vũ khí để khảm phép [%s]:" % item.item_name
-	vbox.add_child(lbl)
-
-	var s_id: String = item.spell_id if not item.spell_id.is_empty() else item.item_id
-	for i: int in range(GameManager.equipped_weapons.size()):
-		var eq: ItemData = GameManager.equipped_weapons[i]
-		var w_btn: Button = Button.new()
-		var st: String = "[Chưa Khảm]"
-		if eq.embedded_spell == s_id:
-			st = "[Đang khảm Lv.%d -> Nâng Lv.%d]" % [eq.embedded_spell_level, eq.embedded_spell_level + 1]
-		elif not eq.embedded_spell.is_empty():
-			st = "[Đang khảm: %s -> Thay thế]" % eq.embedded_spell.capitalize()
-		w_btn.text = "%s (Lv.%d) %s" % [eq.item_name, eq.level, st]
-		w_btn.pressed.connect(func():
-			if GameManager.spend_gold(cost):
-				GameManager.inlay_spell_into_weapon(i, item)
-				AudioManager.play_sfx("buy")
-				buy_btn.disabled = true
-				buy_btn.text = "ĐÃ MUA"
-				buy_btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
-			popup.queue_free()
-		)
-		vbox.add_child(w_btn)
-
-	popup.add_child(vbox)
-	add_child(popup)
-	popup.popup_centered()
+	cards_container.add_child(panel)
 
 
 func _get_player() -> Player:

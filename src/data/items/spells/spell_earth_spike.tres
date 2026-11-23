@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_earth_spike"
-item_name = "Khảm Phép: Gai Đất"
+item_name = "Phép: Gai Đất"
 type = 2
 rarity = 2
 price = 30

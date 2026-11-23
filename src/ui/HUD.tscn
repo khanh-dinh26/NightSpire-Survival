@@ -195,6 +195,8 @@ alignment = 1
 
 [node name="InventoryBar" parent="MarginContainer/VBoxContainer/BottomBar" unique_id=1625563208 instance=ExtResource("2_invbar")]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="GameOverPanel" type="PanelContainer" parent="." unique_id=1110630927]
 visible = false
@@ -256,7 +258,6 @@ theme_override_styles/hover = ExtResource("5_btn_hover")
 text = "Chọn Tháp Mới"
 
 [node name="SpellBar" parent="." unique_id=786394997 instance=ExtResource("6_spellbar")]
-visible = false
 
 [node name="EndgamePanel" type="PanelContainer" parent="." unique_id=927130143]
 visible = false

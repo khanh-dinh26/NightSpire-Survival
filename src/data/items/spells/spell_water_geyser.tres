@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item")
 item_id = "spell_water_geyser"
-item_name = "Khảm Phép: Thủy Long Bộc Phá"
+item_name = "Phép: Thủy Long Bộc Phá"
 type = 2
 rarity = 2
 price = 30
