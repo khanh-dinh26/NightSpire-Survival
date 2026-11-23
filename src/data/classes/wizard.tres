@@ -6,13 +6,13 @@
 [resource]
 script = ExtResource("1_class")
 class_id = "wizard"
-display_name = "Recluse - Pháp Sư (Wizard)"
+display_name = "Pháp Sư (Wizard)"
 sprite_region = Rect2(32, 128, 32, 32)
 max_hp = 85
 speed = 120.0
 defense = 0
 starter_weapon = ExtResource("2_weap")
-description = "Bậc thầy cổ thuật ma pháp. Sở hữu kỹ năng ném Cocktail Ma Pháp phát nổ nguyên tố và Huyết Chú Khải Hoàn nguyền rủa kẻ địch hút máu hồi phục bản thân."
+description = "Bậc thầy cổ thuật ma pháp. Sở hữu kỹ năng Bom Ma Thuật phát nổ nguyên tố diện rộng và Huyết Chú Khải Hoàn nguyền rủa kẻ địch hút máu hồi phục bản thân."
 skill_id = "magic_cocktail"
 skill_name = "Magic Cocktail (Bom Ma Thuật)"
 skill_desc = "Nhấn E lần 1 đổi tâm ngắm chuột, nhấn E lần 2 kích nổ bão tố ma pháp nguyên tố cực đại tại tâm ngắm gây 420 sát thương."

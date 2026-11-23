@@ -6,13 +6,13 @@
 [resource]
 script = ExtResource("1_class")
 class_id = "knight"
-display_name = "Wylder - Hiệp Sĩ (Knight)"
+display_name = "Hiệp Sĩ (Knight)"
 sprite_region = Rect2(0, 32, 32, 32)
 max_hp = 130
 speed = 115.0
 defense = 2
 starter_weapon = ExtResource("2_weap")
-description = "Chiến binh toàn diện phong cách Souls-like. Sở hữu kỹ năng bắn Vuốt Kéo áp sát quái vật và Nộ Tuyệt Kỹ Trọng Kích bùng nổ diện rộng."
+description = "Chiến binh kiên cường phong cách Souls-like. Sở hữu kỹ năng Kiếm Xoay 360° tiêu diệt quái vật xung quanh và Nộ Tuyệt Kỹ Trọng Kích bùng nổ diện rộng."
 skill_id = "claw_shot"
 skill_name = "Spin Slash (Kiếm Xoay 360°)"
 skill_desc = "Quay kiếm 360 độ cực nhanh quét sạch và tiêu diệt toàn bộ quái vật xung quanh, gây 750 sát thương."

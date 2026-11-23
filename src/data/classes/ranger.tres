@@ -6,13 +6,13 @@
 [resource]
 script = ExtResource("1_class")
 class_id = "ranger"
-display_name = "Ironeye - Cung Thủ (Ranger)"
+display_name = "Cung Thủ (Ranger)"
 sprite_region = Rect2(64, 0, 32, 32)
 max_hp = 95
 speed = 145.0
 defense = 0
 starter_weapon = ExtResource("2_weap")
-description = "Xạ thủ bách phát bách trúng với giác quan nhạy bén. Sở hữu kỹ năng lướt lùi đánh dấu điểm yếu và Nhất Tiễn Siêu Thanh xuyên thấu mọi phòng thủ."
+description = "Xạ thủ bách phát bách trúng với giác quan nhạy bén. Sở hữu kỹ năng Lướt Ngắm Bắn toả 5 mũi tên và Nhất Tiễn Siêu Thanh xuyên thấu mọi phòng thủ."
 skill_id = "marking_dash"
 skill_name = "Marking Dash (Lướt Ngắm Bắn)"
 skill_desc = "Nhấn E lần 1 đổi tâm ngắm chuột, nhấn E lần 2 lướt tới vị trí chuột và phóng 5 mũi tên toả tròn 360° xuyên thấu quái."

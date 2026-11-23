@@ -109,7 +109,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
 text = "THÁP RỪNG ĐỘC"
-horizontal_alignment = 0
+horizontal_alignment = 1
 
 [node name="Modifier" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower0/Margin/VBox"]
 layout_mode = 2
@@ -171,7 +171,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
 text = "HẦM MỘ CỔ"
-horizontal_alignment = 0
+horizontal_alignment = 1
 
 [node name="Modifier" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower1/Margin/VBox"]
 layout_mode = 2
@@ -233,7 +233,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
 text = "LÒ RÈN LỬA"
-horizontal_alignment = 0
+horizontal_alignment = 1
 
 [node name="Modifier" type="Label" parent="Margin/VBox/TowerStep/TowerCards/Tower2/Margin/VBox"]
 layout_mode = 2
@@ -365,7 +365,7 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "Wylder (Knight)"
+text = "Hiệp Sĩ (Knight)"
 horizontal_alignment = 0
 
 [node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
@@ -384,8 +384,8 @@ scroll_active = false
 theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
-text = "Chiến binh Souls-like dũng mãnh.
-[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Claw Shot (Vuốt Kéo)
+text = "Chiến binh cận chiến kiên cường.
+[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Spin Slash (Kiếm Xoay 360°)
 [color=#ffaa33][b]Tuyệt kỹ [Q]:[/b][/color] Onslaught Stake (Trọng Kích)"
 
 [node name="Class1" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
@@ -442,7 +442,7 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "Ironeye (Ranger)"
+text = "Cung Thủ (Ranger)"
 horizontal_alignment = 0
 
 [node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
@@ -461,8 +461,8 @@ scroll_active = false
 theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
-text = "Xạ thủ siêu thanh bách phát bách trúng.
-[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Marking (Đánh Dấu Lùi)
+text = "Xạ thủ bách phát bách trúng nhạy bén.
+[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Marking Dash (Lướt Ngắm Bắn)
 [color=#ffaa33][b]Tuyệt kỹ [Q]:[/b][/color] Single Shot (Nhất Tiễn)"
 
 [node name="Class2" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
@@ -519,7 +519,7 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "Recluse (Wizard)"
+text = "Pháp Sư (Wizard)"
 horizontal_alignment = 0
 
 [node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
@@ -538,8 +538,8 @@ scroll_active = false
 theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
-text = "Bậc thầy ma pháp cổ xưa nguyền rủa.
-[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Magic Cocktail (Ma Pháp)
+text = "Bậc thầy cổ thuật ma pháp nguyên tố.
+[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Magic Cocktail (Bom Ma Thuật)
 [color=#ffaa33][b]Tuyệt kỹ [Q]:[/b][/color] Soulblood Song (Huyết Chú)"
 
 [node name="NavFooter" type="HBoxContainer" parent="Margin/VBox/ClassStep"]
