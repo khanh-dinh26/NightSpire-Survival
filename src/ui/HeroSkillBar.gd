@@ -1,33 +1,26 @@
 class_name HeroSkillBar
 extends Control
-## Displays Hero Character Skill (cooldown-based) and Ultimate Art (damage-charged)
-## Located at bottom-right corner of screen, clickable with mouse or via hotkeys.
-
-@onready var skill_btn: Button = $HBox/SkillSlot/SkillButton
-@onready var skill_name_lbl: Label = $HBox/SkillSlot/SkillButton/VBox/SkillName
-@onready var skill_cd_overlay: ColorRect = $HBox/SkillSlot/SkillButton/CDOverlay
-@onready var skill_cd_lbl: Label = $HBox/SkillSlot/SkillButton/CDOverlay/CDLabel
-@onready var skill_key_lbl: Label = $HBox/SkillSlot/SkillButton/VBox/KeyLabel
+## Displays Hero Character Ultimate Art (damage-charged).
+## Located at bottom-right corner of screen, clickable with mouse or via E / Q / Space.
 
 @onready var ult_btn: Button = $HBox/UltimateSlot/UltButton
 @onready var ult_name_lbl: Label = $HBox/UltimateSlot/UltButton/VBox/UltName
 @onready var ult_charge_lbl: Label = $HBox/UltimateSlot/UltButton/VBox/ChargeLabel
 @onready var ult_overlay: ColorRect = $HBox/UltimateSlot/UltButton/ChargeOverlay
 @onready var ult_glow: NinePatchRect = $HBox/UltimateSlot/UltButton/GlowBorder
+@onready var key_lbl: Label = $HBox/UltimateSlot/UltButton/VBox/KeyLabel
 
 var _ult_pulse_tween: Tween = null
 var _is_ult_ready: bool = false
+var _is_aiming: bool = false
 var _hero_class: ClassData = null
 
 
 func _ready() -> void:
-	EventBus.hero_skill_cooldown_updated.connect(_on_skill_cd_updated)
 	EventBus.hero_ultimate_charge_updated.connect(_on_ult_charge_updated)
-	EventBus.hero_skill_used.connect(_on_skill_used)
 	EventBus.hero_ultimate_used.connect(_on_ult_used)
-	EventBus.hero_skill_aiming_changed.connect(_on_skill_aiming_changed)
+	EventBus.hero_skill_aiming_changed.connect(_on_aiming_changed)
 
-	skill_btn.pressed.connect(_on_skill_pressed)
 	ult_btn.pressed.connect(_on_ult_pressed)
 
 	_setup_from_class(GameManager.chosen_class)
@@ -41,48 +34,25 @@ func _setup_from_class(p_class: ClassData) -> void:
 	_hero_class = p_class
 
 	if _hero_class != null:
-		skill_name_lbl.text = _hero_class.skill_name.get_slice("(", 0).strip_edges()
-		skill_btn.tooltip_text = "%s\n%s\n[Hồi: %.1fs | Click chuột hoặc phím E / Chuột Phải]" % [
-			_hero_class.skill_name, _hero_class.skill_desc, _hero_class.skill_cooldown
-		]
-
 		ult_name_lbl.text = _hero_class.ultimate_name.get_slice("(", 0).strip_edges()
-		ult_btn.tooltip_text = "%s\n%s\n[Yêu cầu: %d sát thương | Click chuột hoặc phím Q / Space]" % [
+		ult_btn.tooltip_text = "%s\n%s\n[Yêu cầu: %d sát thương | Nhấn E / Click để ngắm, Chuột Trái để dùng]" % [
 			_hero_class.ultimate_name, _hero_class.ultimate_desc, _hero_class.ultimate_required_damage
 		]
 
-	skill_cd_overlay.visible = false
 	ult_overlay.visible = true
 	ult_glow.visible = false
 	ult_charge_lbl.text = "0%"
 
 
-func _on_skill_pressed() -> void:
-	if skill_cd_overlay.visible:
-		return
-	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
-	if players.size() > 0:
-		var p: Player = players[0] as Player
-		if p != null:
-			p.cast_character_skill()
-
-
 func _on_ult_pressed() -> void:
-	if not _is_ult_ready:
-		return
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 	if players.size() > 0:
 		var p: Player = players[0] as Player
 		if p != null:
-			p.cast_ultimate_art()
-
-
-func _on_skill_cd_updated(current_cd: float, max_cd: float) -> void:
-	if current_cd > 0.05:
-		skill_cd_overlay.visible = true
-		skill_cd_lbl.text = "%.1fs" % current_cd
-	else:
-		skill_cd_overlay.visible = false
+			if _is_aiming:
+				p.execute_ultimate_ability()
+			else:
+				p.cast_ultimate_ability()
 
 
 func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
@@ -90,9 +60,11 @@ func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
 	if pct >= 1.0:
 		_is_ult_ready = true
 		ult_overlay.visible = false
-		ult_charge_lbl.text = "SẴN SÀNG!"
-		ult_charge_lbl.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
-		ult_name_lbl.add_theme_color_override(&"font_color", Color(1.0, 1.0, 1.0, 1.0))
+		if not _is_aiming:
+			ult_charge_lbl.text = "SẴN SÀNG!"
+			ult_charge_lbl.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
+			ult_name_lbl.add_theme_color_override(&"font_color", Color(1.0, 1.0, 1.0, 1.0))
+			key_lbl.text = "[E | Click]"
 		_start_ult_glow()
 	else:
 		_is_ult_ready = false
@@ -100,7 +72,25 @@ func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
 		ult_charge_lbl.text = "%d%%" % roundi(pct * 100.0)
 		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35, 1.0))
 		ult_name_lbl.add_theme_color_override(&"font_color", Color(0.9, 0.9, 0.9, 1.0))
+		key_lbl.text = "[E | Click]"
 		_stop_ult_glow()
+
+
+func _on_aiming_changed(is_aiming: bool) -> void:
+	_is_aiming = is_aiming
+	if is_aiming:
+		key_lbl.text = "[CHUỘT TRÁI]"
+		ult_charge_lbl.text = "KÍCH HOẠT!"
+		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.3, 1.0))
+		ult_btn.modulate = Color(1.3, 1.3, 0.4, 1.0)
+	else:
+		ult_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		if _is_ult_ready:
+			key_lbl.text = "[E | Click]"
+			ult_charge_lbl.text = "SẴN SÀNG!"
+			ult_charge_lbl.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
+		else:
+			key_lbl.text = "[E | Click]"
 
 
 func _start_ult_glow() -> void:
@@ -119,30 +109,13 @@ func _stop_ult_glow() -> void:
 	ult_glow.visible = false
 
 
-func _on_skill_used(_id: String) -> void:
-	# Punch pop on use
-	var tw: Tween = create_tween()
-	tw.tween_property(skill_btn, ^"scale", Vector2(1.2, 1.2), 0.08)
-	tw.tween_property(skill_btn, ^"scale", Vector2.ONE, 0.12)
-
-
-func _on_skill_aiming_changed(is_aiming: bool) -> void:
-	if is_aiming:
-		skill_key_lbl.text = "[CLICK / E]"
-		skill_name_lbl.text = "NGẮM BẮN"
-		skill_btn.modulate = Color(1.4, 1.4, 0.5, 1.0)
-	else:
-		skill_key_lbl.text = "[E | R-Click]"
-		if _hero_class != null:
-			skill_name_lbl.text = _hero_class.skill_name.get_slice("(", 0).strip_edges()
-		skill_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
-
-
 func _on_ult_used(_id: String) -> void:
-	# Epic flash and reset
 	_stop_ult_glow()
+	_is_aiming = false
+	key_lbl.text = "[E | Click]"
+	ult_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	ult_charge_lbl.text = "0%"
 	ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35, 1.0))
 	var tw: Tween = create_tween()
-	tw.tween_property(ult_btn, ^"scale", Vector2(1.3, 1.3), 0.10)
+	tw.tween_property(ult_btn, ^"scale", Vector2(1.25, 1.25), 0.10)
 	tw.tween_property(ult_btn, ^"scale", Vector2.ONE, 0.15)

@@ -1,66 +1,42 @@
-[gd_scene load_steps=7 format=3 uid="uid://brm786yymg5nw"]
+[gd_scene load_steps=6 format=3 uid="uid://heroskillbar001"]
 
 [ext_resource type="Script" path="res://src/ui/HeroSkillBar.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_panel"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill_normal"]
-bg_color = Color(0.08, 0.22, 0.35, 0.95)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.25, 0.75, 1, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill_hover"]
-bg_color = Color(0.12, 0.32, 0.48, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.5, 0.9, 1, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ult_normal"]
-bg_color = Color(0.20, 0.04, 0.04, 0.96)
+bg_color = Color(0.18, 0.08, 0.02, 0.92)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.65, 0.15, 1)
+border_color = Color(0.9, 0.5, 0.15, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ult_hover"]
-bg_color = Color(0.32, 0.08, 0.08, 1)
+bg_color = Color(0.3, 0.14, 0.04, 0.95)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.85, 0.3, 1)
+border_color = Color(1, 0.75, 0.25, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [node name="HeroSkillBar" type="Control"]
-custom_minimum_size = Vector2(142, 54)
+custom_minimum_size = Vector2(80, 56)
 layout_mode = 3
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -152.0
-offset_top = -64.0
+offset_left = -90.0
+offset_top = -66.0
 offset_right = -10.0
 offset_bottom = -10.0
 grow_horizontal = 0
@@ -74,101 +50,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 6
 alignment = 2
 
-[node name="SkillSlot" type="Control" parent="HBox"]
-custom_minimum_size = Vector2(64, 54)
-layout_mode = 2
-
-[node name="SkillButton" type="Button" parent="HBox/SkillSlot"]
-custom_minimum_size = Vector2(64, 54)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(32, 27)
-theme_override_styles/normal = SubResource("StyleBoxFlat_skill_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_skill_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_skill_hover")
-
-[node name="VBox" type="VBoxContainer" parent="HBox/SkillSlot/SkillButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 1
-alignment = 1
-
-[node name="KeyLabel" type="Label" parent="HBox/SkillSlot/SkillButton/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.9, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 8
-text = "[E | R-Click]"
-horizontal_alignment = 1
-
-[node name="SkillName" type="Label" parent="HBox/SkillSlot/SkillButton/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 9
-text = "Kỹ Năng"
-horizontal_alignment = 1
-clip_text = true
-
-[node name="CDOverlay" type="ColorRect" parent="HBox/SkillSlot/SkillButton"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0.06, 0.12, 0.18, 0.85)
-
-[node name="CDLabel" type="Label" parent="HBox/SkillSlot/SkillButton/CDOverlay"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_font_sizes/font_size = 11
-text = "5.0s"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="UltimateSlot" type="Control" parent="HBox"]
-custom_minimum_size = Vector2(70, 54)
+custom_minimum_size = Vector2(80, 56)
 layout_mode = 2
 
 [node name="UltButton" type="Button" parent="HBox/UltimateSlot"]
-custom_minimum_size = Vector2(70, 54)
+custom_minimum_size = Vector2(80, 56)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(35, 27)
+pivot_offset = Vector2(40, 28)
 theme_override_styles/normal = SubResource("StyleBoxFlat_ult_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ult_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ult_hover")
@@ -216,14 +112,14 @@ alignment = 1
 
 [node name="KeyLabel" type="Label" parent="HBox/UltimateSlot/UltButton/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.35, 1)
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 8
-text = "[Q | Space]"
+theme_override_font_sizes/font_size = 9
+text = "[E | Click]"
 horizontal_alignment = 1
 
 [node name="UltName" type="Label" parent="HBox/UltimateSlot/UltButton/VBox"]
@@ -234,7 +130,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 10
 text = "Tuyệt Kỹ"
 horizontal_alignment = 1
 clip_text = true
@@ -247,6 +143,6 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 9
 text = "0%"
 horizontal_alignment = 1

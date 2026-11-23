@@ -11,8 +11,11 @@ var _slots: Dictionary = {} # spell_id: String -> SpellSlot
 # Spell icon preloads
 var _spell_icons: Dictionary = {
 	"fireball": preload("res://assets/effects/magic_effects/Icons/tile000.png"),
+	"water_geyser": preload("res://assets/effects/magic_effects/Icons/tile003.png"),
+	"void_portal": preload("res://assets/effects/magic_effects/Icons/tile004.png"),
 	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile006.png"),
 	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile007.png"),
+	"meteor_rock": preload("res://assets/effects/magic_effects/Icons/tile008.png"),
 	"tornado": preload("res://assets/effects/magic_effects/Icons/tile009.png"),
 }
 
@@ -46,9 +49,12 @@ func learn_spell(spell_id: String, level: int) -> void:
 	var cd: float = 3.5
 	match spell_id:
 		"fireball": cd = 3.0
+		"water_geyser": cd = 3.2
+		"void_portal": cd = 4.0
 		"molten_spear": cd = 2.5
-		"tornado": cd = 5.0
 		"earth_spike": cd = 4.0
+		"meteor_rock": cd = 3.5
+		"tornado": cd = 5.0
 
 	container.add_child(slot)
 	if slot.has_method("setup_spell"):

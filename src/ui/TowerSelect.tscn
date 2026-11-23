@@ -385,8 +385,7 @@ theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
 text = "Chiến binh cận chiến kiên cường.
-[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Spin Slash (Kiếm Xoay 360°)
-[color=#ffaa33][b]Tuyệt kỹ [Q]:[/b][/color] Onslaught Stake (Trọng Kích)"
+[color=#ffaa33][b]Tuyệt kỹ [E / Click]:[/b][/color] Oanh Kích Bộc Phá (Chọn vị trí, nhảy tới bổ kiếm nổ Magic Cocktail 850 sát thương)"
 
 [node name="Class1" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
 layout_mode = 2
@@ -462,8 +461,7 @@ theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
 text = "Xạ thủ bách phát bách trúng nhạy bén.
-[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Marking Dash (Lướt Ngắm Bắn)
-[color=#ffaa33][b]Tuyệt kỹ [Q]:[/b][/color] Single Shot (Nhất Tiễn)"
+[color=#ffaa33][b]Tuyệt kỹ [E / Click]:[/b][/color] Xuyên Phá Thần Tiễn (Ngắm bắn ngọn giáo năng lượng kéo dài xuyên thấu 1100 sát thương)"
 
 [node name="Class2" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
 layout_mode = 2
@@ -539,8 +537,7 @@ theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
 text = "Bậc thầy cổ thuật ma pháp nguyên tố.
-[color=#38c8ff][b]Kỹ năng [E]:[/b][/color] Magic Cocktail (Bom Ma Thuật)
-[color=#ffaa33][b]Tuyệt kỹ [Q]:[/b][/color] Soulblood Song (Huyết Chú)"
+[color=#ffaa33][b]Tuyệt kỹ [E / Click]:[/b][/color] Huyết Ngục Đoạt Hồn (Mở vòng phong ấn 180px, hút máu toàn bộ quái vật bên trong)"
 
 [node name="NavFooter" type="HBoxContainer" parent="Margin/VBox/ClassStep"]
 layout_mode = 2
