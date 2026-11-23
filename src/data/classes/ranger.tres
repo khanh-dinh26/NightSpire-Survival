@@ -19,6 +19,6 @@ skill_desc = "Nhấn E mở đường ngắm, Chuột Trái bắn ngọn giáo n
 skill_cooldown = 0.0
 ultimate_id = "ranger_piercing_spear"
 ultimate_name = "Xuyên Phá Thần Tiễn"
-ultimate_desc = "Nhấn E mở đường ngắm, Chuột Trái bắn ngọn giáo năng lượng kéo dài xuyên thấu quái vật gây 260 sát thương (nhấn lại E để hủy)."
+ultimate_desc = "Bắn thương năng lượng xuyên thấu mục tiêu."
 ultimate_required_damage = 1300
 

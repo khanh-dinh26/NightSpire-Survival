@@ -79,7 +79,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
 theme_override_font_sizes/font_size = 9
-text = "Hạ gục Thủ Lĩnh — Chọn 2 trong 3 Phần Thưởng Cổ Đại Miễn Phí"
+text = "Chọn 2 trong 3 Phần Thưởng"
 horizontal_alignment = 1
 
 [node name="PicksLabel" type="Label" parent="Panel/Margin/VBox/Header"]

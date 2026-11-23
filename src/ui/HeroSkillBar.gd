@@ -35,8 +35,8 @@ func _setup_from_class(p_class: ClassData) -> void:
 
 	if _hero_class != null:
 		ult_name_lbl.text = _hero_class.ultimate_name.get_slice("(", 0).strip_edges()
-		ult_btn.tooltip_text = "%s\n%s\n[Yêu cầu: %d sát thương | Nhấn E hoặc Click để ngắm, Chuột Trái để dùng (Nhấn lại E để hủy)]" % [
-			_hero_class.ultimate_name, _hero_class.ultimate_desc, _hero_class.ultimate_required_damage
+		ult_btn.tooltip_text = "%s\n%s" % [
+			_hero_class.ultimate_name, _hero_class.ultimate_desc
 		]
 
 	ult_overlay.visible = true

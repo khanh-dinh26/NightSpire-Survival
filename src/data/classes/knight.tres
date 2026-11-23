@@ -19,6 +19,6 @@ skill_desc = "Nhấn E mở tâm ngắm (tối đa 200px), Chuột Trái phóng 
 skill_cooldown = 0.0
 ultimate_id = "knight_leap"
 ultimate_name = "Oanh Kích Bộc Phá"
-ultimate_desc = "Nhấn E mở tâm ngắm (tối đa 200px), Chuột Trái phóng mình nhảy tới bổ kiếm nổ Magic Cocktail diện rộng gây 220 sát thương và hất văng quái (nhấn lại E để hủy)."
+ultimate_desc = "Nhảy tới bổ kiếm nổ diện rộng hất văng quái."
 ultimate_required_damage = 1400
 

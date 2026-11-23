@@ -45,7 +45,7 @@ func clear_slot() -> void:
 	level_label.text = ""
 	level_label.visible = false
 	cooldown_overlay.visible = false
-	click_btn.tooltip_text = "Ô Phép Thuật (Trống)"
+	click_btn.tooltip_text = "Ô Phép (Trống)"
 
 
 func setup_spell(p_id: String, p_lvl: int, p_icon: Texture2D, p_cooldown: float = 3.5) -> void:
@@ -59,9 +59,7 @@ func setup_spell(p_id: String, p_lvl: int, p_icon: Texture2D, p_cooldown: float 
 	level_label.visible = (level > 1)
 
 	var s_name: String = _get_spell_name(spell_id)
-	click_btn.tooltip_text = "%s Lv.%d\n(Tự động bắn mỗi %.1fs | Click chuột để bắn)" % [
-		s_name, level, cooldown_time
-	]
+	click_btn.tooltip_text = "%s Lv.%d (Hồi: %.1fs)" % [s_name, level, cooldown_time]
 
 
 func _get_spell_name(s_id: String) -> String:
@@ -81,9 +79,7 @@ func set_level(new_lvl: int) -> void:
 	level_label.text = "L%d" % level
 	level_label.visible = (level > 1)
 	var s_name: String = _get_spell_name(spell_id)
-	click_btn.tooltip_text = "%s Lv.%d\n(Tự động bắn mỗi %.1fs | Click chuột để bắn)" % [
-		s_name, level, cooldown_time
-	]
+	click_btn.tooltip_text = "%s Lv.%d (Hồi: %.1fs)" % [s_name, level, cooldown_time]
 	var tw: Tween = create_tween()
 	tw.tween_property(self, ^"scale", Vector2(1.2, 1.2), 0.1)
 	tw.tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.1)
