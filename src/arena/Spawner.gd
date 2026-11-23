@@ -118,7 +118,7 @@ func stop_spawning() -> void:
 func _on_spawn_tick() -> void:
 	if not is_spawning or current_tower == null or current_floor_config == null:
 		return
-	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies + 6, 48)
+	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies + 12, 75)
 	if active_enemies >= max_allowed:
 		return
 	_spawn_burst()
@@ -128,14 +128,14 @@ func _spawn_burst() -> void:
 	if current_tower.common_enemies.is_empty():
 		return
 
-	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies + 6, 48)
+	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies + 12, 75)
 	var available_slots: int = max_allowed - active_enemies
 	if available_slots <= 0:
 		return
 
 	_formation_tick_counter += 1
 	# Periodically trigger special tactical formations (Pincer lines, Surround circle, Elite vanguard)
-	if _formation_tick_counter >= 3 and available_slots >= 4:
+	if _formation_tick_counter >= 2 and available_slots >= 4:
 		_formation_tick_counter = 0
 		_spawn_special_formation(available_slots)
 		return
@@ -179,7 +179,7 @@ func _spawn_pincer_lines(available_slots: int) -> void:
 
 	var half_w: float = 345.0
 	var half_h: float = 205.0
-	var per_side: int = clampi(available_slots / 2, 2, 4)
+	var per_side: int = clampi(available_slots / 2, 3, 7)
 
 	var can_horizontal: bool = (cam_center.y - half_h - 10.0 >= bounds.position.y) or (cam_center.y + half_h + 10.0 <= bounds.end.y)
 	var can_vertical: bool = (cam_center.x - half_w - 10.0 >= bounds.position.x) or (cam_center.x + half_w + 10.0 <= bounds.end.x)
@@ -239,7 +239,7 @@ func _spawn_surrounding_circle(available_slots: int) -> void:
 			cam_center = (players[0] as Node2D).global_position
 
 	var bounds: Rect2 = arena.get_spawn_bounds()
-	var count: int = clampi(available_slots, 4, 6)
+	var count: int = clampi(available_slots, 6, 14)
 	# Radius strictly outside visible camera screen (diagonal is ~367px)
 	var radius: float = 385.0
 	var step_angle: float = TAU / float(count)
@@ -281,7 +281,7 @@ func _spawn_elite_vanguard(available_slots: int) -> void:
 func _spawn_small_swarm(available_slots: int) -> void:
 	if current_tower == null or current_tower.common_enemies.is_empty():
 		return
-	var swarm_count: int = clampi(available_slots, 4, 8)
+	var swarm_count: int = clampi(available_slots, 6, 16)
 	var spawn_origin: Vector2 = _get_spawn_position()
 	# Pick the first/lowest tier enemy (small creature/swarm)
 	var creep_data: EnemyData = current_tower.common_enemies[0]

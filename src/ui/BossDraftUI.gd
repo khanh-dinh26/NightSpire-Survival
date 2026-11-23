@@ -60,6 +60,7 @@ func _populate_cards(items: Array[ItemData]) -> void:
 		card.custom_minimum_size = Vector2(170, 160)
 		row_top.add_child(card)
 		card.setup(item, true)
+		card.set_show_icon(false)
 		card.item_selected.connect(_on_card_selected)
 		_cards.append(card)
 

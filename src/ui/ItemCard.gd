@@ -17,6 +17,7 @@ signal item_selected(card: ItemCard, item: ItemData)
 @onready var frame_bg: NinePatchRect = $FrameBackground
 
 var is_bought: bool = false
+var show_icon: bool = true
 var _items_tex: Texture2D = preload("res://assets/sprites/items.png")
 
 var _spell_icons: Dictionary = {
@@ -39,6 +40,12 @@ func setup(data: ItemData, p_is_free: bool = false, price_override: int = -1) ->
 	is_bought = false
 	custom_price = price_override
 	_refresh_display()
+
+
+func set_show_icon(p_show: bool) -> void:
+	show_icon = p_show
+	if icon_row != null:
+		icon_row.visible = show_icon
 
 
 func _ready() -> void:
@@ -64,6 +71,8 @@ func _refresh_display() -> void:
 		return
 
 	# Icon display
+	if icon_row != null:
+		icon_row.visible = show_icon
 	if not item_data.custom_icon_path.is_empty() and ResourceLoader.exists(item_data.custom_icon_path):
 		icon_rect.texture = load(item_data.custom_icon_path)
 	else:
@@ -74,7 +83,7 @@ func _refresh_display() -> void:
 
 	# Spell Emblem on weapon card
 	if emblem_rect != null:
-		if item_data.type == ItemData.ItemType.WEAPON and not item_data.embedded_spell.is_empty() and _spell_icons.has(item_data.embedded_spell):
+		if show_icon and item_data.type == ItemData.ItemType.WEAPON and not item_data.embedded_spell.is_empty() and _spell_icons.has(item_data.embedded_spell):
 			emblem_rect.texture = _spell_icons[item_data.embedded_spell]
 			emblem_rect.visible = true
 		else:
@@ -132,9 +141,7 @@ func _refresh_display() -> void:
 		if not item_data.special_effect.is_empty():
 			extra_effect = "\n[Đặc tính: %s]" % ItemData.get_special_effect_name(item_data.special_effect)
 		if not item_data.embedded_spell.is_empty():
-			extra_effect += "\n[Khảm Phép: %s Lv.%d]" % [
-				_get_spell_display_name(item_data.embedded_spell), item_data.embedded_spell_level
-			]
+			extra_effect += "\n[Phép Kèm: %s]" % _get_spell_display_name(item_data.embedded_spell)
 		desc_label.text = "Sát thương: %d  |  Tốc đánh: %.1f/s%s\n%s" % [
 			item_data.base_damage,
 			item_data.attack_speed,

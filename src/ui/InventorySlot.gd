@@ -69,11 +69,8 @@ func set_item(item: ItemData, idx: int) -> void:
 				if emblem_bg != null:
 					emblem_bg.visible = true
 				if emblem_level_label != null:
-					emblem_level_label.text = "L%d" % item.embedded_spell_level
-					emblem_level_label.visible = true
-				effect_text += "\n[Khảm Phép: %s Lv.%d (Tự Động Bắn)]" % [
-					_get_spell_display_name(item.embedded_spell), item.embedded_spell_level
-				]
+					emblem_level_label.visible = false
+				effect_text += "\n[Phép: %s (Tự Động Bắn)]" % _get_spell_display_name(item.embedded_spell)
 			else:
 				emblem_rect.visible = false
 				if emblem_bg != null:
