@@ -19,6 +19,7 @@ var kills_counter: int = 0
 @onready var weapon_orbit: WeaponOrbit = $WeaponOrbit
 
 var _spell_scene: PackedScene = preload("res://src/entities/spells/SpellEntity.tscn")
+var _cursor_aim_tex: Texture2D = preload("res://assets/ui/cursors/all_scroll_cursor.png")
 
 # ── Hero Abilities (Character Skill & Ultimate Art) ─────────────────────
 var hero_class: ClassData = null
@@ -28,6 +29,9 @@ var ultimate_charge: int = 0
 var ultimate_required_damage: int = 650
 var is_stealthed: bool = false
 var is_invincible: bool = false
+var is_aiming_skill: bool = false
+var _is_executing_ability: bool = false
+var _block_ult_charge_timer: float = 0.0
 
 # ── Procedural animation timers ────────────────────────────────────────
 var _walk_phase: float = 0.0
@@ -77,6 +81,8 @@ func _process(delta: float) -> void:
 	if skill_cooldown_timer > 0.0:
 		skill_cooldown_timer = maxf(skill_cooldown_timer - delta, 0.0)
 		EventBus.hero_skill_cooldown_updated.emit(skill_cooldown_timer, skill_cooldown_max)
+	if _block_ult_charge_timer > 0.0:
+		_block_ult_charge_timer = maxf(_block_ult_charge_timer - delta, 0.0)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -87,9 +93,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			cast_character_skill()
 		elif event.keycode == KEY_Q or event.keycode == KEY_SPACE:
 			cast_ultimate_art()
+		elif event.keycode == KEY_ESCAPE and is_aiming_skill:
+			cancel_skill_aiming()
+			get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			cast_character_skill()
+		elif event.button_index == MOUSE_BUTTON_LEFT and is_aiming_skill:
+			cast_character_skill()
+			get_viewport().set_input_as_handled()
 
 
 func setup_from_class(p_class: ClassData) -> void:
@@ -115,7 +127,7 @@ func setup_from_class(p_class: ClassData) -> void:
 
 
 func _on_player_dealt_damage(amount: int) -> void:
-	if is_dead:
+	if is_dead or _is_executing_ability or _block_ult_charge_timer > 0.0:
 		return
 	if ultimate_charge < ultimate_required_damage:
 		ultimate_charge = mini(ultimate_charge + amount, ultimate_required_damage)
@@ -259,6 +271,7 @@ func take_damage(amount: int) -> void:
 	if current_hp <= 0:
 		current_hp = 0
 		is_dead = true
+		cancel_skill_aiming()
 		velocity = Vector2.ZERO
 		set_physics_process(false)
 		collision_layer = 0
@@ -275,6 +288,17 @@ func take_damage(amount: int) -> void:
 				w.set_physics_process(false)
 
 		EventBus.player_died.emit()
+
+
+func cancel_skill_aiming() -> void:
+	if is_aiming_skill:
+		is_aiming_skill = false
+		Input.set_custom_mouse_cursor(null)
+		EventBus.hero_skill_aiming_changed.emit(false)
+
+
+func _exit_tree() -> void:
+	cancel_skill_aiming()
 
 
 func heal(amount: int) -> void:
@@ -395,13 +419,32 @@ func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
 
 # ── Character Skill & Ultimate Art Execution ─────────────────────────
 func cast_character_skill() -> bool:
-	if is_dead or skill_cooldown_timer > 0.0:
+	if is_dead:
 		return false
 	if hero_class == null or hero_class.skill_id.is_empty():
 		return false
 
+	var skill_id: String = hero_class.skill_id
+	var is_two_step: bool = (skill_id == "marking_dash" or skill_id == "magic_cocktail")
+
+	if is_two_step:
+		if not is_aiming_skill:
+			if skill_cooldown_timer > 0.0:
+				return false
+			is_aiming_skill = true
+			Input.set_custom_mouse_cursor(_cursor_aim_tex, Input.CURSOR_ARROW, Vector2(16, 16))
+			EventBus.hero_skill_aiming_changed.emit(true)
+			return true
+		else:
+			is_aiming_skill = false
+			Input.set_custom_mouse_cursor(null)
+			EventBus.hero_skill_aiming_changed.emit(false)
+	else:
+		if skill_cooldown_timer > 0.0:
+			return false
+
 	skill_cooldown_timer = skill_cooldown_max
-	EventBus.hero_skill_used.emit(hero_class.skill_id)
+	EventBus.hero_skill_used.emit(skill_id)
 	EventBus.hero_skill_cooldown_updated.emit(skill_cooldown_timer, skill_cooldown_max)
 
 	var mouse_pos: Vector2 = get_global_mouse_position()
@@ -409,7 +452,10 @@ func cast_character_skill() -> bool:
 	if aim_dir == Vector2.ZERO:
 		aim_dir = Vector2.LEFT if sprite.flip_h else Vector2.RIGHT
 
-	match hero_class.skill_id:
+	_is_executing_ability = true
+	_block_ult_charge_timer = 0.5
+
+	match skill_id:
 		"claw_shot":
 			_execute_claw_shot(mouse_pos, aim_dir)
 		"marking_dash":
@@ -424,6 +470,8 @@ func cast_character_skill() -> bool:
 			_execute_cursed_sword(aim_dir)
 		_:
 			_execute_claw_shot(mouse_pos, aim_dir)
+
+	_is_executing_ability = false
 	return true
 
 
@@ -433,8 +481,12 @@ func cast_ultimate_art() -> bool:
 	if hero_class == null or hero_class.ultimate_id.is_empty():
 		return false
 
+	cancel_skill_aiming()
+
 	ultimate_charge = 0
 	GameManager.hero_ultimate_charge = 0
+	_is_executing_ability = true
+	_block_ult_charge_timer = 0.8
 	EventBus.hero_ultimate_used.emit(hero_class.ultimate_id)
 	EventBus.hero_ultimate_charge_updated.emit(0, ultimate_required_damage)
 
@@ -458,65 +510,121 @@ func cast_ultimate_art() -> bool:
 			_execute_crucible_beast()
 		_:
 			_execute_onslaught_stake(mouse_pos)
+
+	_is_executing_ability = false
 	return true
 
 
-func _execute_claw_shot(_mouse_pos: Vector2, aim_dir: Vector2) -> void:
+func _execute_claw_shot(_mouse_pos: Vector2, _aim_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	_screen_shake(4.0, 0.2)
+	_screen_shake(8.0, 0.25)
 
-	# Direct frontal claw strike visual
-	var claw_line: Line2D = Line2D.new()
-	claw_line.width = 5.0
-	claw_line.default_color = Color(1.3, 0.9, 0.3, 1.0)
-	claw_line.points = PackedVector2Array([Vector2.ZERO, aim_dir * 140.0])
-	add_child(claw_line)
+	# 360-degree rotating blade slash visual
+	var slash_pivot: Node2D = Node2D.new()
+	slash_pivot.global_position = global_position
+	get_tree().current_scene.add_child(slash_pivot)
+
+	var ring: Line2D = Line2D.new()
+	ring.width = 6.0
+	ring.default_color = Color(1.8, 1.4, 0.4, 1.0)
+	var pts: PackedVector2Array = PackedVector2Array()
+	var segs: int = 32
+	var r: float = 140.0
+	for i: int in range(segs + 1):
+		var ang: float = float(i) * TAU / float(segs)
+		pts.append(Vector2(cos(ang), sin(ang)) * r)
+	ring.points = pts
+	slash_pivot.add_child(ring)
+
+	var blade_line: Line2D = Line2D.new()
+	blade_line.width = 7.0
+	blade_line.default_color = Color(2.5, 2.0, 1.0, 1.0)
+	blade_line.points = PackedVector2Array([Vector2.ZERO, Vector2(r + 20.0, 0)])
+	slash_pivot.add_child(blade_line)
+
 	var tw: Tween = create_tween()
-	tw.tween_property(claw_line, ^"width", 0.0, 0.15)
-	tw.tween_callback(claw_line.queue_free)
+	tw.set_parallel(true)
+	tw.tween_property(slash_pivot, ^"rotation", TAU, 0.22)
+	tw.tween_property(ring, ^"width", 0.0, 0.22)
+	tw.tween_property(blade_line, ^"width", 0.0, 0.22)
+	tw.chain().tween_callback(slash_pivot.queue_free)
 
-	# Strike enemies in front cone
+	# Kill/strike all surrounding enemies in 360 degree radius
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
 		if enemy == null or not is_instance_valid(enemy):
 			continue
-		var to_e: Vector2 = enemy.global_position - global_position
-		if to_e.length() <= 150.0 and to_e.normalized().dot(aim_dir) > 0.3:
+		var dist: float = global_position.distance_to(enemy.global_position)
+		if dist <= 190.0:
+			var push_dir: Vector2 = (enemy.global_position - global_position).normalized()
+			if push_dir == Vector2.ZERO:
+				push_dir = Vector2.UP
 			if "apply_knockback" in enemy:
-				enemy.apply_knockback(aim_dir * 120.0)
-			enemy.take_damage(140)
+				enemy.apply_knockback(push_dir * 180.0)
+			enemy.take_damage(750)
 
 
 func _execute_marking_dash(aim_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	_screen_shake(3.0, 0.15)
+	_screen_shake(5.0, 0.2)
 
-	# Swift evasive dash
-	global_position += aim_dir * 60.0
+	# Swift evasive dash towards aim direction
+	var dash_dist: float = 110.0
+	var prev_pos: Vector2 = global_position
+	global_position += aim_dir * dash_dist
 
-	# Front slash
-	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
-	for e_node: Node in enemies:
-		var enemy: CharacterBody2D = e_node as CharacterBody2D
-		if enemy == null or not is_instance_valid(enemy):
-			continue
-		if global_position.distance_to(enemy.global_position) <= 120.0:
-			enemy.take_damage(130)
+	# Visual dash trail
+	var trail: Line2D = Line2D.new()
+	trail.width = 6.0
+	trail.default_color = Color(0.4, 0.8, 1.5, 0.8)
+	trail.points = PackedVector2Array([prev_pos, global_position])
+	get_tree().current_scene.add_child(trail)
+	var tw: Tween = create_tween()
+	tw.tween_property(trail, ^"width", 0.0, 0.2)
+	tw.tween_callback(trail.queue_free)
+
+	# Shoot 5 arrows radiating outward around player in 360 degrees
+	AudioManager.play_sfx("slash")
+	for i: int in range(5):
+		var arrow_angle: float = aim_dir.angle() + float(i) * (TAU / 5.0)
+		var arrow_dir: Vector2 = Vector2.from_angle(arrow_angle)
+		var spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
+		spell.spell_type = SpellEntity.SpellType.MOLTEN_SPEAR
+		spell.level = 2
+		spell.damage = 220
+		spell.speed = 460.0
+		spell.direction = arrow_dir
+		spell.global_position = global_position
+		spell.modulate = Color(0.5, 1.2, 2.0, 1.0)
+		get_tree().current_scene.add_child(spell)
 
 
 func _execute_magic_cocktail(target_pos: Vector2) -> void:
 	AudioManager.play_sfx("spell_fire")
-	_screen_shake(5.0, 0.2)
+	AudioManager.play_sfx("explosion")
+	_screen_shake(9.0, 0.3)
 
-	# Instant elemental explosion at target
+	# Visual elemental explosion at target position
+	var exp_spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
+	exp_spell.spell_type = SpellEntity.SpellType.EXPLOSION
+	exp_spell.damage = 420
+	exp_spell.global_position = target_pos
+	exp_spell.scale = Vector2(1.5, 1.5)
+	get_tree().current_scene.add_child(exp_spell)
+
+	# Direct impact on enemies within blast radius
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
 		if enemy == null or not is_instance_valid(enemy):
 			continue
-		if enemy.global_position.distance_to(target_pos) <= 110.0:
-			enemy.take_damage(180)
+		var dist: float = enemy.global_position.distance_to(target_pos)
+		if dist <= 140.0:
+			var push: Vector2 = (enemy.global_position - target_pos).normalized() * 160.0
+			if "apply_knockback" in enemy:
+				enemy.apply_knockback(push)
+			enemy.take_damage(420)
 
 
 func _execute_whirlwind() -> void:

@@ -25,6 +25,7 @@ func _ready() -> void:
 	EventBus.hero_ultimate_charge_updated.connect(_on_ult_charge_updated)
 	EventBus.hero_skill_used.connect(_on_skill_used)
 	EventBus.hero_ultimate_used.connect(_on_ult_used)
+	EventBus.hero_skill_aiming_changed.connect(_on_skill_aiming_changed)
 
 	skill_btn.pressed.connect(_on_skill_pressed)
 	ult_btn.pressed.connect(_on_ult_pressed)
@@ -121,6 +122,18 @@ func _on_skill_used(_id: String) -> void:
 	var tw: Tween = create_tween()
 	tw.tween_property(skill_btn, ^"scale", Vector2(1.2, 1.2), 0.08)
 	tw.tween_property(skill_btn, ^"scale", Vector2.ONE, 0.12)
+
+
+func _on_skill_aiming_changed(is_aiming: bool) -> void:
+	if is_aiming:
+		skill_key_lbl.text = "[CLICK / E]"
+		skill_name_lbl.text = "NGẮM BẮN"
+		skill_btn.modulate = Color(1.4, 1.4, 0.5, 1.0)
+	else:
+		skill_key_lbl.text = "[E | R-Click]"
+		if _hero_class != null:
+			skill_name_lbl.text = _hero_class.skill_name.get_slice("(", 0).strip_edges()
+		skill_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 
 func _on_ult_used(_id: String) -> void:

@@ -32,6 +32,7 @@ signal hero_skill_used(skill_id: String)
 signal hero_ultimate_used(ultimate_id: String)
 signal hero_skill_cooldown_updated(current: float, max_cd: float)
 signal hero_ultimate_charge_updated(current: int, max_charge: int)
+signal hero_skill_aiming_changed(is_aiming: bool)
 
 # --- UI ---
 signal shop_opened(card_list: Array)
