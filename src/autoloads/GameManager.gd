@@ -199,4 +199,4 @@ func _on_enemy_killed(_pos: Vector2, gold_value: int) -> void:
 
 
 func _on_player_died() -> void:
-	pass
+	SaveManager.delete_save()

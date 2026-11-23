@@ -197,15 +197,15 @@ layout_mode = 2
 
 [node name="GameOverPanel" type="PanelContainer" parent="."]
 visible = false
-custom_minimum_size = Vector2(340, 160)
+custom_minimum_size = Vector2(320, 160)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -170.0
+offset_left = -160.0
 offset_top = -80.0
-offset_right = 170.0
+offset_right = 160.0
 offset_bottom = 80.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -240,27 +240,13 @@ horizontal_alignment = 1
 [node name="Sub" type="Label" parent="GameOverPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "Bạn có thể hồi sinh tại điểm Checkpoint hoặc bắt đầu chuyến đi mới."
+text = "Chuyến đi đã kết thúc. File lưu đã bị xóa (Chết vĩnh viễn)."
 horizontal_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="GameOverPanel/Margin/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 10
-alignment = 1
-
-[node name="CheckpointButton" type="Button" parent="GameOverPanel/Margin/VBox/Buttons"]
+[node name="RestartButton" type="Button" parent="GameOverPanel/Margin/VBox"]
 custom_minimum_size = Vector2(150, 28)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
-theme_override_font_sizes/font_size = 11
-theme_override_styles/normal = ExtResource("4_btn_normal")
-theme_override_styles/hover = ExtResource("5_btn_hover")
-theme_override_styles/pressed = ExtResource("5_btn_hover")
-text = "Hồi Sinh Checkpoint"
-
-[node name="RestartButton" type="Button" parent="GameOverPanel/Margin/VBox/Buttons"]
-custom_minimum_size = Vector2(130, 28)
-layout_mode = 2
+size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = ExtResource("4_btn_normal")
