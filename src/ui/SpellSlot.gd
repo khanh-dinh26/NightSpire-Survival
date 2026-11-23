@@ -125,7 +125,11 @@ func _find_closest_enemy() -> Node2D:
 			continue
 		if "is_dead" in enemy and enemy.is_dead:
 			continue
-		var d: float = pl.global_position.distance_to(enemy.global_position)
+		var diff: Vector2 = enemy.global_position - pl.global_position
+		# Strictly limit targeting to enemies visible within the 640x360 screen viewport
+		if absf(diff.x) > 290.0 or absf(diff.y) > 155.0:
+			continue
+		var d: float = diff.length()
 		if d < min_dist:
 			min_dist = d
 			closest = enemy
@@ -146,4 +150,8 @@ func _try_cast() -> void:
 		var pl: Node2D = players[0] as Node2D
 		if pl != null and is_instance_valid(pl):
 			mouse_pos = pl.get_global_mouse_position()
+			var diff: Vector2 = mouse_pos - pl.global_position
+			diff.x = clampf(diff.x, -290.0, 290.0)
+			diff.y = clampf(diff.y, -155.0, 155.0)
+			mouse_pos = pl.global_position + diff
 	cast_requested.emit(spell_id, level, mouse_pos)

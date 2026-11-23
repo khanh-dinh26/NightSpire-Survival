@@ -81,6 +81,7 @@ func _load_items_pool() -> void:
 		"res://src/data/items/buffs/vampire_chalice.tres",
 		"res://src/data/items/buffs/frost_heart.tres",
 		"res://src/data/items/buffs/spell_echo_prism.tres",
+		"res://src/data/items/buffs/super_magnet.tres",
 	]
 	for p: String in item_paths:
 		if ResourceLoader.exists(p):
@@ -232,6 +233,8 @@ func _on_floor_cleared(floor_index: int) -> void:
 	if spawner != null:
 		spawner.stop_spawning()
 
+	_check_super_magnet()
+
 	if _boss_draft_opened_for_floor == floor_index:
 		return
 	_boss_draft_opened_for_floor = floor_index
@@ -261,6 +264,7 @@ func _on_floor_cleared(floor_index: int) -> void:
 
 
 func _on_shop_closed() -> void:
+	_check_super_magnet()
 	# Permadeath save: save after shop is closed before next floor begins
 	SaveManager.save_run()
 	_clean_pickups()
@@ -268,9 +272,20 @@ func _on_shop_closed() -> void:
 
 
 func _on_draft_closed() -> void:
+	_check_super_magnet()
 	SaveManager.save_run()
 	_clean_pickups()
 	GameManager.advance_floor()
+
+
+func _check_super_magnet() -> void:
+	if GameManager.has_buff("super_magnet"):
+		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+		if players.size() > 0:
+			var pl: Player = players[0] as Player
+			for coin: Node in get_tree().get_nodes_in_group(&"gold_pickups"):
+				if coin is GoldPickup and is_instance_valid(coin):
+					(coin as GoldPickup).vacuum_to_player(pl)
 
 
 func _on_floor_transition_requested(next_floor_index: int) -> void:

@@ -371,7 +371,12 @@ func _hit_flash() -> void:
 
 # ── Active Spell Casting ────────────────────────────────────────────────
 func _on_spell_cast_requested(spell_id: String, p_level: int, target_pos: Vector2) -> void:
-	var aim_dir: Vector2 = (target_pos - global_position).normalized()
+	var diff: Vector2 = target_pos - global_position
+	diff.x = clampf(diff.x, -290.0, 290.0)
+	diff.y = clampf(diff.y, -155.0, 155.0)
+	target_pos = global_position + diff
+
+	var aim_dir: Vector2 = diff.normalized()
 	if aim_dir == Vector2.ZERO:
 		aim_dir = Vector2.RIGHT if _facing_right else Vector2.LEFT
 

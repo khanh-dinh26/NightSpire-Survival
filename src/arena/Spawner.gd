@@ -413,6 +413,11 @@ func _spawn_boss_instance(boss_data: EnemyData, is_second_boss: bool = false) ->
 	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
 	var spd_scale: float = current_floor_config.enemy_speed_multiplier
 
+	# Boss durability scaling: increases significantly with higher floors so high-floor bosses are tanky
+	var floor_idx: int = current_floor_config.floor_index if current_floor_config != null else 1
+	var boss_floor_bonus: float = 1.0 + pow(float(maxi(0, floor_idx - 1)) * 0.28, 1.15)
+	hp_scale *= boss_floor_bonus
+
 	if current_tower != null:
 		hp_scale *= current_tower.enemy_hp_mult
 		dmg_scale *= current_tower.enemy_dmg_mult

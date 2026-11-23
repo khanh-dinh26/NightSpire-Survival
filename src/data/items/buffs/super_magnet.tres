@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "super_magnet"
+item_name = "Siêu Nam Châm"
+type = 1
+rarity = 2
+price = 35
+level = 1
+custom_icon_path = "res://assets/sprites/relic_icons/relic_magnet.png"
+sprite_region = Rect2(96, 64, 32, 32)
+stats_modifier = {
+"magnet_range": 350.0
+}
+special_effect = "super_magnet"
+description = "Tự động hút toàn bộ vàng rơi trên sàn đấu khi qua tầng mới."

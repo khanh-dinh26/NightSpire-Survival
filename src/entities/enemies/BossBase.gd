@@ -1,6 +1,6 @@
 class_name BossBase
 extends CharacterBody2D
-## Imposing Boss entity with smart multi-phase AI, unique skills, and enraged state.
+## Imposing Boss entity with distinct Caster vs Melee/Beast archetypes, dynamic AI, and scaled durability.
 
 signal boss_hp_changed(current_hp: int, max_hp: int)
 signal boss_died(boss_name: String)
@@ -11,7 +11,11 @@ enum State {
 	CHARGING,
 	TELEGRAPH_SLAM,
 	CASTING,
-	STUNNED
+	STUNNED,
+	TELEGRAPH_POUNCE,
+	POUNCING,
+	TELEGRAPH_CLEAVE,
+	CLEAVING
 }
 
 @export var data: EnemyData = null
@@ -28,6 +32,10 @@ var current_state: State = State.CHASE
 var is_enraged: bool = false
 var charge_direction: Vector2 = Vector2.ZERO
 var charge_speed: float = 290.0
+
+var pounce_direction: Vector2 = Vector2.ZERO
+var pounce_speed: float = 380.0
+var _pounce_hit_player: bool = false
 
 var _state_timer: float = 0.0
 var _attack_cooldown_timer: float = 2.0
@@ -50,6 +58,7 @@ var _animals_tex: Texture2D = preload("res://assets/sprites/animals.png")
 
 # ── Scenes ─────────────────────────────────────────────────────────────
 var _proj_scene: PackedScene = preload("res://src/entities/enemies/bosses/BossProjectile.tscn")
+var _ground_aoe_scene: PackedScene = preload("res://src/entities/enemies/bosses/BossGroundAoe.tscn")
 var _enemy_base_scene: PackedScene = preload("res://src/entities/enemies/EnemyBase.tscn")
 var _gold_pickup_scene: PackedScene = preload("res://src/entities/pickups/GoldPickup.tscn")
 var _spider_data: EnemyData = preload("res://src/data/enemies/spider.tres")
@@ -83,6 +92,18 @@ func _ready() -> void:
 
 	hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_attack_cooldown_timer = 2.0
+
+
+func _is_pure_caster() -> bool:
+	if data == null:
+		return false
+	return data.enemy_id in ["lich", "spectral_wraith", "shadow_fiend_boss", "necromancer_lord", "void_overlord"] or data.attack_pattern in ["spiral_projectile", "projectile"]
+
+
+func _is_melee_beast() -> bool:
+	if data == null:
+		return true
+	return data.enemy_id in ["death_knight", "orc_warchief", "flame_hellhound", "ancient_spider", "abyssal_behemoth", "war_demon", "rock_golem_boss", "abyssal_gargoyle"] or data.attack_pattern in ["charge", "ground_slam"]
 
 
 func _apply_boss_data() -> void:
@@ -162,6 +183,14 @@ func _physics_process(delta: float) -> void:
 			_process_casting(delta)
 		State.STUNNED:
 			_process_stunned(delta)
+		State.TELEGRAPH_POUNCE:
+			_process_telegraph_pounce(delta, player)
+		State.POUNCING:
+			_process_pouncing(delta, player)
+		State.TELEGRAPH_CLEAVE:
+			_process_telegraph_cleave(delta, player)
+		State.CLEAVING:
+			_process_cleaving(delta)
 
 	move_and_slide()
 
@@ -169,10 +198,7 @@ func _physics_process(delta: float) -> void:
 # ── Smart Movement & Dynamic AI ──────────────────────────────────────────
 func _process_chase(delta: float, player: Player, to_player: Vector2) -> void:
 	var dist: float = global_position.distance_to(player.global_position)
-	var is_caster: bool = (data != null and (
-		data.attack_pattern in ["projectile", "spiral_projectile", "summon"] or
-		data.enemy_id in ["lich", "shadow_fiend", "necromancer_lord", "void_overlord", "venom_manticore"]
-	))
+	var is_caster: bool = _is_pure_caster()
 
 	# Surge / Aggressive Gap-closer timer
 	if _surge_timer > 0.0:
@@ -203,7 +229,7 @@ func _process_chase(delta: float, player: Player, to_player: Vector2) -> void:
 			var orbit_dir: Vector2 = (to_player.orthogonal() * orbit_sign + to_player * 0.15 * sin(_walk_phase)).normalized()
 			velocity = orbit_dir * speed * 0.95
 	else:
-		# Melee bruiser: Weave and flank dynamically rather than walking straight
+		# Melee bruiser / beast: Weave and flank dynamically
 		var flank_dir: Vector2 = (to_player * 0.85 + to_player.orthogonal() * sin(_walk_phase * 2.2) * 0.55).normalized()
 		velocity = flank_dir * speed
 
@@ -212,79 +238,190 @@ func _process_chase(delta: float, player: Player, to_player: Vector2) -> void:
 
 	# Special attack check
 	if _attack_cooldown_timer <= 0.0:
-		_choose_attack(player, dist, is_caster)
+		_choose_attack(player, dist)
 
 
-func _choose_attack(player: Player, dist: float, is_caster: bool) -> void:
-	var cooldown_base: float = data.attack_cooldown if data != null else 2.6
+func _choose_attack(player: Player, dist: float) -> void:
+	var cooldown_base: float = data.attack_cooldown if data != null else 2.5
 	_attack_cooldown_timer = cooldown_base * (0.65 if is_enraged else 1.0)
 
-	var pattern: String = data.attack_pattern if data != null else "mixed"
+	# Pure Caster Archetype
+	if _is_pure_caster():
+		var roll_caster: float = randf()
+		if roll_caster < 0.38:
+			_start_ground_aoe(player)
+		elif roll_caster < 0.68:
+			_start_projectile_attack(player)
+		elif roll_caster < 0.88:
+			_start_spiral_barrage()
+		else:
+			_start_summon()
+		return
 
-	match pattern:
-		"ground_slam":
-			var roll_gs: float = randf()
-			if roll_gs < 0.35:
-				_start_spiral_barrage()
-			elif roll_gs < 0.75 or dist < 90.0:
+	# Melee / Beast Archetype
+	if _is_melee_beast():
+		if dist <= 90.0:
+			# Close range: 360 cleave or ground slam
+			if randf() < 0.65:
+				_start_360_cleave(player)
+			else:
 				_start_ground_slam(player)
-			else:
-				_start_charge(player)
-
-		"charge":
-			var roll_c: float = randf()
-			if roll_c < 0.35:
-				_start_projectile_attack(player)
-			elif roll_c < 0.75:
+		else:
+			# Medium/long range: Pounce lunge or charge dash
+			var roll_m: float = randf()
+			if roll_m < 0.50:
+				_start_pounce_lunge(player)
+			elif roll_m < 0.80:
 				_start_charge(player)
 			else:
-				_start_ground_slam(player)
+				_start_360_cleave(player)
+		return
 
-		"spiral_projectile":
-			if randf() < 0.5:
-				_start_spiral_barrage()
-			elif randf() < 0.8:
-				_start_projectile_attack(player)
-			else:
-				_start_summon()
-
-		"projectile":
-			if randf() < 0.55:
-				_start_projectile_attack(player)
-			elif randf() < 0.85:
-				_start_spiral_barrage()
-			else:
-				_start_charge(player)
-
-		"summon":
-			if randf() < 0.4:
-				_start_summon()
-			elif randf() < 0.7:
-				_start_spiral_barrage()
-			else:
-				_start_projectile_attack(player)
-
-		_:
-			# Mixed / Final bosses (access to full arsenal)
-			if dist < 75.0:
-				_start_ground_slam(player)
-			elif dist > 170.0 and not is_caster:
-				_start_charge(player)
-			else:
-				var roll: float = randf()
-				if roll < 0.28:
-					_start_spiral_barrage()
-				elif roll < 0.55:
-					_start_projectile_attack(player)
-				elif roll < 0.78:
-					_start_ground_slam(player)
-				elif roll < 0.90:
-					_start_charge(player)
-				else:
-					_start_summon()
+	# Mixed / Final bosses
+	if dist < 80.0:
+		if randf() < 0.5:
+			_start_360_cleave(player)
+		else:
+			_start_ground_slam(player)
+	else:
+		var roll: float = randf()
+		if roll < 0.25:
+			_start_ground_aoe(player)
+		elif roll < 0.50:
+			_start_pounce_lunge(player)
+		elif roll < 0.72:
+			_start_projectile_attack(player)
+		elif roll < 0.88:
+			_start_spiral_barrage()
+		else:
+			_start_charge(player)
 
 
-# ── Skill 1: Charge Dash ────────────────────────────────────────────────
+# ── Beast/Melee Skill 1: Pounce Lunge (Vồ tới cắn) ─────────────────────
+func _start_pounce_lunge(player: Player) -> void:
+	current_state = State.TELEGRAPH_POUNCE
+	_state_timer = 0.38
+	velocity = Vector2.ZERO
+	pounce_direction = (player.global_position - global_position).normalized()
+	_pounce_hit_player = false
+	AudioManager.play_sfx("slash")
+
+	# Crouch and wind-up animation
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"scale", Vector2(1.25, 0.75), 0.18)
+	tw.parallel().tween_property(sprite, ^"modulate", Color(2.5, 0.5, 0.3, 1.0), 0.18)
+	tw.tween_property(sprite, ^"scale", Vector2(0.9, 1.25), 0.2)
+
+
+func _process_telegraph_pounce(_delta: float, player: Player) -> void:
+	velocity = Vector2.ZERO
+	if is_instance_valid(player):
+		pounce_direction = (player.global_position - global_position).normalized()
+	if _state_timer <= 0.0:
+		current_state = State.POUNCING
+		_state_timer = 0.32
+		AudioManager.play_sfx("slash")
+
+
+func _process_pouncing(_delta: float, player: Player) -> void:
+	velocity = pounce_direction * (pounce_speed * (1.2 if is_enraged else 1.0))
+	if not _pounce_hit_player and is_instance_valid(player):
+		if global_position.distance_to(player.global_position) <= 45.0:
+			_pounce_hit_player = true
+			player.take_damage(roundi(damage * 1.35))
+			var push_dir: Vector2 = pounce_direction
+			player.velocity += push_dir * 250.0
+			AudioManager.play_sfx("enemy_death")
+	if _state_timer <= 0.0:
+		current_state = State.STUNNED
+		_state_timer = 0.3
+		sprite.scale = Vector2.ONE
+		sprite.modulate = Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6)
+
+
+# ── Beast/Melee Skill 2: 360 Cleave Slash (Chém 360) ───────────────────
+func _start_360_cleave(_player: Player) -> void:
+	current_state = State.TELEGRAPH_CLEAVE
+	_state_timer = 0.4
+	velocity = Vector2.ZERO
+
+	# Charge aura & spin windup
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"rotation_degrees", -30.0, 0.2)
+	tw.parallel().tween_property(sprite, ^"modulate", Color(2.2, 0.4, 0.4, 1.0), 0.2)
+	tw.tween_property(sprite, ^"rotation_degrees", 0.0, 0.2)
+
+
+func _process_telegraph_cleave(_delta: float, player: Player) -> void:
+	velocity = Vector2.ZERO
+	if _state_timer <= 0.0:
+		_execute_360_cleave(player)
+
+
+func _execute_360_cleave(player: Player) -> void:
+	current_state = State.CLEAVING
+	_state_timer = 0.26
+	velocity = Vector2.ZERO
+	AudioManager.play_sfx("slash")
+
+	# Full 360 spin animation
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"rotation_degrees", 360.0, 0.24)
+	tw.parallel().tween_property(sprite, ^"scale", Vector2(1.35, 1.35), 0.12)
+	tw.tween_property(sprite, ^"scale", Vector2.ONE, 0.12)
+	tw.tween_callback(func(): sprite.rotation_degrees = 0.0)
+
+	# 360 Cleave Damage: check player within 85px
+	var cleave_radius: float = 85.0
+	if is_instance_valid(player) and global_position.distance_to(player.global_position) <= cleave_radius:
+		player.take_damage(roundi(damage * 1.3))
+		var knock_dir: Vector2 = (player.global_position - global_position).normalized()
+		if knock_dir == Vector2.ZERO:
+			knock_dir = Vector2.UP
+		player.velocity += knock_dir * 280.0
+
+	# 8-directional shockwave slash projectiles outward
+	var count: int = 8 if is_enraged else 6
+	for i: int in range(count):
+		var proj: BossProjectile = _proj_scene.instantiate() as BossProjectile
+		var angle: float = (float(i) / float(count)) * TAU
+		proj.setup_type(BossProjectile.ProjectileType.FIREBALL, roundi(damage * 0.7), 150.0, Vector2.RIGHT.rotated(angle))
+		proj.global_position = global_position
+		get_tree().current_scene.add_child(proj)
+
+
+func _process_cleaving(_delta: float) -> void:
+	velocity = Vector2.ZERO
+	if _state_timer <= 0.0:
+		current_state = State.CHASE
+		sprite.modulate = Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6)
+
+
+# ── Caster Skill 1: Ground AOE Eruption (Phép AOE) ──────────────────────
+func _start_ground_aoe(player: Player) -> void:
+	current_state = State.CASTING
+	_state_timer = 0.55
+	velocity = Vector2.ZERO
+
+	# Channel glow
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, ^"modulate", Color(2.5, 0.3, 0.3, 1.0), 0.25)
+	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.25)
+
+	# Spawn 1 to 3 eruption zones targeting player position & near player
+	var aoe_count: int = 2 if not is_enraged else 3
+	for i: int in range(aoe_count):
+		var aoe: Node2D = _ground_aoe_scene.instantiate() as Node2D
+		aoe.set("damage", roundi(damage * 1.25))
+		var offset: Vector2 = Vector2.ZERO
+		if i > 0:
+			offset = Vector2(randf_range(-55, 55), randf_range(-55, 55))
+		var spawn_pos: Vector2 = (player.global_position if is_instance_valid(player) else global_position) + offset
+		aoe.global_position = spawn_pos
+		get_tree().current_scene.call_deferred(&"add_child", aoe)
+
+
+# ── Charge Dash ─────────────────────────────────────────────────────────
 func _start_charge(player: Player) -> void:
 	current_state = State.TELEGRAPH_CHARGE
 	_state_timer = 0.55
@@ -313,7 +450,7 @@ func _process_charging(_delta: float) -> void:
 		_state_timer = 0.35
 
 
-# ── Skill 2: Ground Slam / Shockwave ────────────────────────────────────
+# ── Ground Slam / Shockwave ─────────────────────────────────────────────
 func _start_ground_slam(_player: Player) -> void:
 	current_state = State.TELEGRAPH_SLAM
 	_state_timer = 0.6
@@ -338,7 +475,6 @@ func _execute_ground_slam(player: Player) -> void:
 	_state_timer = 0.4
 	velocity = Vector2.ZERO
 
-	# Slam down impact animation
 	sprite.position.y = 0.0
 	var tw: Tween = create_tween()
 	tw.tween_property(sprite, ^"scale", Vector2(1.3, 0.7), 0.08)
@@ -347,7 +483,7 @@ func _execute_ground_slam(player: Player) -> void:
 
 	AudioManager.play_sfx("explosion")
 
-	# Area slam damage to nearby player
+	# Area slam damage
 	if is_instance_valid(player):
 		var dist_to_player: float = global_position.distance_to(player.global_position)
 		if dist_to_player <= 75.0:
@@ -357,19 +493,17 @@ func _execute_ground_slam(player: Player) -> void:
 				knock_dir = Vector2.DOWN
 			player.velocity += knock_dir * 240.0
 
-	# 8-Direction Expanding Shockwave Projectiles
+	# Shockwave Projectiles
 	var spike_count: int = 12 if is_enraged else 8
 	for i: int in range(spike_count):
 		var proj: BossProjectile = _proj_scene.instantiate() as BossProjectile
 		var angle: float = (float(i) / float(spike_count)) * TAU
-		proj.direction = Vector2.RIGHT.rotated(angle)
-		proj.damage = roundi(damage * 0.7)
-		proj.speed = 135.0
+		proj.setup_type(BossProjectile.ProjectileType.FIREBALL, roundi(damage * 0.7), 135.0, Vector2.RIGHT.rotated(angle))
 		proj.global_position = global_position
 		get_tree().current_scene.add_child(proj)
 
 
-# ── Skill 3: Spiral Nova Barrage ────────────────────────────────────────
+# ── Spiral Nova Barrage ─────────────────────────────────────────────────
 func _start_spiral_barrage() -> void:
 	current_state = State.CASTING
 	_state_timer = 0.5
@@ -386,23 +520,21 @@ func _fire_spiral_projectiles() -> void:
 	AudioManager.play_sfx("slash")
 	var count: int = 12 if is_enraged else 8
 	var base_offset: float = randf() * TAU
+	var p_type: BossProjectile.ProjectileType = BossProjectile.ProjectileType.DARK_ORB if _is_pure_caster() else BossProjectile.ProjectileType.FIREBALL
 	for i: int in range(count):
 		var proj: BossProjectile = _proj_scene.instantiate() as BossProjectile
 		var angle: float = base_offset + (float(i) / float(count)) * TAU
-		proj.direction = Vector2.RIGHT.rotated(angle)
-		proj.damage = roundi(damage * 0.75)
-		proj.speed = 145.0
+		proj.setup_type(p_type, roundi(damage * 0.75), 145.0, Vector2.RIGHT.rotated(angle))
 		proj.global_position = global_position
 		get_tree().current_scene.add_child(proj)
 
 
-# ── Skill 4: Targeted Projectile Volley ─────────────────────────────────
+# ── Targeted Projectile Volley ──────────────────────────────────────────
 func _start_projectile_attack(player: Player) -> void:
 	current_state = State.CASTING
 	_state_timer = 0.45
 	velocity = Vector2.ZERO
 
-	# Emerald channel glow
 	var tw: Tween = create_tween()
 	tw.tween_property(sprite, ^"modulate", Color(0.4, 3.0, 0.6, 1.0), 0.2)
 	tw.tween_property(sprite, ^"modulate", Color.WHITE if not is_enraged else Color(1.3, 0.6, 0.6), 0.2)
@@ -417,18 +549,18 @@ func _fire_projectiles(player: Player) -> void:
 
 	var count: int = 6 if is_enraged else 4
 	var spread_angle: float = PI * 0.4
+	var p_type: BossProjectile.ProjectileType = BossProjectile.ProjectileType.DARK_ORB if _is_pure_caster() else BossProjectile.ProjectileType.FIREBALL
 
 	for i: int in range(count):
 		var proj: BossProjectile = _proj_scene.instantiate() as BossProjectile
 		var angle_offset: float = -spread_angle / 2.0 + (float(i) / float(maxi(count - 1, 1))) * spread_angle
-		proj.direction = base_dir.rotated(angle_offset)
-		proj.damage = roundi(damage * 0.8)
-		proj.speed = data.projectile_speed if data != null else 150.0
+		var p_spd: float = data.projectile_speed if data != null else 150.0
+		proj.setup_type(p_type, roundi(damage * 0.8), p_spd, base_dir.rotated(angle_offset))
 		proj.global_position = global_position
 		get_tree().current_scene.add_child(proj)
 
 
-# ── Skill 5: Summon Minions ─────────────────────────────────────────────
+# ── Summon Minions ──────────────────────────────────────────────────────
 func _start_summon() -> void:
 	current_state = State.CASTING
 	_state_timer = 0.6
@@ -468,7 +600,7 @@ func _on_hitbox_body_entered(body: Node2D) -> void:
 	if _is_dying:
 		return
 	if body is Player:
-		var final_dmg: int = damage if current_state != State.CHARGING else roundi(damage * 1.5)
+		var final_dmg: int = damage if (current_state != State.CHARGING and current_state != State.POUNCING) else roundi(damage * 1.5)
 		(body as Player).take_damage(final_dmg)
 
 

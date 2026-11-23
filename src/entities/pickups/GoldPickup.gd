@@ -76,6 +76,24 @@ func _on_body_entered(body: Node2D) -> void:
 		tw.tween_callback(queue_free)
 
 
+func vacuum_to_player(player: Player) -> void:
+	if _collected or player == null or not is_instance_valid(player):
+		return
+	_collected = true
+	if _float_tween != null and _float_tween.is_valid():
+		_float_tween.kill()
+
+	var tw: Tween = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(self, ^"global_position", player.global_position, 0.4).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, ^"scale", Vector2(0.4, 0.4), 0.4)
+	tw.chain().tween_callback(func():
+		GameManager.add_gold(gold_amount)
+		AudioManager.play_sfx("gold")
+		queue_free()
+	)
+
+
 func _start_float_animation() -> void:
 	_float_tween = create_tween()
 	_float_tween.set_loops()

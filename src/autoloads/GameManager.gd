@@ -197,6 +197,13 @@ func do_reroll() -> bool:
 	return false
 
 
+func has_buff(p_item_id: String) -> bool:
+	for b: ItemData in passive_buffs:
+		if b.item_id == p_item_id:
+			return true
+	return false
+
+
 func _on_enemy_killed(_pos: Vector2, gold_value: int) -> void:
 	add_gold(gold_value)
 
