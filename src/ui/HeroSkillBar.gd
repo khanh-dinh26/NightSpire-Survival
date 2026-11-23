@@ -91,13 +91,15 @@ func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
 		_is_ult_ready = true
 		ult_overlay.visible = false
 		ult_charge_lbl.text = "SẴN SÀNG!"
-		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.3))
+		ult_charge_lbl.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
+		ult_name_lbl.add_theme_color_override(&"font_color", Color(1.0, 1.0, 1.0, 1.0))
 		_start_ult_glow()
 	else:
 		_is_ult_ready = false
 		ult_overlay.visible = true
 		ult_charge_lbl.text = "%d%%" % roundi(pct * 100.0)
-		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35))
+		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35, 1.0))
+		ult_name_lbl.add_theme_color_override(&"font_color", Color(0.9, 0.9, 0.9, 1.0))
 		_stop_ult_glow()
 
 
@@ -106,8 +108,8 @@ func _start_ult_glow() -> void:
 	if _ult_pulse_tween != null and _ult_pulse_tween.is_valid():
 		return
 	_ult_pulse_tween = create_tween().set_loops()
-	_ult_pulse_tween.tween_property(ult_glow, ^"modulate", Color(1.5, 1.2, 0.3, 1.0), 0.45)
-	_ult_pulse_tween.tween_property(ult_glow, ^"modulate", Color(1.8, 0.4, 0.2, 1.0), 0.45)
+	_ult_pulse_tween.tween_property(ult_glow, ^"modulate", Color(1.3, 1.1, 0.3, 1.0), 0.5)
+	_ult_pulse_tween.tween_property(ult_glow, ^"modulate", Color(1.4, 0.5, 0.2, 1.0), 0.5)
 
 
 func _stop_ult_glow() -> void:
@@ -140,6 +142,7 @@ func _on_ult_used(_id: String) -> void:
 	# Epic flash and reset
 	_stop_ult_glow()
 	ult_charge_lbl.text = "0%"
+	ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35, 1.0))
 	var tw: Tween = create_tween()
 	tw.tween_property(ult_btn, ^"scale", Vector2(1.3, 1.3), 0.10)
 	tw.tween_property(ult_btn, ^"scale", Vector2.ONE, 0.15)
