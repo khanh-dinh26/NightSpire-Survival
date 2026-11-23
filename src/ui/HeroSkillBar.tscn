@@ -1,0 +1,189 @@
+[gd_scene load_steps=5 format=3 uid="uid://heroskillbar001"]
+
+[ext_resource type="Script" path="res://src/ui/HeroSkillBar.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="2_panel"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="3_btn_normal"]
+[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="4_btn_hover"]
+
+[node name="HeroSkillBar" type="Control"]
+custom_minimum_size = Vector2(136, 54)
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -146.0
+offset_top = -64.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("1_script")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+alignment = 2
+
+[node name="SkillSlot" type="Control" parent="HBox"]
+custom_minimum_size = Vector2(62, 54)
+layout_mode = 2
+
+[node name="SkillButton" type="Button" parent="HBox/SkillSlot"]
+custom_minimum_size = Vector2(62, 54)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(31, 27)
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+
+[node name="VBox" type="VBoxContainer" parent="HBox/SkillSlot/SkillButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="KeyLabel" type="Label" parent="HBox/SkillSlot/SkillButton/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.45, 0.75, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0.4)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 8
+text = "[E | R-Click]"
+horizontal_alignment = 1
+
+[node name="SkillName" type="Label" parent="HBox/SkillSlot/SkillButton/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 9
+text = "Kỹ Năng"
+horizontal_alignment = 1
+clip_text = true
+
+[node name="CDOverlay" type="ColorRect" parent="HBox/SkillSlot/SkillButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.08, 0.08, 0.12, 0.82)
+
+[node name="CDLabel" type="Label" parent="HBox/SkillSlot/SkillButton/CDOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 11
+text = "5.0s"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UltimateSlot" type="Control" parent="HBox"]
+custom_minimum_size = Vector2(68, 54)
+layout_mode = 2
+
+[node name="UltButton" type="Button" parent="HBox/UltimateSlot"]
+custom_minimum_size = Vector2(68, 54)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(34, 27)
+theme_override_styles/normal = ExtResource("3_btn_normal")
+theme_override_styles/hover = ExtResource("4_btn_hover")
+theme_override_styles/pressed = ExtResource("4_btn_hover")
+
+[node name="VBox" type="VBoxContainer" parent="HBox/UltimateSlot/UltButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="KeyLabel" type="Label" parent="HBox/UltimateSlot/UltButton/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.35, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0.4)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 8
+text = "[Q | Space]"
+horizontal_alignment = 1
+
+[node name="UltName" type="Label" parent="HBox/UltimateSlot/UltButton/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 9
+text = "Tuyệt Kỹ"
+horizontal_alignment = 1
+clip_text = true
+
+[node name="ChargeLabel" type="Label" parent="HBox/UltimateSlot/UltButton/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.25, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0.3)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 8
+text = "0%"
+horizontal_alignment = 1
+
+[node name="ChargeOverlay" type="ColorRect" parent="HBox/UltimateSlot/UltButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.1, 0.05, 0.05, 0.45)
+
+[node name="GlowBorder" type="NinePatchRect" parent="HBox/UltimateSlot/UltButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_panel")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10

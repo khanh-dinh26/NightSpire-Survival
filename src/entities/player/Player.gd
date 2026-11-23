@@ -20,6 +20,15 @@ var kills_counter: int = 0
 
 var _spell_scene: PackedScene = preload("res://src/entities/spells/SpellEntity.tscn")
 
+# ── Hero Abilities (Character Skill & Ultimate Art) ─────────────────────
+var hero_class: ClassData = null
+var skill_cooldown_timer: float = 0.0
+var skill_cooldown_max: float = 7.0
+var ultimate_charge: int = 0
+var ultimate_required_damage: int = 650
+var is_stealthed: bool = false
+var is_invincible: bool = false
+
 # ── Procedural animation timers ────────────────────────────────────────
 var _walk_phase: float = 0.0
 var _idle_phase: float = 0.0
@@ -30,6 +39,14 @@ var _is_hit_animating: bool = false
 func _ready() -> void:
 	add_to_group(&"player")
 	EventBus.spell_cast_requested.connect(_on_spell_cast_requested)
+	EventBus.player_dealt_damage.connect(_on_player_dealt_damage)
+	ultimate_charge = GameManager.hero_ultimate_charge
+
+	if GameManager.chosen_class == null:
+		var default_path: String = "res://src/data/classes/knight.tres"
+		if ResourceLoader.exists(default_path):
+			GameManager.chosen_class = load(default_path) as ClassData
+
 	if GameManager.chosen_class != null:
 		setup_from_class(GameManager.chosen_class)
 		if GameManager.player_current_hp > 0:
@@ -56,19 +73,54 @@ func _ready() -> void:
 		apply_item(buff)
 
 
+func _process(delta: float) -> void:
+	if skill_cooldown_timer > 0.0:
+		skill_cooldown_timer = maxf(skill_cooldown_timer - delta, 0.0)
+		EventBus.hero_skill_cooldown_updated.emit(skill_cooldown_timer, skill_cooldown_max)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if is_dead:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_E:
+			cast_character_skill()
+		elif event.keycode == KEY_Q or event.keycode == KEY_SPACE:
+			cast_ultimate_art()
+	elif event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			cast_character_skill()
+
+
 func setup_from_class(p_class: ClassData) -> void:
 	if p_class == null:
 		return
+	hero_class = p_class
 	max_hp = p_class.max_hp
 	current_hp = max_hp
 	speed = p_class.speed
 	defense = p_class.defense
 	sprite.region_rect = p_class.sprite_region
 
+	if hero_class != null:
+		skill_cooldown_max = hero_class.skill_cooldown
+		ultimate_required_damage = hero_class.ultimate_required_damage
+		EventBus.hero_skill_cooldown_updated.emit(skill_cooldown_timer, skill_cooldown_max)
+		EventBus.hero_ultimate_charge_updated.emit(ultimate_charge, ultimate_required_damage)
+
 	if weapon_orbit != null:
 		weapon_orbit.clear_weapons()
 		for w: ItemData in GameManager.equipped_weapons:
 			weapon_orbit.add_weapon(w)
+
+
+func _on_player_dealt_damage(amount: int) -> void:
+	if is_dead:
+		return
+	if ultimate_charge < ultimate_required_damage:
+		ultimate_charge = mini(ultimate_charge + amount, ultimate_required_damage)
+		GameManager.hero_ultimate_charge = ultimate_charge
+		EventBus.hero_ultimate_charge_updated.emit(ultimate_charge, ultimate_required_damage)
 
 
 # ── Movement & Procedural Animation ─────────────────────────────────────
@@ -186,7 +238,7 @@ func apply_item(item: ItemData) -> void:
 
 # ── Damage ─────────────────────────────────────────────────────────────
 func take_damage(amount: int) -> void:
-	if is_dead:
+	if is_dead or is_invincible or is_stealthed:
 		return
 
 	# Dodge chance
@@ -339,3 +391,326 @@ func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
 		spell.damage = 40 + (lvl - 1) * 20
 		spell.global_position = target_pos + offset
 		get_tree().current_scene.add_child(spell)
+
+
+# ── Character Skill & Ultimate Art Execution ─────────────────────────
+func cast_character_skill() -> bool:
+	if is_dead or skill_cooldown_timer > 0.0:
+		return false
+	if hero_class == null or hero_class.skill_id.is_empty():
+		return false
+
+	skill_cooldown_timer = skill_cooldown_max
+	EventBus.hero_skill_used.emit(hero_class.skill_id)
+	EventBus.hero_skill_cooldown_updated.emit(skill_cooldown_timer, skill_cooldown_max)
+
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var aim_dir: Vector2 = (mouse_pos - global_position).normalized()
+	if aim_dir == Vector2.ZERO:
+		aim_dir = Vector2.LEFT if sprite.flip_h else Vector2.RIGHT
+
+	match hero_class.skill_id:
+		"claw_shot":
+			_execute_claw_shot(mouse_pos, aim_dir)
+		"marking_dash":
+			_execute_marking_dash(aim_dir)
+		"magic_cocktail":
+			_execute_magic_cocktail(mouse_pos)
+		"whirlwind":
+			_execute_whirlwind()
+		"restage":
+			_execute_restage()
+		"cursed_sword":
+			_execute_cursed_sword(aim_dir)
+		_:
+			_execute_claw_shot(mouse_pos, aim_dir)
+	return true
+
+
+func cast_ultimate_art() -> bool:
+	if is_dead or ultimate_charge < ultimate_required_damage:
+		return false
+	if hero_class == null or hero_class.ultimate_id.is_empty():
+		return false
+
+	ultimate_charge = 0
+	GameManager.hero_ultimate_charge = 0
+	EventBus.hero_ultimate_used.emit(hero_class.ultimate_id)
+	EventBus.hero_ultimate_charge_updated.emit(0, ultimate_required_damage)
+
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var aim_dir: Vector2 = (mouse_pos - global_position).normalized()
+	if aim_dir == Vector2.ZERO:
+		aim_dir = Vector2.LEFT if sprite.flip_h else Vector2.RIGHT
+
+	match hero_class.ultimate_id:
+		"onslaught_stake":
+			_execute_onslaught_stake(mouse_pos)
+		"single_shot":
+			_execute_single_shot(aim_dir)
+		"soulblood_song":
+			_execute_soulblood_song()
+		"wings_of_salvation":
+			_execute_wings_of_salvation()
+		"finale":
+			_execute_finale()
+		"crucible_beast":
+			_execute_crucible_beast()
+		_:
+			_execute_onslaught_stake(mouse_pos)
+	return true
+
+
+func _execute_claw_shot(_mouse_pos: Vector2, aim_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	_screen_shake(5.0, 0.25)
+
+	# Spectral claw visuals
+	var claw_line: Line2D = Line2D.new()
+	claw_line.width = 4.0
+	claw_line.default_color = Color(1.2, 0.8, 0.3, 1.0)
+	claw_line.points = PackedVector2Array([Vector2.ZERO, aim_dir * 180.0])
+	add_child(claw_line)
+	var tw: Tween = create_tween()
+	tw.tween_property(claw_line, ^"width", 0.0, 0.20)
+	tw.tween_callback(claw_line.queue_free)
+
+	# Pull enemies
+	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
+	for e_node: Node in enemies:
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		var to_e: Vector2 = enemy.global_position - global_position
+		if to_e.length() <= 190.0 and to_e.normalized().dot(aim_dir) > 0.4:
+			if enemy is BossBase:
+				# Boss: Pull player towards boss!
+				global_position = global_position.lerp(enemy.global_position - aim_dir * 45.0, 0.65)
+				enemy.take_damage(140)
+			else:
+				# Normal enemy: pull to player
+				enemy.global_position = enemy.global_position.lerp(global_position + aim_dir * 35.0, 0.80)
+				enemy.take_damage(140)
+
+
+func _execute_marking_dash(aim_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	_screen_shake(4.0, 0.2)
+
+	# Swift backwards dash
+	velocity = -aim_dir * 380.0
+	move_and_slide()
+
+	# Front crescent dagger slash marking enemies
+	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
+	for e_node: Node in enemies:
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		var to_e: Vector2 = enemy.global_position - global_position
+		if to_e.length() <= 140.0 and to_e.normalized().dot(aim_dir) > 0.25:
+			enemy.set_meta("marked", true)
+			enemy.take_damage(120)
+			# Red outline / marked aura
+			var tw_mark: Tween = enemy.create_tween()
+			tw_mark.set_loops(6)
+			tw_mark.tween_property(enemy, ^"modulate", Color(2.0, 0.4, 0.4, 1.0), 0.5)
+			tw_mark.tween_property(enemy, ^"modulate", Color.WHITE, 0.5)
+			# Remove mark after 6s
+			var tw_clean: Tween = create_tween()
+			tw_clean.tween_interval(6.0)
+			tw_clean.tween_callback(func():
+				if is_instance_valid(enemy):
+					enemy.remove_meta("marked")
+			)
+
+
+func _execute_magic_cocktail(target_pos: Vector2) -> void:
+	AudioManager.play_sfx("spell_fire")
+	_screen_shake(6.0, 0.25)
+
+	# Explosion at target
+	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
+	for e_node: Node in enemies:
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		if enemy.global_position.distance_to(target_pos) <= 100.0:
+			enemy.take_damage(160)
+			if "speed_mult" in enemy:
+				enemy.speed_mult *= 0.4
+				var tw_spd: Tween = create_tween()
+				tw_spd.tween_interval(4.0)
+				tw_spd.tween_callback(func():
+					if is_instance_valid(enemy):
+						enemy.speed_mult /= 0.4
+				)
+
+	# Lingering pool ticks
+	for tick: int in range(1, 4):
+		var tw_tick: Tween = create_tween()
+		tw_tick.tween_interval(float(tick) * 0.9)
+		tw_tick.tween_callback(func():
+			for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+				var enemy: CharacterBody2D = e_node as CharacterBody2D
+				if enemy != null and is_instance_valid(enemy) and enemy.global_position.distance_to(target_pos) <= 90.0:
+					enemy.take_damage(40)
+		)
+
+
+func _execute_whirlwind() -> void:
+	AudioManager.play_sfx("spell_wind")
+	_screen_shake(6.0, 0.25)
+	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy != null and is_instance_valid(enemy) and global_position.distance_to(enemy.global_position) <= 130.0:
+			var push_dir: Vector2 = (enemy.global_position - global_position).normalized()
+			if "apply_knockback" in enemy:
+				enemy.apply_knockback(push_dir * 180.0)
+			enemy.take_damage(140)
+
+
+func _execute_restage() -> void:
+	AudioManager.play_sfx("slash")
+	_screen_shake(6.0, 0.25)
+	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy != null and is_instance_valid(enemy) and global_position.distance_to(enemy.global_position) <= 130.0:
+			enemy.take_damage(180)
+
+
+func _execute_cursed_sword(aim_dir: Vector2) -> void:
+	AudioManager.play_sfx("slash")
+	_screen_shake(6.0, 0.25)
+	global_position += aim_dir * 100.0
+	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy != null and is_instance_valid(enemy) and global_position.distance_to(enemy.global_position) <= 90.0:
+			enemy.take_damage(190)
+
+
+# ── Ultimates ──────────────────────────────────────────────────────────
+func _execute_onslaught_stake(target_pos: Vector2) -> void:
+	AudioManager.play_sfx("explosion")
+	_screen_shake(16.0, 0.5)
+
+	# Giant fiery impact shockwave
+	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
+	for e_node: Node in enemies:
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		if enemy.global_position.distance_to(target_pos) <= 180.0:
+			var push: Vector2 = (enemy.global_position - target_pos).normalized() * 220.0
+			if "apply_knockback" in enemy:
+				enemy.apply_knockback(push)
+			enemy.take_damage(850)
+
+
+func _execute_single_shot(aim_dir: Vector2) -> void:
+	AudioManager.play_sfx("explosion")
+	_screen_shake(12.0, 0.4)
+
+	# Visual supersonic piercing laser beam
+	var laser: Line2D = Line2D.new()
+	laser.width = 8.0
+	laser.default_color = Color(2.5, 2.0, 0.5, 1.0)
+	laser.points = PackedVector2Array([global_position, global_position + aim_dir * 900.0])
+	get_tree().current_scene.add_child(laser)
+	var tw: Tween = create_tween()
+	tw.tween_property(laser, ^"width", 0.0, 0.35)
+	tw.tween_callback(laser.queue_free)
+
+	# Pierces all enemies along line
+	var ray_start: Vector2 = global_position
+	var ray_end: Vector2 = global_position + aim_dir * 900.0
+	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		var to_e: Vector2 = enemy.global_position - ray_start
+		var proj: float = to_e.dot(aim_dir)
+		if proj >= 0.0 and proj <= 900.0:
+			var closest_point: Vector2 = ray_start + aim_dir * proj
+			if enemy.global_position.distance_to(closest_point) <= 45.0:
+				enemy.take_damage(1100)
+
+
+func _execute_soulblood_song() -> void:
+	AudioManager.play_sfx("spell_fire")
+	_screen_shake(10.0, 0.35)
+	heal(40)
+
+	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy != null and is_instance_valid(enemy):
+			enemy.take_damage(500)
+
+
+func _execute_wings_of_salvation() -> void:
+	AudioManager.play_sfx("heal")
+	AudioManager.play_sfx("explosion")
+	_screen_shake(10.0, 0.35)
+	heal(50)
+	defense += 5
+	var tw_def: Tween = create_tween()
+	tw_def.tween_interval(8.0)
+	tw_def.tween_callback(func(): defense -= 5)
+
+	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: CharacterBody2D = e_node as CharacterBody2D
+		if enemy != null and is_instance_valid(enemy) and global_position.distance_to(enemy.global_position) <= 150.0:
+			enemy.take_damage(600)
+
+
+func _execute_finale() -> void:
+	AudioManager.play_sfx("unpause")
+	is_stealthed = true
+	is_invincible = true
+	var orig_color: Color = sprite.modulate
+	sprite.modulate.a = 0.35
+	speed *= 1.5
+
+	var tw: Tween = create_tween()
+	tw.tween_interval(4.0)
+	tw.tween_callback(func():
+		is_stealthed = false
+		is_invincible = false
+		sprite.modulate = orig_color
+		speed /= 1.5
+	)
+
+
+func _execute_crucible_beast() -> void:
+	AudioManager.play_sfx("explosion")
+	_screen_shake(12.0, 0.4)
+	var orig_mod: Color = sprite.modulate
+	sprite.modulate = Color(2.0, 0.6, 0.2, 1.0)
+	speed *= 1.35
+
+	for wave_idx: int in range(3):
+		var tw_wave: Tween = create_tween()
+		tw_wave.tween_interval(float(wave_idx) * 1.5)
+		tw_wave.tween_callback(func():
+			_screen_shake(8.0, 0.25)
+			for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+				var enemy: CharacterBody2D = e_node as CharacterBody2D
+				if enemy != null and is_instance_valid(enemy) and global_position.distance_to(enemy.global_position) <= 180.0:
+					enemy.take_damage(400)
+		)
+
+	var tw_end: Tween = create_tween()
+	tw_end.tween_interval(5.0)
+	tw_end.tween_callback(func():
+		sprite.modulate = orig_mod
+		speed /= 1.35
+	)
+
+
+func _screen_shake(amount: float, duration: float = 0.3) -> void:
+	var hud_nodes: Array[Node] = get_tree().get_nodes_in_group(&"hud")
+	if hud_nodes.size() > 0:
+		var hud: HUD = hud_nodes[0] as HUD
+		if hud != null:
+			hud.screen_shake(amount, duration)
+

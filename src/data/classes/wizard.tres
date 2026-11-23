@@ -6,10 +6,19 @@
 [resource]
 script = ExtResource("1_class")
 class_id = "wizard"
-display_name = "Pháp Sư (Wizard)"
+display_name = "Recluse - Pháp Sư (Wizard)"
 sprite_region = Rect2(32, 128, 32, 32)
 max_hp = 85
 speed = 120.0
 defense = 0
 starter_weapon = ExtResource("2_weap")
-description = "Bậc thầy phép thuật phóng những tia sét xuyên thấu uy lực cao. Khởi đầu với Trượng Pha Lê."
+description = "Bậc thầy cổ thuật ma pháp. Sở hữu kỹ năng ném Cocktail Ma Pháp phát nổ nguyên tố và Huyết Chú Khải Hoàn nguyền rủa kẻ địch hút máu hồi phục bản thân."
+skill_id = "magic_cocktail"
+skill_name = "Magic Cocktail (Ma Pháp)"
+skill_desc = "Ném bình cocktail ma thuật phát nổ nguyên tố diện rộng, làm chậm 60% và thiêu đốt quái."
+skill_cooldown = 7.5
+ultimate_id = "soulblood_song"
+ultimate_name = "Soulblood Song (Huyết Chú)"
+ultimate_desc = "Khai mở huyết ấn lên toàn bộ quái vật trên sàn đấu, gây 500 sát thương và hồi máu cho người chơi."
+ultimate_required_damage = 600
+

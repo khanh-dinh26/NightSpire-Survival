@@ -144,6 +144,9 @@ func _on_damage_cooldown_timeout() -> void:
 func take_damage(amount: int) -> void:
 	if _is_dying:
 		return
+	if has_meta("marked"):
+		amount = roundi(float(amount) * 1.6)
+	EventBus.player_dealt_damage.emit(amount)
 	current_hp -= amount
 	_hit_flash()
 	if current_hp <= 0:

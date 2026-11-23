@@ -365,7 +365,7 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "Hiệp Sĩ (Knight)"
+text = "Wylder (Knight)"
 horizontal_alignment = 1
 
 [node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
@@ -378,8 +378,8 @@ horizontal_alignment = 1
 [node name="Desc" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class0/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
-theme_override_font_sizes/font_size = 14
-text = "Chiến binh kiên cường với lượng HP dày và giáp sắt giảm sát thương nhận vào."
+theme_override_font_sizes/font_size = 12
+text = "Chiến binh Souls-like dũng mãnh.\nKỹ năng [E]: Claw Shot (Vuốt Kéo)\nTuyệt kỹ [Q]: Onslaught Stake (Trọng Kích Nổ)"
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -437,7 +437,7 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "Cung Thủ (Ranger)"
+text = "Ironeye (Ranger)"
 horizontal_alignment = 1
 
 [node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
@@ -450,9 +450,10 @@ horizontal_alignment = 1
 [node name="Desc" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class1/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
-theme_override_font_sizes/font_size = 14
-text = "Thợ săn bóng đêm với Speed di chuyển cực nhanh và khả năng bắn tỉa tầm xa."
+theme_override_font_sizes/font_size = 12
+text = "Xạ thủ siêu thanh bách phát bách trúng.\nKỹ năng [E]: Marking (Đánh Dấu Lùi)\nTuyệt kỹ [Q]: Single Shot (Nhất Tiễn Siêu Thanh)"
 horizontal_alignment = 1
+autowrap_mode = 3
 autowrap_mode = 3
 
 [node name="Class2" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
@@ -509,7 +510,7 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "Pháp Sư (Wizard)"
+text = "Recluse (Wizard)"
 horizontal_alignment = 1
 
 [node name="Stats" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
@@ -522,8 +523,8 @@ horizontal_alignment = 1
 [node name="Desc" type="Label" parent="Margin/VBox/ClassStep/ClassCards/Class2/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
-theme_override_font_sizes/font_size = 14
-text = "Bậc thầy phép thuật phóng những tia sét xuyên thấu uy lực cao."
+theme_override_font_sizes/font_size = 12
+text = "Bậc thầy ma pháp cổ xưa nguyền rủa.\nKỹ năng [E]: Magic Cocktail (Ma Pháp)\nTuyệt kỹ [Q]: Soulblood Song (Huyết Chú)"
 horizontal_alignment = 1
 autowrap_mode = 3
 

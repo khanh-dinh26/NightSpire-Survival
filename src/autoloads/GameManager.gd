@@ -11,6 +11,7 @@ var player_max_hp: int = 100
 var player_current_hp: int = 100
 var is_dark_night: bool = false
 var dark_night_cycle: int = 0
+var hero_ultimate_charge: int = 0
 
 # ---- Inventory ----
 const MAX_WEAPONS: int = 10
@@ -39,6 +40,7 @@ func start_new_run(tower: TowerData, floors: Array[FloorConfig], p_class: ClassD
 	chosen_class = p_class
 	current_floor_index = 1
 	gold = 0
+	hero_ultimate_charge = 0
 	is_dark_night = false
 	dark_night_cycle = 0
 	equipped_weapons.clear()

@@ -10,3 +10,16 @@ extends Resource
 @export var defense: int = 0
 @export var starter_weapon: ItemData = null
 @export_multiline var description: String = ""
+
+# --- Character Skill (Hồi theo thời gian - Cooldown) ---
+@export var skill_id: String = ""
+@export var skill_name: String = ""
+@export_multiline var skill_desc: String = ""
+@export var skill_cooldown: float = 7.0
+
+# --- Ultimate Art (Tích nộ khi gây đủ sát thương - Damage Charged) ---
+@export var ultimate_id: String = ""
+@export var ultimate_name: String = ""
+@export_multiline var ultimate_desc: String = ""
+@export var ultimate_required_damage: int = 650
+

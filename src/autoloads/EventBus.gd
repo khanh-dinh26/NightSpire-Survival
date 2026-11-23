@@ -26,6 +26,13 @@ signal weapon_dropped(item_id: String)
 signal spell_learned(spell_id: String, level: int)
 signal spell_cast_requested(spell_id: String, level: int, target_pos: Vector2)
 
+# --- Hero Abilities ---
+signal player_dealt_damage(damage: int)
+signal hero_skill_used(skill_id: String)
+signal hero_ultimate_used(ultimate_id: String)
+signal hero_skill_cooldown_updated(current: float, max_cd: float)
+signal hero_ultimate_charge_updated(current: int, max_charge: int)
+
 # --- UI ---
 signal shop_opened(card_list: Array)
 signal shop_closed()

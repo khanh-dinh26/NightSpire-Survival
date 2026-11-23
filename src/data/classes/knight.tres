@@ -6,10 +6,19 @@
 [resource]
 script = ExtResource("1_class")
 class_id = "knight"
-display_name = "Hiệp Sĩ (Knight)"
+display_name = "Wylder - Hiệp Sĩ (Knight)"
 sprite_region = Rect2(0, 32, 32, 32)
 max_hp = 130
 speed = 115.0
 defense = 2
 starter_weapon = ExtResource("2_weap")
-description = "Chiến binh kiên cường với lượng máu dày và giáp sắt giảm sát thương nhận vào. Khởi đầu với Dao Thép."
+description = "Chiến binh toàn diện phong cách Souls-like. Sở hữu kỹ năng bắn Vuốt Kéo áp sát quái vật và Nộ Tuyệt Kỹ Trọng Kích bùng nổ diện rộng."
+skill_id = "claw_shot"
+skill_name = "Claw Shot (Vuốt Kéo)"
+skill_desc = "Bắn vuốt kéo quái nhỏ lại gần và lướt tới quái to, gây 140 sát thương và làm choáng 1.2s."
+skill_cooldown = 7.0
+ultimate_id = "onslaught_stake"
+ultimate_name = "Onslaught Stake (Trọng Kích Nổ)"
+ultimate_desc = "Đóng cọc sắt bùng nổ kinh hoàng gây 850 sát thương diện rộng và phá vỡ thế trận quái vật."
+ultimate_required_damage = 700
+

@@ -462,6 +462,10 @@ func take_damage(amount: int) -> void:
 	if _is_dying:
 		return
 
+	if has_meta("marked"):
+		amount = roundi(float(amount) * 1.6)
+	EventBus.player_dealt_damage.emit(amount)
+
 	current_hp = maxi(current_hp - amount, 0)
 	boss_hp_changed.emit(current_hp, max_hp)
 

@@ -43,6 +43,7 @@ func save_run() -> void:
 		"max_hp": GameManager.player_max_hp,
 		"is_dark_night": GameManager.is_dark_night,
 		"dark_night_cycle": GameManager.dark_night_cycle,
+		"hero_ultimate_charge": GameManager.hero_ultimate_charge,
 		"learned_spells": GameManager.learned_spells,
 		"equipped_weapons": weapons_data,
 		"passives": passives_data
@@ -112,6 +113,7 @@ func resume_saved_run() -> bool:
 	var saved_hp: int = int(save_data.get("current_hp", GameManager.player_max_hp))
 	# Ensure resuming has at least half HP or full HP
 	GameManager.player_current_hp = maxi(saved_hp, GameManager.player_max_hp / 2)
+	GameManager.hero_ultimate_charge = int(save_data.get("hero_ultimate_charge", 0))
 	GameManager.is_dark_night = bool(save_data.get("is_dark_night", false))
 	GameManager.dark_night_cycle = int(save_data.get("dark_night_cycle", 0))
 
