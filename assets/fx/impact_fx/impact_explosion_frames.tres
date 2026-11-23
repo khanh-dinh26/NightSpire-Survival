@@ -1,0 +1,50 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_00.png" id="1_exp0"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_01.png" id="2_exp1"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_02.png" id="3_exp2"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_03.png" id="4_exp3"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_04.png" id="5_exp4"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_05.png" id="6_exp5"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_06.png" id="7_exp6"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_07.png" id="8_exp7"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_08.png" id="9_exp8"]
+[ext_resource type="Texture2D" path="res://assets/fx/impact_fx/frames/explosion/explosion_09.png" id="10_exp9"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_exp0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_exp1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_exp2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_exp3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_exp4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_exp5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_exp6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_exp7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_exp8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_exp9")
+}],
+"loop": false,
+"name": &"play",
+"speed": 16.0
+}]

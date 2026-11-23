@@ -1,0 +1,17 @@
+[
+ {
+  "file": "sfx/explosion.wav",
+  "description": "Large explosion",
+  "seconds": 1.5
+ },
+ {
+  "file": "sfx/swish_heavy.wav",
+  "description": "Heavy weapon swing",
+  "seconds": 0.372
+ },
+ {
+  "file": "sfx/pumpkin_splat.wav",
+  "description": "Pumpkin splat",
+  "seconds": 0.55
+ }
+]

@@ -20,6 +20,10 @@ var kills_counter: int = 0
 
 var _spell_scene: PackedScene = preload("res://src/entities/spells/SpellEntity.tscn")
 var _cursor_aim_tex: Texture2D = preload("res://assets/ui/cursors/all_scroll_cursor.png")
+var _impact_exp_frames: SpriteFrames = preload("res://assets/fx/impact_fx/impact_explosion_frames.tres")
+var _impact_slash_frames: SpriteFrames = preload("res://assets/fx/impact_fx/impact_slash_frames.tres")
+var _impact_burst_frames: SpriteFrames = preload("res://assets/fx/impact_fx/impact_burst_frames.tres")
+var _target_indicator: SkillTargetIndicator = null
 
 # ── Hero Abilities (Character Skill & Ultimate Art) ─────────────────────
 var hero_class: ClassData = null
@@ -294,7 +298,24 @@ func cancel_skill_aiming() -> void:
 	if is_aiming_skill:
 		is_aiming_skill = false
 		Input.set_custom_mouse_cursor(null)
+		_cleanup_target_indicator()
 		EventBus.hero_skill_aiming_changed.emit(false)
+
+
+func _spawn_target_indicator(p_skill_id: String) -> void:
+	_cleanup_target_indicator()
+	_target_indicator = SkillTargetIndicator.new()
+	_target_indicator.skill_type = p_skill_id
+	_target_indicator.player = self
+	if p_skill_id == "magic_cocktail":
+		_target_indicator.aoe_radius = 140.0
+	get_tree().current_scene.add_child(_target_indicator)
+
+
+func _cleanup_target_indicator() -> void:
+	if _target_indicator != null and is_instance_valid(_target_indicator):
+		_target_indicator.queue_free()
+	_target_indicator = null
 
 
 func _exit_tree() -> void:
@@ -433,11 +454,13 @@ func cast_character_skill() -> bool:
 				return false
 			is_aiming_skill = true
 			Input.set_custom_mouse_cursor(_cursor_aim_tex, Input.CURSOR_ARROW, Vector2(16, 16))
+			_spawn_target_indicator(skill_id)
 			EventBus.hero_skill_aiming_changed.emit(true)
 			return true
 		else:
 			is_aiming_skill = false
 			Input.set_custom_mouse_cursor(null)
+			_cleanup_target_indicator()
 			EventBus.hero_skill_aiming_changed.emit(false)
 	else:
 		if skill_cooldown_timer > 0.0:
@@ -516,8 +539,9 @@ func cast_ultimate_art() -> bool:
 
 
 func _execute_claw_shot(_mouse_pos: Vector2, _aim_dir: Vector2) -> void:
+	AudioManager.play_sfx("heavy_slash")
 	AudioManager.play_sfx("slash")
-	_screen_shake(8.0, 0.25)
+	_screen_shake(9.0, 0.25)
 
 	# 360-degree rotating blade slash visual
 	var slash_pivot: Node2D = Node2D.new()
@@ -526,10 +550,10 @@ func _execute_claw_shot(_mouse_pos: Vector2, _aim_dir: Vector2) -> void:
 
 	var ring: Line2D = Line2D.new()
 	ring.width = 6.0
-	ring.default_color = Color(1.8, 1.4, 0.4, 1.0)
+	ring.default_color = Color(2.0, 1.6, 0.4, 1.0)
 	var pts: PackedVector2Array = PackedVector2Array()
-	var segs: int = 32
-	var r: float = 140.0
+	var segs: int = 36
+	var r: float = 150.0
 	for i: int in range(segs + 1):
 		var ang: float = float(i) * TAU / float(segs)
 		pts.append(Vector2(cos(ang), sin(ang)) * r)
@@ -537,9 +561,9 @@ func _execute_claw_shot(_mouse_pos: Vector2, _aim_dir: Vector2) -> void:
 	slash_pivot.add_child(ring)
 
 	var blade_line: Line2D = Line2D.new()
-	blade_line.width = 7.0
-	blade_line.default_color = Color(2.5, 2.0, 1.0, 1.0)
-	blade_line.points = PackedVector2Array([Vector2.ZERO, Vector2(r + 20.0, 0)])
+	blade_line.width = 8.0
+	blade_line.default_color = Color(3.0, 2.2, 1.0, 1.0)
+	blade_line.points = PackedVector2Array([Vector2.ZERO, Vector2(r + 30.0, 0)])
 	slash_pivot.add_child(blade_line)
 
 	var tw: Tween = create_tween()
@@ -549,7 +573,18 @@ func _execute_claw_shot(_mouse_pos: Vector2, _aim_dir: Vector2) -> void:
 	tw.tween_property(blade_line, ^"width", 0.0, 0.22)
 	tw.chain().tween_callback(slash_pivot.queue_free)
 
-	# Kill/strike all surrounding enemies in 360 degree radius
+	# ImpactFX heavy slash kinetic sprite
+	var slash_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+	slash_fx.sprite_frames = _impact_slash_frames
+	slash_fx.animation = &"play"
+	slash_fx.scale = Vector2(2.6, 2.6)
+	slash_fx.global_position = global_position
+	slash_fx.modulate = Color(2.5, 1.8, 0.6, 1.0)
+	get_tree().current_scene.add_child(slash_fx)
+	slash_fx.play(&"play")
+	slash_fx.animation_finished.connect(slash_fx.queue_free)
+
+	# Kill/strike all surrounding enemies in 190px radius
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
@@ -561,7 +596,7 @@ func _execute_claw_shot(_mouse_pos: Vector2, _aim_dir: Vector2) -> void:
 			if push_dir == Vector2.ZERO:
 				push_dir = Vector2.UP
 			if "apply_knockback" in enemy:
-				enemy.apply_knockback(push_dir * 180.0)
+				enemy.apply_knockback(push_dir * 200.0)
 			enemy.take_damage(750)
 
 
@@ -601,19 +636,47 @@ func _execute_marking_dash(aim_dir: Vector2) -> void:
 
 
 func _execute_magic_cocktail(target_pos: Vector2) -> void:
-	AudioManager.play_sfx("spell_fire")
-	AudioManager.play_sfx("explosion")
+	AudioManager.play_sfx("impact_heavy")
+	AudioManager.play_sfx("burst_splat")
 	_screen_shake(9.0, 0.3)
 
-	# Visual elemental explosion at target position
-	var exp_spell: SpellEntity = _spell_scene.instantiate() as SpellEntity
-	exp_spell.spell_type = SpellEntity.SpellType.EXPLOSION
-	exp_spell.damage = 420
-	exp_spell.global_position = target_pos
-	exp_spell.scale = Vector2(1.5, 1.5)
-	get_tree().current_scene.add_child(exp_spell)
+	# 1. Main ImpactFX Explosion (scaled to cover the 140px radius: 140 / 48 ~ 2.9)
+	var exp_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+	exp_fx.sprite_frames = _impact_exp_frames
+	exp_fx.animation = &"play"
+	exp_fx.scale = Vector2(2.9, 2.9)
+	exp_fx.global_position = target_pos
+	get_tree().current_scene.add_child(exp_fx)
+	exp_fx.play(&"play")
+	exp_fx.animation_finished.connect(exp_fx.queue_free)
 
-	# Direct impact on enemies within blast radius
+	# 2. Alchemical burst splatter (purple/orange elemental splash from ImpactFX)
+	var burst_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+	burst_fx.sprite_frames = _impact_burst_frames
+	burst_fx.animation = &"play"
+	burst_fx.scale = Vector2(2.7, 2.7)
+	burst_fx.global_position = target_pos
+	burst_fx.modulate = Color(1.8, 0.5, 0.2, 0.95)
+	get_tree().current_scene.add_child(burst_fx)
+	burst_fx.play(&"play")
+	burst_fx.animation_finished.connect(burst_fx.queue_free)
+
+	# 3. Expanding fiery/arcane shockwave ring clearly marking the 140px perimeter
+	var ring: Line2D = Line2D.new()
+	ring.width = 6.0
+	ring.default_color = Color(1.9, 0.8, 0.2, 1.0)
+	var pts: PackedVector2Array = PackedVector2Array()
+	var segs: int = 36
+	for i: int in range(segs + 1):
+		var ang: float = float(i) * TAU / float(segs)
+		pts.append(target_pos + Vector2(cos(ang), sin(ang)) * 140.0)
+	ring.points = pts
+	get_tree().current_scene.add_child(ring)
+	var tw_ring: Tween = create_tween()
+	tw_ring.tween_property(ring, ^"width", 0.0, 0.28)
+	tw_ring.tween_callback(ring.queue_free)
+
+	# 4. Direct impact on enemies within blast radius
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
@@ -621,7 +684,7 @@ func _execute_magic_cocktail(target_pos: Vector2) -> void:
 			continue
 		var dist: float = enemy.global_position.distance_to(target_pos)
 		if dist <= 140.0:
-			var push: Vector2 = (enemy.global_position - target_pos).normalized() * 160.0
+			var push: Vector2 = (enemy.global_position - target_pos).normalized() * 180.0
 			if "apply_knockback" in enemy:
 				enemy.apply_knockback(push)
 			enemy.take_damage(420)
@@ -660,17 +723,67 @@ func _execute_cursed_sword(aim_dir: Vector2) -> void:
 
 # ── Ultimates ──────────────────────────────────────────────────────────
 func _execute_onslaught_stake(target_pos: Vector2) -> void:
-	AudioManager.play_sfx("explosion")
+	AudioManager.play_sfx("heavy_slash")
 	_screen_shake(16.0, 0.5)
 
-	# Giant fiery impact shockwave
+	# 1. Sky Strike: Massive fiery iron stake crashes from above down into target_pos
+	var stake_line: Line2D = Line2D.new()
+	stake_line.width = 10.0
+	stake_line.default_color = Color(3.0, 2.2, 0.8, 1.0)
+	stake_line.points = PackedVector2Array([target_pos + Vector2(0, -320), target_pos])
+	get_tree().current_scene.add_child(stake_line)
+	var tw_stake: Tween = create_tween()
+	tw_stake.tween_property(stake_line, ^"width", 0.0, 0.12)
+	tw_stake.tween_callback(stake_line.queue_free)
+
+	# 2. Cataclysmic Impact explosion at target_pos
+	AudioManager.play_sfx("impact_heavy")
+	AudioManager.play_sfx("explosion")
+
+	# Colossal Explosion FX from ImpactFX (covers 180px radius: 180 / 48 ~ 3.8)
+	var exp_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+	exp_fx.sprite_frames = _impact_exp_frames
+	exp_fx.animation = &"play"
+	exp_fx.scale = Vector2(3.8, 3.8)
+	exp_fx.global_position = target_pos
+	get_tree().current_scene.add_child(exp_fx)
+	exp_fx.play(&"play")
+	exp_fx.animation_finished.connect(exp_fx.queue_free)
+
+	# Heavy Slash Shockwave FX from ImpactFX
+	var slash_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+	slash_fx.sprite_frames = _impact_slash_frames
+	slash_fx.animation = &"play"
+	slash_fx.scale = Vector2(3.4, 3.4)
+	slash_fx.global_position = target_pos
+	slash_fx.modulate = Color(2.6, 1.5, 0.4, 1.0)
+	get_tree().current_scene.add_child(slash_fx)
+	slash_fx.play(&"play")
+	slash_fx.animation_finished.connect(slash_fx.queue_free)
+
+	# Fiery outward shockwave ring expanding to 180px
+	var ring: Line2D = Line2D.new()
+	ring.width = 8.0
+	ring.default_color = Color(2.5, 1.4, 0.3, 1.0)
+	var pts: PackedVector2Array = PackedVector2Array()
+	var segs: int = 40
+	for i: int in range(segs + 1):
+		var ang: float = float(i) * TAU / float(segs)
+		pts.append(target_pos + Vector2(cos(ang), sin(ang)) * 180.0)
+	ring.points = pts
+	get_tree().current_scene.add_child(ring)
+	var tw_ring: Tween = create_tween()
+	tw_ring.tween_property(ring, ^"width", 0.0, 0.35)
+	tw_ring.tween_callback(ring.queue_free)
+
+	# Deal massive 850 damage & devastating knockback
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
 		if enemy == null or not is_instance_valid(enemy):
 			continue
 		if enemy.global_position.distance_to(target_pos) <= 180.0:
-			var push: Vector2 = (enemy.global_position - target_pos).normalized() * 220.0
+			var push: Vector2 = (enemy.global_position - target_pos).normalized() * 240.0
 			if "apply_knockback" in enemy:
 				enemy.apply_knockback(push)
 			enemy.take_damage(850)
@@ -707,13 +820,72 @@ func _execute_single_shot(aim_dir: Vector2) -> void:
 
 func _execute_soulblood_song() -> void:
 	AudioManager.play_sfx("spell_fire")
-	_screen_shake(10.0, 0.35)
-	heal(40)
+	AudioManager.play_sfx("burst_splat")
+	_screen_shake(12.0, 0.4)
 
-	for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
+	# 1. Runic Blood Sigil ritual ring centered on Player
+	var ring: Line2D = Line2D.new()
+	ring.width = 6.0
+	ring.default_color = Color(2.4, 0.2, 0.4, 1.0)
+	var pts: PackedVector2Array = PackedVector2Array()
+	var segs: int = 36
+	var r: float = 160.0
+	for i: int in range(segs + 1):
+		var ang: float = float(i) * TAU / float(segs)
+		pts.append(global_position + Vector2(cos(ang), sin(ang)) * r)
+	ring.points = pts
+	get_tree().current_scene.add_child(ring)
+	var tw_ring: Tween = create_tween()
+	tw_ring.tween_property(ring, ^"width", 0.0, 0.5)
+	tw_ring.tween_callback(ring.queue_free)
+
+	# Arcane blood swirl under player
+	var swirl_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+	swirl_fx.sprite_frames = _impact_burst_frames
+	swirl_fx.animation = &"play"
+	swirl_fx.scale = Vector2(3.0, 3.0)
+	swirl_fx.global_position = global_position
+	swirl_fx.modulate = Color(2.2, 0.15, 0.35, 0.85)
+	get_tree().current_scene.add_child(swirl_fx)
+	swirl_fx.play(&"play")
+	swirl_fx.animation_finished.connect(swirl_fx.queue_free)
+
+	# 2. Blood bursts & soul siphoning from ALL enemies on field
+	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
+	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
-		if enemy != null and is_instance_valid(enemy):
-			enemy.take_damage(500)
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+
+		# Blood burst FX at enemy location
+		var burst_fx: AnimatedSprite2D = AnimatedSprite2D.new()
+		burst_fx.sprite_frames = _impact_burst_frames
+		burst_fx.animation = &"play"
+		burst_fx.scale = Vector2(1.8, 1.8)
+		burst_fx.global_position = enemy.global_position
+		burst_fx.modulate = Color(2.2, 0.1, 0.25, 1.0)
+		get_tree().current_scene.add_child(burst_fx)
+		burst_fx.play(&"play")
+		burst_fx.animation_finished.connect(burst_fx.queue_free)
+
+		# Soul siphon blood orb flying from enemy to player
+		var soul_line: Line2D = Line2D.new()
+		soul_line.width = 4.0
+		soul_line.default_color = Color(2.4, 0.3, 0.5, 0.9)
+		soul_line.points = PackedVector2Array([enemy.global_position, enemy.global_position])
+		get_tree().current_scene.add_child(soul_line)
+		var tw_soul: Tween = create_tween()
+		tw_soul.tween_property(soul_line, ^"points", PackedVector2Array([enemy.global_position, global_position]), 0.25)
+		tw_soul.tween_property(soul_line, ^"width", 0.0, 0.1)
+		tw_soul.tween_callback(soul_line.queue_free)
+
+		enemy.take_damage(500)
+
+	# 3. Heal player with divine green-crimson flash
+	get_tree().create_timer(0.22).timeout.connect(func():
+		heal(40)
+		AudioManager.play_sfx("heal")
+	)
 
 
 func _execute_wings_of_salvation() -> void:
