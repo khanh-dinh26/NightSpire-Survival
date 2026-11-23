@@ -60,7 +60,6 @@ func _populate_cards(items: Array[ItemData]) -> void:
 		card.custom_minimum_size = Vector2(170, 160)
 		row_top.add_child(card)
 		card.setup(item, true)
-		card.set_show_icon(false)
 		card.item_selected.connect(_on_card_selected)
 		_cards.append(card)
 
@@ -148,17 +147,17 @@ func _update_picks_label() -> void:
 	if picks_label == null:
 		return
 	if _picks_left == 2:
-		picks_label.text = "[ ★ CÒN 2 LẦN CHỌN ★ ]"
+		picks_label.text = "[ CÒN 2 LẦN CHỌN ]"
 		picks_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.25, 1.0))
 		continue_btn.text = "Bỏ Qua Còn Lại & Tiếp Tục"
 	elif _picks_left == 1:
-		picks_label.text = "[ ★ CÒN 1 LẦN CHỌN ★ ]"
+		picks_label.text = "[ CÒN 1 LẦN CHỌN ]"
 		picks_label.add_theme_color_override(&"font_color", Color(0.3, 0.9, 1.0, 1.0))
 		continue_btn.text = "Bỏ Qua Còn Lại & Tiếp Tục"
 	else:
-		picks_label.text = "[ ✔ ĐÃ CHỌN ĐỦ 2 PHẦN THƯỞNG ]"
+		picks_label.text = "[ ĐÃ CHỌN ĐỦ 2 PHẦN THƯỞNG ]"
 		picks_label.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
-		continue_btn.text = "TIẾP TỤC HÀNH TRÌNH ➔"
+		continue_btn.text = "Tiếp Tục Leo Tháp"
 		continue_btn.grab_focus()
 
 

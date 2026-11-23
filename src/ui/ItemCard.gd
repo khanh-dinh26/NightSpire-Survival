@@ -178,7 +178,7 @@ func get_effective_price() -> int:
 
 func update_button_state() -> void:
 	if is_bought:
-		action_btn.text = "✔ ĐÃ CHỌN" if is_free else "✔ ĐÃ MUA"
+		action_btn.text = "ĐÃ CHỌN" if is_free else "ĐÃ MUA"
 		action_btn.disabled = true
 		action_btn.add_theme_color_override(&"font_disabled_color", Color(0.25, 0.95, 0.45, 1.0))
 		modulate = Color(0.92, 0.95, 0.92, 0.95)
