@@ -1,11 +1,12 @@
 class_name SpellSlot
 extends Control
-## An individual active spell button in the vertical Spell Bar.
-## Auto-casts towards nearby enemies on cooldown, and supports mouse click or keyboard hotkey.
+## An individual spell inventory slot in the vertical Spell Bar.
+## Styled identically to weapon inventory slots (Sample-InventorySlotsSet.png).
+## Auto-casts towards nearby enemies on cooldown, and supports mouse click to cast.
 
 signal cast_requested(spell_id: String, level: int, target_pos: Vector2)
 
-@export var hotkey_index: int = 1 # 1, 2, 3, 4, 5
+@export var slot_index: int = 0
 
 var spell_id: String = ""
 var level: int = 1
@@ -13,17 +14,24 @@ var cooldown_time: float = 3.5
 var is_equipped: bool = false
 var _cooldown_timer: float = 0.0
 
+@onready var frame_rect: TextureRect = $FrameRect
 @onready var icon_rect: TextureRect = $IconRect
 @onready var level_label: Label = $LevelLabel
-@onready var hotkey_label: Label = $HotkeyLabel
 @onready var cooldown_overlay: ColorRect = $CooldownOverlay
 @onready var cooldown_label: Label = $CooldownOverlay/CooldownLabel
-@onready var btn: BaseButton = $Button
+@onready var click_btn: Button = $ClickButton
+
+var _slot_sheet: Texture2D = preload("res://assets/sprites/Sample-InventorySlotsSet.png")
 
 
 func _ready() -> void:
-	btn.pressed.connect(_on_pressed)
-	hotkey_label.text = str(hotkey_index)
+	# Configure slot frame from Sample-InventorySlotsSet.png (24x24 slot at 112, 79)
+	var slot_atlas: AtlasTexture = AtlasTexture.new()
+	slot_atlas.atlas = _slot_sheet
+	slot_atlas.region = Rect2(112, 79, 24, 24)
+	frame_rect.texture = slot_atlas
+
+	click_btn.pressed.connect(_on_pressed)
 	clear_slot()
 
 
@@ -33,9 +41,11 @@ func clear_slot() -> void:
 	level = 1
 	_cooldown_timer = 0.0
 	icon_rect.texture = null
+	icon_rect.visible = false
 	level_label.text = ""
+	level_label.visible = false
 	cooldown_overlay.visible = false
-	btn.tooltip_text = "[%d] Ô Phép Thuật (Trống)" % hotkey_index
+	click_btn.tooltip_text = "Ô Phép Thuật (Trống)"
 
 
 func setup_spell(p_id: String, p_lvl: int, p_icon: Texture2D, p_cooldown: float = 3.5) -> void:
@@ -44,36 +54,38 @@ func setup_spell(p_id: String, p_lvl: int, p_icon: Texture2D, p_cooldown: float 
 	level = p_lvl
 	cooldown_time = p_cooldown
 	icon_rect.texture = p_icon
+	icon_rect.visible = true
 	level_label.text = "L%d" % level
-	hotkey_label.text = str(hotkey_index)
+	level_label.visible = (level > 1)
 
 	var s_name: String = _get_spell_name(spell_id)
-	btn.tooltip_text = "%s Lv.%d (Tự động bắn mỗi %.1fs | Nhấn [%d] hoặc Click để bắn)" % [
-		s_name, level, cooldown_time, hotkey_index
+	click_btn.tooltip_text = "%s Lv.%d\n(Tự động bắn mỗi %.1fs | Click chuột để bắn)" % [
+		s_name, level, cooldown_time
 	]
 
 
 func _get_spell_name(s_id: String) -> String:
 	match s_id:
-		"fireball": return "Cầu Lửa (Fireball)"
-		"meteor_rock": return "Mưa Thiên Thạch"
-		"void_portal": return "Hố Đen Hư Không"
-		"molten_spear": return "Thương Dung Nham"
-		"earth_spike": return "Chông Gai Đất"
-		"water_geyser": return "Thủy Long Bộc Phá"
-		"tornado": return "Lốc Xoáy Cuồng Phong"
+		"fireball": return "Phép: Cầu Lửa"
+		"meteor_rock": return "Phép: Mưa Thiên Thạch"
+		"void_portal": return "Phép: Hố Đen Hư Không"
+		"molten_spear": return "Phép: Thương Dung Nham"
+		"earth_spike": return "Phép: Gai Đất"
+		"water_geyser": return "Phép: Thủy Long Bộc Phá"
+		"tornado": return "Phép: Lốc Xoáy Cuồng Phong"
 		_: return s_id.capitalize()
 
 
 func set_level(new_lvl: int) -> void:
 	level = new_lvl
 	level_label.text = "L%d" % level
+	level_label.visible = (level > 1)
 	var s_name: String = _get_spell_name(spell_id)
-	btn.tooltip_text = "%s Lv.%d (Tự động bắn mỗi %.1fs | Nhấn [%d] hoặc Click để bắn)" % [
-		s_name, level, cooldown_time, hotkey_index
+	click_btn.tooltip_text = "%s Lv.%d\n(Tự động bắn mỗi %.1fs | Click chuột để bắn)" % [
+		s_name, level, cooldown_time
 	]
 	var tw: Tween = create_tween()
-	tw.tween_property(self, ^"scale", Vector2(1.25, 1.25), 0.1)
+	tw.tween_property(self, ^"scale", Vector2(1.2, 1.2), 0.1)
 	tw.tween_property(self, ^"scale", Vector2(1.0, 1.0), 0.1)
 
 
@@ -88,7 +100,6 @@ func _process(delta: float) -> void:
 	else:
 		if cooldown_overlay.visible:
 			cooldown_overlay.visible = false
-		# Auto-cast when ready!
 		_auto_cast()
 
 
@@ -123,16 +134,6 @@ func _find_closest_enemy() -> Node2D:
 			min_dist = d
 			closest = enemy
 	return closest
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if not is_equipped or spell_id.is_empty():
-		return
-	if event is InputEventKey and event.is_pressed() and not event.is_echo():
-		var key_code: Key = event.keycode
-		var expected_key: Key = KEY_1 + (hotkey_index - 1)
-		if key_code == expected_key:
-			_try_cast()
 
 
 func _on_pressed() -> void:
