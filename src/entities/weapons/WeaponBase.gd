@@ -73,7 +73,7 @@ func _process_spinning_contact_damage() -> void:
 	var now: float = Time.get_ticks_msec() / 1000.0
 	# Hit interval per enemy based on weapon attack speed
 	var hit_interval: float = clampf(1.0 / maxf(item_data.attack_speed, 1.0), 0.16, 0.40)
-	var contact_radius: float = 44.0 + float(item_data.level - 1) * 2.5
+	var contact_radius: float = 34.0
 
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for node: Node in enemies:
@@ -171,7 +171,7 @@ func _trigger_radius_execute(center_pos: Vector2) -> void:
 func _find_closest_enemy() -> Node2D:
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	var closest: Node2D = null
-	var closest_dist: float = (item_data.attack_range * 1.25) if item_data != null else 220.0
+	var closest_dist: float = item_data.attack_range if item_data != null else 180.0
 	for enemy: Node in enemies:
 		var e: Node2D = enemy as Node2D
 		if e == null or not is_instance_valid(e):
@@ -205,7 +205,7 @@ func _attack_ranged() -> void:
 func _find_spell_target() -> Node2D:
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	var closest: Node2D = null
-	var closest_dist: float = 280.0
+	var closest_dist: float = 240.0
 	for enemy: Node in enemies:
 		var e: Node2D = enemy as Node2D
 		if e == null or not is_instance_valid(e):

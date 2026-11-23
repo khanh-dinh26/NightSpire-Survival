@@ -1,15 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://bhud0001"]
+[gd_scene format=3 uid="uid://bhud0001"]
 
-[ext_resource type="Script" path="res://src/ui/HUD.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://src/ui/InventoryBar.tscn" id="2_invbar"]
-[ext_resource type="Texture2D" path="res://assets/ui/slices/panel_window.png" id="3_ui"]
-[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_normal.tres" id="4_btn_normal"]
-[ext_resource type="StyleBox" path="res://assets/ui/buttons/btn_rect_hover.tres" id="5_btn_hover"]
+[ext_resource type="Script" uid="uid://bn1tr2iqhx66f" path="res://src/ui/HUD.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cinvbar001" path="res://src/ui/InventoryBar.tscn" id="2_invbar"]
+[ext_resource type="Texture2D" uid="uid://by1s4jx6o7kr2" path="res://assets/ui/slices/panel_window.png" id="3_ui"]
+[ext_resource type="StyleBox" uid="uid://b3rca4i4umt01" path="res://assets/ui/buttons/btn_rect_normal.tres" id="4_btn_normal"]
+[ext_resource type="StyleBox" uid="uid://b3rcaxi8m481" path="res://assets/ui/buttons/btn_rect_hover.tres" id="5_btn_hover"]
 [ext_resource type="PackedScene" path="res://src/ui/SpellBar.tscn" id="6_spellbar"]
-[ext_resource type="Texture2D" path="res://assets/ui/hp_bar/heart_icon.png" id="7_heart"]
-[ext_resource type="Texture2D" path="res://assets/ui/hp_bar/hp_bar_under.png" id="8_bar_under"]
-[ext_resource type="Texture2D" path="res://assets/ui/hp_bar/hp_bar_progress.png" id="9_bar_prog"]
-[ext_resource type="Texture2D" path="res://assets/ui/slices/screen_border_frame.png" id="10_border"]
+[ext_resource type="Texture2D" uid="uid://ivqfajsd3e1v" path="res://assets/ui/hp_bar/heart_icon.png" id="7_heart"]
+[ext_resource type="Texture2D" uid="uid://ehylsn2obf2" path="res://assets/ui/hp_bar/hp_bar_under.png" id="8_bar_under"]
+[ext_resource type="Texture2D" uid="uid://dhr22hans62iw" path="res://assets/ui/hp_bar/hp_bar_progress.png" id="9_bar_prog"]
+[ext_resource type="Texture2D" uid="uid://8fw2vo3kvd2n" path="res://assets/ui/slices/screen_border_frame.png" id="10_border"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_alert"]
 bg_color = Color(0.12, 0.02, 0.02, 0.94)
@@ -23,17 +23,15 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" unique_id=2050087372]
 script = ExtResource("1_script")
 
-[node name="ScreenBorder" type="NinePatchRect" parent="."]
-texture_filter = 0
+[node name="ScreenBorder" type="NinePatchRect" parent="." unique_id=1601905963]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 texture = ExtResource("10_border")
 draw_center = false
 patch_margin_left = 14
@@ -41,7 +39,7 @@ patch_margin_top = 14
 patch_margin_right = 14
 patch_margin_bottom = 14
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=335352606]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -52,24 +50,22 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=973904901]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=196566127]
 layout_mode = 2
 
-[node name="PlayerStatus" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="PlayerStatus" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1530949077]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="HPContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus"]
+[node name="HPContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus" unique_id=2141887337]
 layout_mode = 2
 theme_override_constants/separation = 4
-alignment = 0
 
-[node name="HeartIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer"]
-texture_filter = 0
+[node name="HeartIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer" unique_id=374433686]
 custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 size_flags_vertical = 4
@@ -77,8 +73,7 @@ texture = ExtResource("7_heart")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer"]
-texture_filter = 0
+[node name="HPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer" unique_id=1440822179]
 custom_minimum_size = Vector2(108, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -92,7 +87,7 @@ texture_under = ExtResource("8_bar_under")
 texture_progress = ExtResource("9_bar_prog")
 tint_progress = Color(0.88, 0.22, 0.22, 1)
 
-[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer/HPBar"]
+[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus/HPContainer/HPBar" unique_id=236739889]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,54 +103,53 @@ text = "100 / 100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BuffsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus"]
+[node name="BuffsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/PlayerStatus" unique_id=1631689698]
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/TopBar" unique_id=518143364]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar" unique_id=2015894017]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_font_sizes/font_size = 11
 text = "Gold: 0"
 
-[node name="CenterBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="CenterBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=714310155]
 layout_mode = 2
 alignment = 1
 
-[node name="FloorLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterBar"]
+[node name="FloorLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterBar" unique_id=1691965680]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Floor 1/10 — WAVE"
 
-[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/CenterBar"]
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/CenterBar" unique_id=46076521]
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 
-[node name="TimerLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterBar"]
+[node name="TimerLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterBar" unique_id=71055254]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 11
 text = "Time: 25s"
 
-[node name="BossBarContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="BossBarContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1479452534]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="BossNameLabel" type="Label" parent="MarginContainer/VBoxContainer/BossBarContainer"]
+[node name="BossNameLabel" type="Label" parent="MarginContainer/VBoxContainer/BossBarContainer" unique_id=714909692]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_font_sizes/font_size = 11
 text = "BOSS"
 horizontal_alignment = 1
 
-[node name="BossHPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/BossBarContainer"]
-texture_filter = 0
+[node name="BossHPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/BossBarContainer" unique_id=936225888]
 custom_minimum_size = Vector2(210, 16)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -169,7 +163,7 @@ texture_under = ExtResource("8_bar_under")
 texture_progress = ExtResource("9_bar_prog")
 tint_progress = Color(0.85, 0.18, 0.18, 1)
 
-[node name="BossHPLabel" type="Label" parent="MarginContainer/VBoxContainer/BossBarContainer/BossHPBar"]
+[node name="BossHPLabel" type="Label" parent="MarginContainer/VBoxContainer/BossBarContainer/BossHPBar" unique_id=480073467]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -185,17 +179,17 @@ text = "200 / 200"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BottomSpacer" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="BottomSpacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1263998820]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BottomBar" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+[node name="BottomBar" type="CenterContainer" parent="MarginContainer/VBoxContainer" unique_id=1466198048]
 layout_mode = 2
 
-[node name="InventoryBar" parent="MarginContainer/VBoxContainer/BottomBar" instance=ExtResource("2_invbar")]
+[node name="InventoryBar" parent="MarginContainer/VBoxContainer/BottomBar" unique_id=1625563208 instance=ExtResource("2_invbar")]
 layout_mode = 2
 
-[node name="GameOverPanel" type="PanelContainer" parent="."]
+[node name="GameOverPanel" type="PanelContainer" parent="." unique_id=1110630927]
 visible = false
 custom_minimum_size = Vector2(320, 160)
 anchors_preset = 8
@@ -210,7 +204,7 @@ offset_bottom = 80.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="FrameBG" type="NinePatchRect" parent="GameOverPanel"]
+[node name="FrameBG" type="NinePatchRect" parent="GameOverPanel" unique_id=1833372994]
 layout_mode = 2
 texture = ExtResource("3_ui")
 patch_margin_left = 14
@@ -218,46 +212,46 @@ patch_margin_top = 14
 patch_margin_right = 14
 patch_margin_bottom = 14
 
-[node name="Margin" type="MarginContainer" parent="GameOverPanel"]
+[node name="Margin" type="MarginContainer" parent="GameOverPanel" unique_id=786229903]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
-[node name="VBox" type="VBoxContainer" parent="GameOverPanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="GameOverPanel/Margin" unique_id=1952634151]
 layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Title" type="Label" parent="GameOverPanel/Margin/VBox"]
+[node name="Title" type="Label" parent="GameOverPanel/Margin/VBox" unique_id=585976878]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.2, 0.2, 1)
 theme_override_font_sizes/font_size = 18
 text = "BẠN ĐÃ TỬ TRẬN"
 horizontal_alignment = 1
 
-[node name="Sub" type="Label" parent="GameOverPanel/Margin/VBox"]
+[node name="Sub" type="Label" parent="GameOverPanel/Margin/VBox" unique_id=431483153]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "Chuyến đi đã kết thúc. File lưu đã bị xóa (Chết vĩnh viễn)."
+text = "Chuyến đi đã kết thúc. "
 horizontal_alignment = 1
 
-[node name="RestartButton" type="Button" parent="GameOverPanel/Margin/VBox"]
+[node name="RestartButton" type="Button" parent="GameOverPanel/Margin/VBox" unique_id=2009104190]
 custom_minimum_size = Vector2(150, 28)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = ExtResource("4_btn_normal")
-theme_override_styles/hover = ExtResource("5_btn_hover")
 theme_override_styles/pressed = ExtResource("5_btn_hover")
+theme_override_styles/hover = ExtResource("5_btn_hover")
 text = "Chọn Tháp Mới"
 
-[node name="SpellBar" parent="." instance=ExtResource("6_spellbar")]
+[node name="SpellBar" parent="." unique_id=786394997 instance=ExtResource("6_spellbar")]
 visible = false
 
-[node name="EndgamePanel" type="PanelContainer" parent="."]
+[node name="EndgamePanel" type="PanelContainer" parent="." unique_id=927130143]
 visible = false
 custom_minimum_size = Vector2(360, 180)
 anchors_preset = 8
@@ -272,7 +266,7 @@ offset_bottom = 90.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="FrameBG" type="NinePatchRect" parent="EndgamePanel"]
+[node name="FrameBG" type="NinePatchRect" parent="EndgamePanel" unique_id=1381393160]
 layout_mode = 2
 texture = ExtResource("3_ui")
 patch_margin_left = 14
@@ -280,58 +274,58 @@ patch_margin_top = 14
 patch_margin_right = 14
 patch_margin_bottom = 14
 
-[node name="Margin" type="MarginContainer" parent="EndgamePanel"]
+[node name="Margin" type="MarginContainer" parent="EndgamePanel" unique_id=61952049]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 14
 
-[node name="VBox" type="VBoxContainer" parent="EndgamePanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="EndgamePanel/Margin" unique_id=1906446814]
 layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Title" type="Label" parent="EndgamePanel/Margin/VBox"]
+[node name="Title" type="Label" parent="EndgamePanel/Margin/VBox" unique_id=1491065100]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_font_sizes/font_size = 18
 text = "CHINH PHỤC TÒA THÁP THÀNH CÔNG!"
 horizontal_alignment = 1
 
-[node name="Sub" type="Label" parent="EndgamePanel/Margin/VBox"]
+[node name="Sub" type="Label" parent="EndgamePanel/Margin/VBox" unique_id=2129763518]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Bạn đã tiêu diệt trùm cuối! Trở về vinh quang hay tiếp tục dấn thân vào chế độ vô tận DARK NIGHT (Ác Mộng)?"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="EndgamePanel/Margin/VBox"]
+[node name="Buttons" type="HBoxContainer" parent="EndgamePanel/Margin/VBox" unique_id=1853094970]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="MenuButton" type="Button" parent="EndgamePanel/Margin/VBox/Buttons"]
+[node name="MenuButton" type="Button" parent="EndgamePanel/Margin/VBox/Buttons" unique_id=1637293474]
 custom_minimum_size = Vector2(120, 30)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = ExtResource("4_btn_normal")
-theme_override_styles/hover = ExtResource("5_btn_hover")
 theme_override_styles/pressed = ExtResource("5_btn_hover")
+theme_override_styles/hover = ExtResource("5_btn_hover")
 text = "Vinh Quang Trở Về"
 
-[node name="DarkNightButton" type="Button" parent="EndgamePanel/Margin/VBox/Buttons"]
+[node name="DarkNightButton" type="Button" parent="EndgamePanel/Margin/VBox/Buttons" unique_id=1344890664]
 custom_minimum_size = Vector2(160, 30)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
 theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = ExtResource("4_btn_normal")
-theme_override_styles/hover = ExtResource("5_btn_hover")
 theme_override_styles/pressed = ExtResource("5_btn_hover")
+theme_override_styles/hover = ExtResource("5_btn_hover")
 text = "TIẾP TỤC: DARK NIGHT"
 
-[node name="BossAlertPanel" type="PanelContainer" parent="."]
+[node name="BossAlertPanel" type="PanelContainer" parent="." unique_id=1368704030]
 visible = false
 custom_minimum_size = Vector2(380, 56)
 anchors_preset = 8
@@ -347,35 +341,56 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_alert")
 
-[node name="Margin" type="MarginContainer" parent="BossAlertPanel"]
+[node name="Margin" type="MarginContainer" parent="BossAlertPanel" unique_id=735370239]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 6
 
-[node name="VBox" type="VBoxContainer" parent="BossAlertPanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="BossAlertPanel/Margin" unique_id=953182937]
 layout_mode = 2
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="AlertHeader" type="Label" parent="BossAlertPanel/Margin/VBox"]
+[node name="AlertHeader" type="Label" parent="BossAlertPanel/Margin/VBox" unique_id=527124376]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.2, 0.15, 1)
-theme_override_colors/font_outline_color = Color(0.25, 0.0, 0.0, 1)
+theme_override_colors/font_outline_color = Color(0.25, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 13
 text = "CẢNH BÁO: ĐẠI MA VƯƠNG XUẤT HIỆN!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AlertSubtitle" type="Label" parent="BossAlertPanel/Margin/VBox"]
+[node name="AlertSubtitle" type="Label" parent="BossAlertPanel/Margin/VBox" unique_id=1577405293]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.35, 1)
-theme_override_colors/font_outline_color = Color(0.2, 0.1, 0.0, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.1, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_font_sizes/font_size = 11
 text = "CHÚA TỂ BÓNG TỐI"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="CenterCountdownLabel" type="Label" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -60.0
+offset_right = 100.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(100, 60)
+theme_override_colors/font_color = Color(1, 0.25, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 56
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1

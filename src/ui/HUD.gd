@@ -26,9 +26,12 @@ extends CanvasLayer
 @onready var boss_alert_panel: PanelContainer = $BossAlertPanel
 @onready var alert_header_label: Label = $BossAlertPanel/Margin/VBox/AlertHeader
 @onready var alert_sub_label: Label = $BossAlertPanel/Margin/VBox/AlertSubtitle
+@onready var center_countdown_label: Label = get_node_or_null("CenterCountdownLabel") as Label
 
 var spawner: Spawner = null
 var _alert_tween: Tween = null
+var _last_countdown_sec: int = -1
+var _countdown_tween: Tween = null
 
 
 func _ready() -> void:
@@ -37,6 +40,9 @@ func _ready() -> void:
 	boss_bar_container.visible = false
 	if boss_alert_panel != null:
 		boss_alert_panel.visible = false
+	if center_countdown_label != null:
+		center_countdown_label.visible = false
+		center_countdown_label.modulate.a = 0.0
 	if restart_button != null:
 		restart_button.pressed.connect(_on_restart_pressed)
 	if endgame_menu_btn != null:
@@ -74,10 +80,70 @@ func setup_spawner(p_spawner: Spawner) -> void:
 
 func _process(_delta: float) -> void:
 	if spawner != null and spawner.is_spawning:
-		timer_label.text = "Time: %02ds" % ceili(spawner.time_remaining)
+		var time_left: float = spawner.time_remaining
+		timer_label.text = "Time: %02ds" % ceili(time_left)
 		timer_label.visible = true
+
+		# Screen-center countdown when 5..1 seconds remaining
+		if time_left <= 5.0 and time_left > 0.0:
+			var sec: int = ceili(time_left)
+			if sec != _last_countdown_sec and sec >= 1 and sec <= 5:
+				_last_countdown_sec = sec
+				_trigger_countdown_pulse(sec)
+		else:
+			if _last_countdown_sec != -1:
+				_last_countdown_sec = -1
+				_stop_countdown()
 	else:
 		timer_label.visible = false
+		if _last_countdown_sec != -1:
+			_last_countdown_sec = -1
+			_stop_countdown()
+
+
+func _trigger_countdown_pulse(sec: int) -> void:
+	if center_countdown_label == null:
+		return
+
+	if _countdown_tween != null and _countdown_tween.is_valid():
+		_countdown_tween.kill()
+
+	center_countdown_label.text = str(sec)
+	center_countdown_label.visible = true
+	center_countdown_label.modulate.a = 1.0
+
+	# Dynamic color theme: 5 (golden yellow) -> 1 (critical fiery red)
+	var num_color: Color
+	match sec:
+		5: num_color = Color(1.0, 0.90, 0.25)
+		4: num_color = Color(1.0, 0.70, 0.20)
+		3: num_color = Color(1.0, 0.50, 0.15)
+		2: num_color = Color(1.0, 0.30, 0.15)
+		_: num_color = Color(1.0, 0.10, 0.10)
+
+	center_countdown_label.add_theme_color_override(&"font_color", num_color)
+
+	# Audio cue (pitch rises as countdown gets closer to 0)
+	AudioManager.play_sfx("confirm", 0.9 + float(6 - sec) * 0.12)
+
+	# Punchy animation: Pop in (scale 1.8 -> 1.0), hold, then fade out before the next second starts
+	center_countdown_label.scale = Vector2(1.8, 1.8)
+	_countdown_tween = create_tween()
+	_countdown_tween.tween_property(center_countdown_label, ^"scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_countdown_tween.tween_interval(0.35)
+	_countdown_tween.tween_property(center_countdown_label, ^"modulate:a", 0.0, 0.25)
+	_countdown_tween.tween_callback(func():
+		if center_countdown_label != null:
+			center_countdown_label.visible = false
+	)
+
+
+func _stop_countdown() -> void:
+	if _countdown_tween != null and _countdown_tween.is_valid():
+		_countdown_tween.kill()
+	if center_countdown_label != null:
+		center_countdown_label.visible = false
+		center_countdown_label.modulate.a = 0.0
 
 
 func _update_hp_display(current: int, max_val: int) -> void:
@@ -228,6 +294,7 @@ func _on_player_hit(_damage: int) -> void:
 
 
 func _on_player_died() -> void:
+	_stop_countdown()
 	_update_hp_display(0, GameManager.player_max_hp)
 	SaveManager.delete_save()
 	game_over_panel.visible = true
@@ -258,6 +325,7 @@ func _on_wave_started(floor_idx: int) -> void:
 
 
 func _on_wave_ended(_floor_idx: int) -> void:
+	_stop_countdown()
 	timer_label.text = "HOÀN THÀNH TẦNG!"
 
 
