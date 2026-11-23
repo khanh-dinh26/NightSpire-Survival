@@ -463,99 +463,60 @@ func cast_ultimate_art() -> bool:
 
 func _execute_claw_shot(_mouse_pos: Vector2, aim_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	_screen_shake(5.0, 0.25)
+	_screen_shake(4.0, 0.2)
 
-	# Spectral claw visuals
+	# Direct frontal claw strike visual
 	var claw_line: Line2D = Line2D.new()
-	claw_line.width = 4.0
-	claw_line.default_color = Color(1.2, 0.8, 0.3, 1.0)
-	claw_line.points = PackedVector2Array([Vector2.ZERO, aim_dir * 180.0])
+	claw_line.width = 5.0
+	claw_line.default_color = Color(1.3, 0.9, 0.3, 1.0)
+	claw_line.points = PackedVector2Array([Vector2.ZERO, aim_dir * 140.0])
 	add_child(claw_line)
 	var tw: Tween = create_tween()
-	tw.tween_property(claw_line, ^"width", 0.0, 0.20)
+	tw.tween_property(claw_line, ^"width", 0.0, 0.15)
 	tw.tween_callback(claw_line.queue_free)
 
-	# Pull enemies
+	# Strike enemies in front cone
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
 		if enemy == null or not is_instance_valid(enemy):
 			continue
 		var to_e: Vector2 = enemy.global_position - global_position
-		if to_e.length() <= 190.0 and to_e.normalized().dot(aim_dir) > 0.4:
-			if enemy is BossBase:
-				# Boss: Pull player towards boss!
-				global_position = global_position.lerp(enemy.global_position - aim_dir * 45.0, 0.65)
-				enemy.take_damage(140)
-			else:
-				# Normal enemy: pull to player
-				enemy.global_position = enemy.global_position.lerp(global_position + aim_dir * 35.0, 0.80)
-				enemy.take_damage(140)
+		if to_e.length() <= 150.0 and to_e.normalized().dot(aim_dir) > 0.3:
+			if "apply_knockback" in enemy:
+				enemy.apply_knockback(aim_dir * 120.0)
+			enemy.take_damage(140)
 
 
 func _execute_marking_dash(aim_dir: Vector2) -> void:
 	AudioManager.play_sfx("slash")
-	_screen_shake(4.0, 0.2)
+	_screen_shake(3.0, 0.15)
 
-	# Swift backwards dash
-	velocity = -aim_dir * 380.0
-	move_and_slide()
+	# Swift evasive dash
+	global_position += aim_dir * 60.0
 
-	# Front crescent dagger slash marking enemies
+	# Front slash
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
 		if enemy == null or not is_instance_valid(enemy):
 			continue
-		var to_e: Vector2 = enemy.global_position - global_position
-		if to_e.length() <= 140.0 and to_e.normalized().dot(aim_dir) > 0.25:
-			enemy.set_meta("marked", true)
-			enemy.take_damage(120)
-			# Red outline / marked aura
-			var tw_mark: Tween = enemy.create_tween()
-			tw_mark.set_loops(6)
-			tw_mark.tween_property(enemy, ^"modulate", Color(2.0, 0.4, 0.4, 1.0), 0.5)
-			tw_mark.tween_property(enemy, ^"modulate", Color.WHITE, 0.5)
-			# Remove mark after 6s
-			var tw_clean: Tween = create_tween()
-			tw_clean.tween_interval(6.0)
-			tw_clean.tween_callback(func():
-				if is_instance_valid(enemy):
-					enemy.remove_meta("marked")
-			)
+		if global_position.distance_to(enemy.global_position) <= 120.0:
+			enemy.take_damage(130)
 
 
 func _execute_magic_cocktail(target_pos: Vector2) -> void:
 	AudioManager.play_sfx("spell_fire")
-	_screen_shake(6.0, 0.25)
+	_screen_shake(5.0, 0.2)
 
-	# Explosion at target
+	# Instant elemental explosion at target
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for e_node: Node in enemies:
 		var enemy: CharacterBody2D = e_node as CharacterBody2D
 		if enemy == null or not is_instance_valid(enemy):
 			continue
-		if enemy.global_position.distance_to(target_pos) <= 100.0:
-			enemy.take_damage(160)
-			if "speed_mult" in enemy:
-				enemy.speed_mult *= 0.4
-				var tw_spd: Tween = create_tween()
-				tw_spd.tween_interval(4.0)
-				tw_spd.tween_callback(func():
-					if is_instance_valid(enemy):
-						enemy.speed_mult /= 0.4
-				)
-
-	# Lingering pool ticks
-	for tick: int in range(1, 4):
-		var tw_tick: Tween = create_tween()
-		tw_tick.tween_interval(float(tick) * 0.9)
-		tw_tick.tween_callback(func():
-			for e_node: Node in get_tree().get_nodes_in_group(&"enemies"):
-				var enemy: CharacterBody2D = e_node as CharacterBody2D
-				if enemy != null and is_instance_valid(enemy) and enemy.global_position.distance_to(target_pos) <= 90.0:
-					enemy.take_damage(40)
-		)
+		if enemy.global_position.distance_to(target_pos) <= 110.0:
+			enemy.take_damage(180)
 
 
 func _execute_whirlwind() -> void:

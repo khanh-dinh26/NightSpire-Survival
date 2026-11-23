@@ -3,9 +3,10 @@
 [ext_resource type="Script" path="res://src/ui/InventoryBar.gd" id="1_bar"]
 [ext_resource type="PackedScene" path="res://src/ui/InventorySlot.tscn" id="2_slot"]
 
-[node name="InventoryBar" type="HBoxContainer"]
-theme_override_constants/separation = 4
-alignment = 1
+[node name="InventoryBar" type="GridContainer"]
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 3
+columns = 5
 script = ExtResource("1_bar")
 
 [node name="Slot0" parent="." instance=ExtResource("2_slot")]

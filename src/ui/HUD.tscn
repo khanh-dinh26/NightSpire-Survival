@@ -184,8 +184,9 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BottomBar" type="CenterContainer" parent="MarginContainer/VBoxContainer" unique_id=1466198048]
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1466198048]
 layout_mode = 2
+alignment = 0
 
 [node name="InventoryBar" parent="MarginContainer/VBoxContainer/BottomBar" unique_id=1625563208 instance=ExtResource("2_invbar")]
 layout_mode = 2

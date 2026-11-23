@@ -1,6 +1,6 @@
 class_name InventoryBar
-extends HBoxContainer
-## Inventory Hotbar displaying up to 10 equipped weapon slots.
+extends GridContainer
+## Inventory Hotbar displaying up to 10 equipped weapon slots in 2 rows of 5.
 
 var _slots: Array[InventorySlot] = []
 

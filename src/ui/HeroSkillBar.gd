@@ -57,6 +57,8 @@ func _setup_from_class(p_class: ClassData) -> void:
 
 
 func _on_skill_pressed() -> void:
+	if skill_cd_overlay.visible:
+		return
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 	if players.size() > 0:
 		var p: Player = players[0] as Player
@@ -65,6 +67,8 @@ func _on_skill_pressed() -> void:
 
 
 func _on_ult_pressed() -> void:
+	if not _is_ult_ready:
+		return
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 	if players.size() > 0:
 		var p: Player = players[0] as Player
@@ -76,12 +80,8 @@ func _on_skill_cd_updated(current_cd: float, max_cd: float) -> void:
 	if current_cd > 0.05:
 		skill_cd_overlay.visible = true
 		skill_cd_lbl.text = "%.1fs" % current_cd
-		skill_btn.disabled = true
-		skill_btn.modulate = Color(0.65, 0.65, 0.65, 0.9)
 	else:
 		skill_cd_overlay.visible = false
-		skill_btn.disabled = false
-		skill_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 
 func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
@@ -89,14 +89,12 @@ func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
 	if pct >= 1.0:
 		_is_ult_ready = true
 		ult_overlay.visible = false
-		ult_btn.disabled = false
 		ult_charge_lbl.text = "SẴN SÀNG!"
 		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.3))
 		_start_ult_glow()
 	else:
 		_is_ult_ready = false
 		ult_overlay.visible = true
-		ult_btn.disabled = true
 		ult_charge_lbl.text = "%d%%" % roundi(pct * 100.0)
 		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35))
 		_stop_ult_glow()
