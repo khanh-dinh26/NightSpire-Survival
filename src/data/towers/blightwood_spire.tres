@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://diux81jhe5dbv" path="res://src/resources/EnemyData.gd" id="1_14nnr"]
 [ext_resource type="Script" uid="uid://c8bdsexivlyd8" path="res://src/resources/TowerData.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/data/enemies/scarab_swarm.tres" id="2_scarab"]
 [ext_resource type="Resource" path="res://src/data/enemies/spider.tres" id="2_spider"]
 [ext_resource type="Resource" path="res://src/data/enemies/bat.tres" id="3_bat"]
 [ext_resource type="Resource" path="res://src/data/enemies/abyssal_crawler.tres" id="4_crawler"]
@@ -16,11 +17,26 @@
 script = ExtResource("1_script")
 tower_id = "blightwood"
 tower_name = "Blightwood Spire (Rừng Độc)"
-lore_description = "Tòa tháp cổ mục nát bị bao phủ bởi gai độc chết người. Không khí xung quanh đặc quánh độc tố."
+lore_description = "Tòa tháp cổ mục nát ngập tràn dây leo gai độc. Không khí rừng thiêng nước độc kích thích cơ thể di chuyển mau lẹ nhưng cản trở hồi phục vết thương."
+player_buff_desc = "Tốc chạy +15%, Tốc đánh +20%"
+player_debuff_desc = "Khí độc giảm 30% hiệu quả hồi máu"
+enemy_trait_desc = "Quái vật nhanh nhẹn (+25% tốc chạy) nhưng máu giấy (-20% HP)"
+player_speed_mult = 1.15
+player_atk_speed_mult = 1.2
+player_heal_mult = 0.7
+player_dmg_taken_mult = 1.0
+player_dmg_deal_mult = 1.0
+player_spell_dmg_mult = 1.0
+player_crit_bonus = 0.0
+player_gold_mult = 1.0
+enemy_hp_mult = 0.8
+enemy_speed_mult = 1.25
+enemy_dmg_mult = 1.0
+enemy_knockback_resist = 0.0
 floor_tile_atlas_coords = Array[Vector2i]([Vector2i(1, 7), Vector2i(2, 7), Vector2i(3, 7)])
 wall_tile_atlas_coords = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0)])
 tower_modifier = 1
-common_enemies = Array[ExtResource("1_14nnr")]([ExtResource("2_spider"), ExtResource("3_bat"), ExtResource("4_snake"), ExtResource("4_slime"), ExtResource("4_crawler")])
+common_enemies = Array[ExtResource("1_14nnr")]([ExtResource("2_scarab"), ExtResource("2_spider"), ExtResource("3_bat"), ExtResource("4_snake"), ExtResource("4_slime"), ExtResource("4_crawler")])
 miniboss_pool = Array[ExtResource("1_14nnr")]([ExtResource("5_miniboss1"), ExtResource("6_miniboss2"), ExtResource("6_behemoth")])
 final_boss = ExtResource("7_finalboss")
 ambient_color = Color(0.7, 0.85, 0.65, 1)

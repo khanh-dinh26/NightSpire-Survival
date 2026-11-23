@@ -5,7 +5,7 @@ extends Node2D
 const MAX_WEAPONS: int = 10
 
 var weapons: Array[WeaponBase] = []
-var orbit_radius: float = 38.0
+var orbit_radius: float = 48.0
 var rotation_speed: float = 5.6  # rad/s - blazing spinning top whirl
 
 var _orbit_angle: float = 0.0
@@ -69,7 +69,8 @@ func _reposition_weapons() -> void:
 	if total == 0:
 		return
 
+	var dynamic_radius: float = orbit_radius + float(maxi(0, total - 2)) * 1.5
 	for i: int in range(total):
 		var angle: float = _orbit_angle + (float(i) / float(total)) * TAU
-		weapons[i].position = Vector2(cos(angle), sin(angle)) * orbit_radius
+		weapons[i].position = Vector2(cos(angle), sin(angle)) * dynamic_radius
 		weapons[i].rotation = angle + deg_to_rad(45.0)

@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/001.png" id="1_wg01"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/002.png" id="2_wg02"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/003.png" id="3_wg03"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/004.png" id="4_wg04"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/005.png" id="5_wg05"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/006.png" id="6_wg06"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/007.png" id="7_wg07"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/008.png" id="8_wg08"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/009.png" id="9_wg09"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/010.png" id="10_wg10"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/011.png" id="11_wg11"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/012.png" id="12_wg12"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Water_Geyser/013.png" id="13_wg13"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_wg01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_wg02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_wg03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_wg04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_wg05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_wg06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_wg07")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_wg08")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_wg09")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_wg10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_wg11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_wg12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_wg13")
+}],
+"loop": false,
+"name": &"erupt",
+"speed": 16.0
+}]

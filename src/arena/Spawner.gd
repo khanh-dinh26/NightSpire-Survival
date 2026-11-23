@@ -118,7 +118,7 @@ func stop_spawning() -> void:
 func _on_spawn_tick() -> void:
 	if not is_spawning or current_tower == null or current_floor_config == null:
 		return
-	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies, 26)
+	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies + 6, 36)
 	if active_enemies >= max_allowed:
 		return
 	_spawn_burst()
@@ -128,7 +128,7 @@ func _spawn_burst() -> void:
 	if current_tower.common_enemies.is_empty():
 		return
 
-	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies, 26)
+	var max_allowed: int = mini(current_floor_config.max_concurrent_enemies + 6, 36)
 	var available_slots: int = max_allowed - active_enemies
 	if available_slots <= 0:
 		return
@@ -152,7 +152,7 @@ func _spawn_burst() -> void:
 
 
 func _spawn_special_formation(available_slots: int) -> void:
-	var pattern: int = randi() % 3
+	var pattern: int = randi() % 4
 	match pattern:
 		0:
 			_spawn_pincer_lines(available_slots)
@@ -160,6 +160,8 @@ func _spawn_special_formation(available_slots: int) -> void:
 			_spawn_surrounding_circle(available_slots)
 		2:
 			_spawn_elite_vanguard(available_slots)
+		3:
+			_spawn_small_swarm(available_slots)
 
 
 func _spawn_pincer_lines(available_slots: int) -> void:
@@ -276,6 +278,18 @@ func _spawn_elite_vanguard(available_slots: int) -> void:
 			_spawn_enemy(flank_data, false, lead_pos + offset)
 
 
+func _spawn_small_swarm(available_slots: int) -> void:
+	if current_tower == null or current_tower.common_enemies.is_empty():
+		return
+	var swarm_count: int = clampi(available_slots, 4, 8)
+	var spawn_origin: Vector2 = _get_spawn_position()
+	# Pick the first/lowest tier enemy (small creature/swarm)
+	var creep_data: EnemyData = current_tower.common_enemies[0]
+	for i: int in range(swarm_count):
+		var offset: Vector2 = Vector2(randf_range(-30.0, 30.0), randf_range(-30.0, 30.0))
+		_spawn_enemy(creep_data, false, spawn_origin + offset)
+
+
 func _get_tiered_enemy() -> EnemyData:
 	if current_tower.common_enemies.is_empty():
 		return null
@@ -311,6 +325,11 @@ func _spawn_enemy(data: EnemyData, is_elite: bool = false, custom_pos: Vector2 =
 	var hp_scale: float = current_floor_config.enemy_hp_multiplier
 	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
 	var spd_scale: float = current_floor_config.enemy_speed_multiplier
+
+	if current_tower != null:
+		hp_scale *= current_tower.enemy_hp_mult
+		dmg_scale *= current_tower.enemy_dmg_mult
+		spd_scale *= current_tower.enemy_speed_mult
 
 	if GameManager.is_dark_night:
 		hp_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.6)
@@ -393,6 +412,11 @@ func _spawn_boss_instance(boss_data: EnemyData, is_second_boss: bool = false) ->
 	var hp_scale: float = current_floor_config.enemy_hp_multiplier
 	var dmg_scale: float = current_floor_config.enemy_damage_multiplier
 	var spd_scale: float = current_floor_config.enemy_speed_multiplier
+
+	if current_tower != null:
+		hp_scale *= current_tower.enemy_hp_mult
+		dmg_scale *= current_tower.enemy_dmg_mult
+		spd_scale *= current_tower.enemy_speed_mult
 
 	if GameManager.is_dark_night:
 		hp_scale *= (1.0 + float(GameManager.dark_night_cycle) * 0.75)

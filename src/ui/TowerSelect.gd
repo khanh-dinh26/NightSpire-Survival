@@ -131,12 +131,9 @@ func _on_embark_pressed() -> void:
 	var tower: TowerData = towers[selected_tower_index]
 	var character_class: ClassData = classes[selected_class_index]
 
-	# Load 10 floors (Floor 10 is Final Boss)
-	var floors: Array[FloorConfig] = []
-	for i: int in range(1, 11):
-		var path: String = "res://src/data/floors/floor_%02d.tres" % i
-		if ResourceLoader.exists(path):
-			floors.append(load(path) as FloorConfig)
+	# Generate 100 floors dynamically (Floor 100 is Final Boss, Floor 99 Sanctuary, Bosses every 3-5 floors)
+	var floors: Array[FloorConfig] = FloorConfig.generate_100_floors()
 
 	GameManager.start_new_run(tower, floors, character_class)
+	SaveManager.save_run()
 	get_tree().change_scene_to_file("res://src/arena/Arena.tscn")

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "spell_water_geyser"
+item_name = "Khảm Phép: Thủy Long Bộc Phá"
+type = 2
+rarity = 2
+price = 30
+level = 1
+custom_icon_path = "res://assets/effects/magic_effects/Icons/tile004.png"
+spell_id = "water_geyser"
+cooldown = 3.2
+description = "Phun cột nước khổng lồ từ lòng đất hất tung và gây sát thương nước liên hoàn."

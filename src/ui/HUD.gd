@@ -17,7 +17,8 @@ extends CanvasLayer
 @onready var boss_hp_label: Label = $MarginContainer/VBoxContainer/BossBarContainer/BossHPBar/BossHPLabel
 
 @onready var game_over_panel: PanelContainer = $GameOverPanel
-@onready var restart_button: Button = $GameOverPanel/Margin/VBox/RestartButton
+@onready var checkpoint_button: Button = get_node_or_null("GameOverPanel/Margin/VBox/Buttons/CheckpointButton") as Button
+@onready var restart_button: Button = get_node_or_null("GameOverPanel/Margin/VBox/Buttons/RestartButton") as Button
 
 @onready var endgame_panel: PanelContainer = $EndgamePanel
 @onready var endgame_menu_btn: Button = $EndgamePanel/Margin/VBox/Buttons/MenuButton
@@ -39,6 +40,8 @@ func _ready() -> void:
 		boss_alert_panel.visible = false
 	if restart_button != null:
 		restart_button.pressed.connect(_on_restart_pressed)
+	if checkpoint_button != null:
+		checkpoint_button.pressed.connect(_on_checkpoint_pressed)
 	if endgame_menu_btn != null:
 		endgame_menu_btn.pressed.connect(_on_endgame_menu_pressed)
 	if endgame_darknight_btn != null:
@@ -229,7 +232,18 @@ func _on_player_hit(_damage: int) -> void:
 
 func _on_player_died() -> void:
 	_update_hp_display(0, GameManager.player_max_hp)
+	if checkpoint_button != null:
+		checkpoint_button.text = "Hồi Sinh Checkpoint (Tầng %d)" % GameManager.current_floor_index
 	game_over_panel.visible = true
+
+
+func _on_checkpoint_pressed() -> void:
+	game_over_panel.visible = false
+	if SaveManager.resume_saved_run():
+		GameManager.player_current_hp = GameManager.player_max_hp
+		get_tree().reload_current_scene()
+	else:
+		_on_restart_pressed()
 
 
 func _on_wave_started(floor_idx: int) -> void:
@@ -247,7 +261,7 @@ func _on_wave_started(floor_idx: int) -> void:
 	if GameManager.is_dark_night:
 		prefix = "[ĐÊM TỐI C%d] " % GameManager.dark_night_cycle
 
-	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 10
+	var total_floors: int = GameManager.floor_configs.size() if not GameManager.floor_configs.is_empty() else 100
 	floor_label.text = "%sTầng %d/%d — %s" % [prefix, floor_idx, total_floors, type_str]
 	if spawner != null and not spawner.is_spawning and cfg != null and cfg.floor_type == FloorConfig.FloorType.COMBAT_WAVE:
 		floor_label.text = "%sTầng %d/%d — THƯƠNG NHÂN" % [prefix, floor_idx, total_floors]

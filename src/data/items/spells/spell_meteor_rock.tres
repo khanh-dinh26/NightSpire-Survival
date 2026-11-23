@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "spell_meteor_rock"
+item_name = "Khảm Phép: Mưa Thiên Thạch"
+type = 2
+rarity = 2
+price = 35
+level = 1
+custom_icon_path = "res://assets/effects/magic_effects/Icons/tile006.png"
+spell_id = "meteor_rock"
+cooldown = 3.5
+description = "Triệu hồi tảng thiên thạch cổ đại giáng xuống nghiền nát diện rộng và hất văng quái vật."

@@ -73,7 +73,7 @@ func _process_spinning_contact_damage() -> void:
 	var now: float = Time.get_ticks_msec() / 1000.0
 	# Hit interval per enemy based on weapon attack speed
 	var hit_interval: float = clampf(1.0 / maxf(item_data.attack_speed, 1.0), 0.16, 0.40)
-	var contact_radius: float = 34.0
+	var contact_radius: float = 44.0 + float(item_data.level - 1) * 2.5
 
 	var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 	for node: Node in enemies:
@@ -102,6 +102,12 @@ func _deal_melee_damage(target: Node2D) -> void:
 		return
 
 	var final_damage: int = item_data.base_damage
+
+	# Tower modifier & crit bonus
+	if GameManager.current_tower != null:
+		final_damage = roundi(float(final_damage) * GameManager.current_tower.player_dmg_deal_mult)
+		if GameManager.current_tower.player_crit_bonus > 0.0 and randf() < GameManager.current_tower.player_crit_bonus:
+			final_damage = roundi(float(final_damage) * 1.75)
 
 	# Berserk Low HP check
 	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
@@ -165,7 +171,7 @@ func _trigger_radius_execute(center_pos: Vector2) -> void:
 func _find_closest_enemy() -> Node2D:
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	var closest: Node2D = null
-	var closest_dist: float = item_data.attack_range if item_data != null else 180.0
+	var closest_dist: float = (item_data.attack_range * 1.25) if item_data != null else 220.0
 	for enemy: Node in enemies:
 		var e: Node2D = enemy as Node2D
 		if e == null or not is_instance_valid(e):
@@ -199,7 +205,7 @@ func _attack_ranged() -> void:
 func _find_spell_target() -> Node2D:
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	var closest: Node2D = null
-	var closest_dist: float = 240.0
+	var closest_dist: float = 280.0
 	for enemy: Node in enemies:
 		var e: Node2D = enemy as Node2D
 		if e == null or not is_instance_valid(e):
@@ -232,6 +238,12 @@ func _auto_cast_embedded_spell(target_node: Node2D) -> void:
 			_cast_tornado(lvl, aim_dir)
 		"earth_spike":
 			_cast_earth_spike(lvl, target_pos)
+		"water_geyser":
+			_cast_water_geyser(lvl, target_pos)
+		"void_portal":
+			_cast_void_portal(lvl, target_pos)
+		"meteor_rock":
+			_cast_meteor_rock(lvl, target_pos)
 
 	var tw: Tween = create_tween()
 	tw.tween_property(self, ^"scale", Vector2(1.3, 1.3), 0.06)
@@ -318,5 +330,49 @@ func _cast_earth_spike(lvl: int, target_pos: Vector2) -> void:
 		spell.set("spell_type", 3) # EARTH_SPIKE
 		spell.set("level", lvl)
 		spell.set("damage", 40 + (lvl - 1) * 20)
+		spell.global_position = target_pos + offset
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_water_geyser(lvl: int, target_pos: Vector2) -> void:
+	AudioManager.play_sfx("water")
+	var echo_bonus: int = 0
+	for buff: ItemData in GameManager.passive_buffs:
+		if buff != null and buff.item_id == "spell_echo_prism":
+			echo_bonus += buff.level
+	var count: int = 1 + lvl + echo_bonus
+	for i: int in range(count):
+		var offset: Vector2 = Vector2.ZERO if i == 0 else Vector2(randf_range(-35, 35), randf_range(-35, 35))
+		var spell: Area2D = _spell_scene.instantiate() as Area2D
+		spell.set("spell_type", 5) # WATER_GEYSER
+		spell.set("level", lvl)
+		spell.set("damage", 45 + (lvl - 1) * 22)
+		spell.global_position = target_pos + offset
+		get_tree().current_scene.add_child(spell)
+
+
+func _cast_void_portal(lvl: int, target_pos: Vector2) -> void:
+	AudioManager.play_sfx("spell_fire")
+	var spell: Area2D = _spell_scene.instantiate() as Area2D
+	spell.set("spell_type", 6) # VOID_PORTAL
+	spell.set("level", lvl)
+	spell.set("damage", 30 + (lvl - 1) * 15)
+	spell.global_position = target_pos
+	get_tree().current_scene.add_child(spell)
+
+
+func _cast_meteor_rock(lvl: int, target_pos: Vector2) -> void:
+	AudioManager.play_sfx("explosion")
+	var echo_bonus: int = 0
+	for buff: ItemData in GameManager.passive_buffs:
+		if buff != null and buff.item_id == "spell_echo_prism":
+			echo_bonus += buff.level
+	var count: int = 1 + (lvl / 2) + echo_bonus
+	for i: int in range(count):
+		var offset: Vector2 = Vector2.ZERO if i == 0 else Vector2(randf_range(-40, 40), randf_range(-40, 40))
+		var spell: Area2D = _spell_scene.instantiate() as Area2D
+		spell.set("spell_type", 7) # METEOR_ROCK
+		spell.set("level", lvl)
+		spell.set("damage", 60 + (lvl - 1) * 28)
 		spell.global_position = target_pos + offset
 		get_tree().current_scene.add_child(spell)

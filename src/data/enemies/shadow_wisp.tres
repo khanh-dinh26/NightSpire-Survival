@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/EnemyData.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "shadow_wisp"
+enemy_name = "Lửa Ma Vong Hồn"
+enemy_type = 0
+max_hp = 14
+damage = 7
+speed = 90.0
+contact_knockback = 50.0
+gold_drop_min = 1
+gold_drop_max = 1
+sprite_sheet = "monsters"
+sprite_region = Rect2(96, 160, 32, 32)

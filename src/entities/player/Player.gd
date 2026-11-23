@@ -32,8 +32,15 @@ func _ready() -> void:
 	EventBus.spell_cast_requested.connect(_on_spell_cast_requested)
 	if GameManager.chosen_class != null:
 		setup_from_class(GameManager.chosen_class)
+		if GameManager.player_current_hp > 0:
+			current_hp = GameManager.player_current_hp
+			max_hp = GameManager.player_max_hp
 	else:
-		current_hp = max_hp
+		if GameManager.player_current_hp > 0:
+			current_hp = GameManager.player_current_hp
+			max_hp = GameManager.player_max_hp
+		else:
+			current_hp = max_hp
 		if weapon_orbit != null:
 			weapon_orbit.clear_weapons()
 			if GameManager.equipped_weapons.is_empty():
@@ -83,7 +90,10 @@ func _physics_process(delta: float) -> void:
 	if input_dir != Vector2.ZERO:
 		input_dir = input_dir.normalized()
 
-	velocity = input_dir * speed
+	var current_spd: float = speed
+	if GameManager.current_tower != null:
+		current_spd *= GameManager.current_tower.player_speed_mult
+	velocity = input_dir * current_spd
 	move_and_slide()
 
 	# Flip sprite based on movement direction (sprite naturally faces left in spritesheet)
@@ -184,7 +194,10 @@ func take_damage(amount: int) -> void:
 		# Dodged cleanly!
 		return
 
-	var effective: int = maxi(amount - defense, 1)
+	var final_amount: int = amount
+	if GameManager.current_tower != null:
+		final_amount = roundi(float(amount) * GameManager.current_tower.player_dmg_taken_mult)
+	var effective: int = maxi(final_amount - defense, 1)
 	current_hp -= effective
 	GameManager.player_current_hp = current_hp
 
@@ -213,7 +226,10 @@ func take_damage(amount: int) -> void:
 
 
 func heal(amount: int) -> void:
-	current_hp = mini(current_hp + amount, max_hp)
+	var final_amount: int = amount
+	if GameManager.current_tower != null:
+		final_amount = maxi(1, roundi(float(amount) * GameManager.current_tower.player_heal_mult))
+	current_hp = mini(current_hp + final_amount, max_hp)
 	GameManager.player_current_hp = current_hp
 	AudioManager.play_sfx("heal")
 	EventBus.player_hit.emit(0)

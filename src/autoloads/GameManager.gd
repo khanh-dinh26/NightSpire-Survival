@@ -75,8 +75,8 @@ func advance_floor() -> void:
 
 
 func add_gold(amount: int) -> void:
-	if current_tower != null and current_tower.tower_modifier == TowerData.TowerModifier.REDUCED_HEAL_MORE_GOLD:
-		amount = roundi(amount * 1.3)
+	if current_tower != null and current_tower.player_gold_mult != 1.0:
+		amount = roundi(float(amount) * current_tower.player_gold_mult)
 	gold += amount
 	EventBus.gold_changed.emit(gold)
 
@@ -199,4 +199,4 @@ func _on_enemy_killed(_pos: Vector2, gold_value: int) -> void:
 
 
 func _on_player_died() -> void:
-	SaveManager.delete_save()
+	pass

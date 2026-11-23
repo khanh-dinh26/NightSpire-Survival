@@ -37,12 +37,11 @@ func _ready() -> void:
 
 
 func _load_floor_configs() -> void:
-	all_floor_configs.clear()
-	for i: int in range(1, 11):
-		var path: String = "res://src/data/floors/floor_%02d.tres" % i
-		if ResourceLoader.exists(path):
-			var config: FloorConfig = load(path) as FloorConfig
-			all_floor_configs.append(config)
+	if not GameManager.floor_configs.is_empty():
+		all_floor_configs = GameManager.floor_configs
+	else:
+		all_floor_configs = FloorConfig.generate_100_floors()
+		GameManager.floor_configs = all_floor_configs
 
 
 func _load_items_pool() -> void:
@@ -66,6 +65,9 @@ func _load_items_pool() -> void:
 		"res://src/data/items/spells/spell_molten_spear.tres",
 		"res://src/data/items/spells/spell_tornado.tres",
 		"res://src/data/items/spells/spell_earth_spike.tres",
+		"res://src/data/items/spells/spell_water_geyser.tres",
+		"res://src/data/items/spells/spell_void_portal.tres",
+		"res://src/data/items/spells/spell_meteor_rock.tres",
 		# Buffs
 		"res://src/data/items/buffs/ruby_ring.tres",
 		"res://src/data/items/buffs/leather_boots.tres",
@@ -86,19 +88,9 @@ func _load_items_pool() -> void:
 
 
 func start_default_run() -> void:
-	# Thương nhân luôn xuất hiện ở tầng 9 (trước final boss tầng 10 theo floor_type == NPC_SANCTUARY)
-	# Các tầng quái còn lại (2, 4, 5, 7, 8) có tỉ lệ ngẫu nhiên xuất hiện thêm tầng thương nhân
-	_random_sanctuary_floor = -1
-	if randf() <= 0.40:
-		_random_merchant_floor = [2, 4, 5, 7, 8].pick_random()
-	else:
-		_random_merchant_floor = -1
-
 	if GameManager.current_tower == null:
 		GameManager.start_new_run(default_tower, all_floor_configs)
-	else:
-		GameManager.floor_configs = all_floor_configs
-	start_floor(1)
+	start_floor(GameManager.current_floor_index)
 
 
 func start_floor(floor_num: int) -> void:
@@ -111,6 +103,9 @@ func start_floor(floor_num: int) -> void:
 	_clean_sanctuary()
 	_clean_pickups()
 	_clean_enemies()
+
+	# Save checkpoint for the current floor
+	SaveManager.save_run()
 
 	# Setup arena tiles and dimensions
 	if arena != null:
@@ -138,7 +133,7 @@ func start_floor(floor_num: int) -> void:
 				if hud != null and hud.timer_label != null:
 					hud.timer_label.text = "SỰ KIỆN: SONG ĐẤU TRÙM (DOUBLE BOSS)!"
 
-	var is_sanctuary: bool = (config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY) or (floor_num == _random_sanctuary_floor) or (floor_num == _random_merchant_floor)
+	var is_sanctuary: bool = (config.floor_type == FloorConfig.FloorType.NPC_SANCTUARY)
 
 	# NPC Sanctuary / Merchant Floor: Safe haven without monsters
 	if is_sanctuary:

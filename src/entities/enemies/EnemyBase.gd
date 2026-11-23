@@ -107,6 +107,8 @@ func _physics_process(delta: float) -> void:
 
 
 func apply_knockback(force: Vector2) -> void:
+	if GameManager.current_tower != null and GameManager.current_tower.enemy_knockback_resist > 0.0:
+		force *= (1.0 - clampf(GameManager.current_tower.enemy_knockback_resist, 0.0, 0.95))
 	_knockback_velocity = force
 
 
@@ -178,16 +180,16 @@ func die() -> void:
 	var p: Player = players[0] as Player if players.size() > 0 else null
 	var luck: float = p.luck_stat if p != null else 0.0
 
-	# Càng lên tầng cao tỉ lệ rơi vàng giảm, nhưng có buff thì tăng theo buff
+	# Càng lên tầng cao tỉ lệ rơi vàng giảm dần suốt 100 tầng để cân bằng kinh tế
 	var current_floor: int = maxi(1, GameManager.current_floor_index)
-	var base_drop_chance: float = maxf(0.20, 0.80 - float(current_floor - 1) * 0.10)
-	var drop_chance: float = base_drop_chance + (luck * 0.25)
-	var drops_gold: bool = randf() <= drop_chance or is_elite
-	var gold_value: int = randi_range(data.gold_drop_min, data.gold_drop_max) if data != null else 1
+	var base_drop_chance: float = clampf(0.75 - (float(current_floor - 1) / 99.0) * 0.65, 0.10, 0.75)
+	var drop_chance: float = base_drop_chance + (luck * 0.20)
+	var drops_gold: bool = (randf() <= drop_chance) or (is_elite and randf() <= 0.75)
+	var gold_value: int = 1
 	if is_elite:
-		gold_value = randi_range(4, 7)
+		gold_value = randi_range(3, 5)
 	else:
-		gold_value = clampi(gold_value, 1, 3)
+		gold_value = 2 if (luck > 0.0 and randf() <= 0.25) else 1
 
 	EventBus.enemy_killed.emit(global_position, gold_value if drops_gold else 0)
 	if drops_gold:

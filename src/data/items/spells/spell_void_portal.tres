@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = "spell_void_portal"
+item_name = "Khảm Phép: Hố Đen Hư Không"
+type = 2
+rarity = 3
+price = 45
+level = 1
+custom_icon_path = "res://assets/effects/magic_effects/Icons/tile005.png"
+spell_id = "void_portal"
+cooldown = 4.0
+description = "Mở cổng không gian xoay tròn hút toàn bộ quái vật xung quanh vào tâm nghiền nát."

@@ -1,0 +1,55 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/001.png" id="1_rk01"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/002.png" id="2_rk02"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/003.png" id="3_rk03"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/004.png" id="4_rk04"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/005.png" id="5_rk05"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/006.png" id="6_rk06"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/007.png" id="7_rk07"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/008.png" id="8_rk08"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/009.png" id="9_rk09"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Rocks/010.png" id="10_rk10"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_rk01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_rk02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_rk03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_rk04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_rk05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_rk06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_rk07")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_rk08")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_rk09")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_rk10")
+}],
+"loop": false,
+"name": &"impact",
+"speed": 15.0
+}]

@@ -1,0 +1,55 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/001.png" id="1_vp01"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/002.png" id="2_vp02"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/003.png" id="3_vp03"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/004.png" id="4_vp04"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/005.png" id="5_vp05"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/006.png" id="6_vp06"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/007.png" id="7_vp07"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/008.png" id="8_vp08"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/009.png" id="9_vp09"]
+[ext_resource type="Texture2D" path="res://assets/effects/magic_effects/Portal/010.png" id="10_vp10"]
+
+[resource]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_vp01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_vp02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_vp03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_vp04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_vp05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_vp06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_vp07")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_vp08")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_vp09")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_vp10")
+}],
+"loop": true,
+"name": &"swirl",
+"speed": 12.0
+}]

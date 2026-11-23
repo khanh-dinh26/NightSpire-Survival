@@ -1,6 +1,8 @@
-[gd_resource type="Resource" script_class="TowerData" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="TowerData" load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://src/resources/TowerData.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/data/enemies/lava_mite.tres" id="2_mite"]
+[ext_resource type="Resource" path="res://src/data/enemies/scarab_swarm.tres" id="2_scarab"]
 [ext_resource type="Resource" path="res://src/data/enemies/goblin.tres" id="2_gob"]
 [ext_resource type="Resource" path="res://src/data/enemies/dark_cultist.tres" id="2_cultist"]
 [ext_resource type="Resource" path="res://src/data/enemies/orc.tres" id="3_orc"]
@@ -15,12 +17,27 @@
 script = ExtResource("1_script")
 tower_id = "cinderforge"
 tower_name = "Cinderforge Spire (Lò Rèn Dung Nham)"
-lore_description = "Lò rèn của quỷ dữ ngập tràn lửa đỏ và nham thạch sôi sục. Sát thương gia tăng khủng khiếp cho cả hai phe."
+lore_description = "Lò rèn của quỷ dữ ngập tràn lửa đỏ và nham thạch sôi sục. Sát thương gia tăng khủng khiếp cho cả hai phe trong cuộc đại chiến sinh tử cuồng nộ."
+player_buff_desc = "Sát thương cuồng nộ +50%, Chí mạng +15%, Vàng rơi +35%"
+player_debuff_desc = "Nhiệt độ dung nham khiến sát thương gánh chịu tăng +35%"
+enemy_trait_desc = "Quái vật hỏa ngục cuồng chiến (+35% sát thương, hung hãn)"
+player_speed_mult = 1.05
+player_atk_speed_mult = 1.1
+player_heal_mult = 1.0
+player_dmg_taken_mult = 1.35
+player_dmg_deal_mult = 1.5
+player_spell_dmg_mult = 1.2
+player_crit_bonus = 0.15
+player_gold_mult = 1.35
+enemy_hp_mult = 1.0
+enemy_speed_mult = 1.1
+enemy_dmg_mult = 1.35
+enemy_knockback_resist = 0.15
 floor_tile_atlas_coords = Array[Vector2i]([Vector2i(1, 11), Vector2i(2, 11), Vector2i(3, 11)])
 wall_tile_atlas_coords = Array[Vector2i]([Vector2i(0, 3), Vector2i(1, 3)])
 tower_modifier = 3
 modifier_value = 0.25
-common_enemies = Array[Resource]([ExtResource("2_gob"), ExtResource("2_cultist"), ExtResource("3_orc"), ExtResource("4_imp"), ExtResource("4_agolem")])
+common_enemies = Array[Resource]([ExtResource("2_mite"), ExtResource("2_scarab"), ExtResource("2_gob"), ExtResource("2_cultist"), ExtResource("3_orc"), ExtResource("4_imp"), ExtResource("4_agolem")])
 miniboss_pool = Array[Resource]([ExtResource("5_mb1"), ExtResource("6_mb2"), ExtResource("6_void")])
 final_boss = ExtResource("7_fb")
 ambient_color = Color(1, 0.75, 0.65, 1)

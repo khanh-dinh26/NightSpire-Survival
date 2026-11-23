@@ -1,9 +1,18 @@
 class_name SpellEntity
 extends Area2D
 ## Universal Spell projectile / area effect in world space.
-## Handles Fireball, Molten Spear, Tornado, Earth Spike, and Explosions.
+## Handles Fireball, Molten Spear, Tornado, Earth Spike, Water Geyser, Void Portal, Meteor Rock, and Explosions.
 
-enum SpellType { FIREBALL, MOLTEN_SPEAR, TORNADO, EARTH_SPIKE, EXPLOSION }
+enum SpellType {
+	FIREBALL,
+	MOLTEN_SPEAR,
+	TORNADO,
+	EARTH_SPIKE,
+	EXPLOSION,
+	WATER_GEYSER,
+	VOID_PORTAL,
+	METEOR_ROCK
+}
 
 var spell_type: SpellType = SpellType.FIREBALL
 var damage: int = 30
@@ -24,6 +33,9 @@ var _exp_frames: SpriteFrames = preload("res://src/entities/spells/explosion_fra
 var _ms_frames: SpriteFrames = preload("res://src/entities/spells/molten_spear_frames.tres")
 var _tor_frames: SpriteFrames = preload("res://src/entities/spells/tornado_frames.tres")
 var _es_frames: SpriteFrames = preload("res://src/entities/spells/earth_spike_frames.tres")
+var _wg_frames: SpriteFrames = preload("res://src/entities/spells/water_geyser_frames.tres")
+var _vp_frames: SpriteFrames = preload("res://src/entities/spells/void_portal_frames.tres")
+var _mr_frames: SpriteFrames = preload("res://src/entities/spells/meteor_rock_frames.tres")
 
 
 func _ready() -> void:
@@ -65,6 +77,26 @@ func _setup_visuals() -> void:
 			speed = 0.0
 			lifetime = 0.6
 			animated_sprite.animation_finished.connect(queue_free)
+		SpellType.WATER_GEYSER:
+			animated_sprite.sprite_frames = _wg_frames
+			animated_sprite.play(&"erupt")
+			speed = 0.0
+			lifetime = 0.9
+			scale = Vector2(1.1, 1.1)
+			animated_sprite.animation_finished.connect(queue_free)
+		SpellType.VOID_PORTAL:
+			animated_sprite.sprite_frames = _vp_frames
+			animated_sprite.play(&"swirl")
+			speed = 0.0
+			lifetime = 3.2 + float(level) * 0.4
+			scale = Vector2(1.0, 1.0)
+		SpellType.METEOR_ROCK:
+			animated_sprite.sprite_frames = _mr_frames
+			animated_sprite.play(&"impact")
+			speed = 0.0
+			lifetime = 0.75
+			scale = Vector2(1.25, 1.25)
+			animated_sprite.animation_finished.connect(queue_free)
 
 
 func _physics_process(delta: float) -> void:
@@ -79,15 +111,18 @@ func _physics_process(delta: float) -> void:
 	if speed > 0.0:
 		global_position += direction * speed * delta
 
-	# Tornado suction & continuous tick damage
-	if spell_type == SpellType.TORNADO:
-		_process_tornado(delta)
+	# Continuous suction & area tick damage
+	if spell_type == SpellType.TORNADO or spell_type == SpellType.VOID_PORTAL:
+		_process_suction_vortex(delta)
 
 
-func _process_tornado(delta: float) -> void:
+func _process_suction_vortex(delta: float) -> void:
 	_tick_timer += delta
-	var radius: float = 80.0 + float(level) * 20.0
-	var suction_strength: float = 70.0 + float(level) * 25.0
+	var radius: float = 95.0 + float(level) * 20.0
+	var suction_strength: float = 85.0 + float(level) * 25.0
+	if spell_type == SpellType.VOID_PORTAL:
+		radius += 20.0
+		suction_strength += 35.0
 
 	for enemy: Node in get_tree().get_nodes_in_group(&"enemies"):
 		var e: Node2D = enemy as Node2D
@@ -95,19 +130,18 @@ func _process_tornado(delta: float) -> void:
 			continue
 		var dist: float = global_position.distance_to(e.global_position)
 		if dist <= radius:
-			# Pull enemy toward tornado center
 			var pull_dir: Vector2 = (global_position - e.global_position).normalized()
 			if e.has_method("apply_knockback"):
 				e.apply_knockback(pull_dir * suction_strength * delta)
 			elif "velocity" in e:
 				e.velocity += pull_dir * suction_strength * delta
 
-			# Periodic tick damage
-			if _tick_timer >= 0.25:
+			if _tick_timer >= 0.22:
 				if e.has_method("take_damage"):
-					e.take_damage(maxi(damage / 4, 3))
+					var tick_dmg: int = maxi(damage / 4, 3)
+					e.take_damage(tick_dmg)
 
-	if _tick_timer >= 0.25:
+	if _tick_timer >= 0.22:
 		_tick_timer = 0.0
 
 
@@ -133,19 +167,26 @@ func _handle_hit(target: Node) -> void:
 		return
 	_hit_enemies[id] = true
 
+	var final_damage: int = damage
+	if GameManager.current_tower != null:
+		final_damage = roundi(float(final_damage) * GameManager.current_tower.player_spell_dmg_mult)
+
 	if target.has_method("take_damage"):
-		target.take_damage(damage)
+		target.take_damage(final_damage)
 		if target.has_method("apply_knockback"):
-			target.apply_knockback(direction * 80.0)
+			var kb: float = 90.0
+			if spell_type == SpellType.WATER_GEYSER:
+				kb = 160.0
+			elif spell_type == SpellType.METEOR_ROCK:
+				kb = 200.0
+			target.apply_knockback(direction * kb if direction != Vector2.ZERO else Vector2.UP * kb)
 
 	match spell_type:
 		SpellType.FIREBALL:
 			_explode()
 		SpellType.MOLTEN_SPEAR:
-			# Pierces through, does not queue_free
 			pass
-		SpellType.EARTH_SPIKE:
-			# Hits and stays for animation
+		SpellType.EARTH_SPIKE, SpellType.WATER_GEYSER, SpellType.METEOR_ROCK:
 			pass
 
 
