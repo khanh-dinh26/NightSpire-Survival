@@ -1,13 +1,14 @@
 class_name SkillTargetIndicator
 extends Node2D
 ## Dynamic world-space visual indicator for aiming hero abilities:
-## - Knight Leap: Ground target circle (150px) at mouse with trajectory line.
-## - Ranger Spear: Piercing direction corridor & guide arrow towards mouse.
-## - Wizard Siphon: 180px aura boundary centered on player (siphons strictly inside).
+## - Knight Leap: Ground target circle (100px) clamped to max leap range (200px) from player.
+## - Ranger Spear: Piercing direction corridor (44px width) & guide arrow towards mouse.
+## - Wizard Siphon: 120px aura boundary centered on player (siphons strictly inside).
 
 var skill_type: String = "knight_leap"
 var player: CharacterBody2D = null
-var aoe_radius: float = 150.0
+var aoe_radius: float = 100.0
+var max_leap_range: float = 200.0
 var _pulse_timer: float = 0.0
 
 
@@ -17,7 +18,12 @@ func _process(delta: float) -> void:
 		if skill_type in ["ranger_piercing_spear", "single_shot", "marking_dash", "wizard_blood_siphon", "soulblood_song"]:
 			global_position = player.global_position
 		else:
-			global_position = get_global_mouse_position()
+			# Knight leap: clamp mouse target to max_leap_range around player
+			var mouse_pos: Vector2 = get_global_mouse_position()
+			var offset: Vector2 = mouse_pos - player.global_position
+			if offset.length() > max_leap_range:
+				offset = offset.normalized() * max_leap_range
+			global_position = player.global_position + offset
 	else:
 		global_position = get_global_mouse_position()
 	queue_redraw()
@@ -36,34 +42,34 @@ func _draw() -> void:
 
 
 func _draw_knight_leap_indicator() -> void:
-	var pulse: float = sin(_pulse_timer) * 2.5
+	var pulse: float = sin(_pulse_timer) * 2.0
 	var current_rad: float = aoe_radius + pulse
 
-	# Translucent fiery/magic orange filled circular area
-	draw_circle(Vector2.ZERO, current_rad, Color(1.0, 0.45, 0.12, 0.20))
-
-	# Bright glowing outer boundary showing the EXACT blast radius (150px)
-	draw_arc(Vector2.ZERO, current_rad, 0, TAU, 64, Color(1.0, 0.8, 0.25, 0.95), 2.5)
-
-	# Inner concentric ring
-	draw_arc(Vector2.ZERO, current_rad * 0.5, 0, TAU, 48, Color(1.0, 0.55, 0.15, 0.4), 1.5)
-
-	# Center crosshairs
-	draw_line(Vector2(-16, 0), Vector2(16, 0), Color(1.0, 0.95, 0.4, 0.95), 2.0)
-	draw_line(Vector2(0, -16), Vector2(0, 16), Color(1.0, 0.95, 0.4, 0.95), 2.0)
-
-	# 4 compass tick marks on perimeter
-	draw_line(Vector2(0, -current_rad - 8), Vector2(0, -current_rad + 8), Color(1.0, 0.9, 0.3, 0.95), 2.5)
-	draw_line(Vector2(0, current_rad - 8), Vector2(0, current_rad + 8), Color(1.0, 0.9, 0.3, 0.95), 2.5)
-	draw_line(Vector2(-current_rad - 8, 0), Vector2(-current_rad + 8, 0), Color(1.0, 0.9, 0.3, 0.95), 2.5)
-	draw_line(Vector2(current_rad - 8, 0), Vector2(current_rad + 8, 0), Color(1.0, 0.9, 0.3, 0.95), 2.5)
-
-	# Jump arc line from player to target landing spot
+	# Max leap range boundary circle centered around player
 	if player != null and is_instance_valid(player):
 		var p_local: Vector2 = to_local(player.global_position)
-		draw_line(p_local, Vector2.ZERO, Color(1.0, 0.7, 0.2, 0.5), 2.0)
-		# Small circle at player
-		draw_circle(p_local, 8.0, Color(1.0, 0.8, 0.3, 0.5))
+		draw_arc(p_local, max_leap_range, 0, TAU, 64, Color(1.0, 0.65, 0.2, 0.25), 1.5)
+		draw_line(p_local, Vector2.ZERO, Color(1.0, 0.7, 0.2, 0.45), 2.0)
+		draw_circle(p_local, 6.0, Color(1.0, 0.8, 0.3, 0.5))
+
+	# Translucent fiery orange filled landing circle (100px radius)
+	draw_circle(Vector2.ZERO, current_rad, Color(1.0, 0.45, 0.12, 0.22))
+
+	# Glowing outer boundary showing exact blast radius
+	draw_arc(Vector2.ZERO, current_rad, 0, TAU, 56, Color(1.0, 0.8, 0.25, 0.95), 2.5)
+
+	# Inner concentric ring
+	draw_arc(Vector2.ZERO, current_rad * 0.5, 0, TAU, 40, Color(1.0, 0.55, 0.15, 0.4), 1.5)
+
+	# Center crosshairs
+	draw_line(Vector2(-14, 0), Vector2(14, 0), Color(1.0, 0.95, 0.4, 0.95), 2.0)
+	draw_line(Vector2(0, -14), Vector2(0, 14), Color(1.0, 0.95, 0.4, 0.95), 2.0)
+
+	# 4 compass tick marks on perimeter
+	draw_line(Vector2(0, -current_rad - 6), Vector2(0, -current_rad + 6), Color(1.0, 0.9, 0.3, 0.95), 2.5)
+	draw_line(Vector2(0, current_rad - 6), Vector2(0, current_rad + 6), Color(1.0, 0.9, 0.3, 0.95), 2.5)
+	draw_line(Vector2(-current_rad - 6, 0), Vector2(-current_rad + 6, 0), Color(1.0, 0.9, 0.3, 0.95), 2.5)
+	draw_line(Vector2(current_rad - 6, 0), Vector2(current_rad + 6, 0), Color(1.0, 0.9, 0.3, 0.95), 2.5)
 
 
 func _draw_ranger_spear_indicator() -> void:
@@ -73,9 +79,9 @@ func _draw_ranger_spear_indicator() -> void:
 	if aim_dir == Vector2.ZERO:
 		aim_dir = Vector2.RIGHT
 
-	var beam_len: float = 950.0
+	var beam_len: float = 850.0
 	var beam_end: Vector2 = aim_dir * beam_len
-	var half_width: float = 45.0
+	var half_width: float = 22.0 # Compact corridor (44px total width)
 	var perp: Vector2 = aim_dir.orthogonal()
 
 	# Corridor polygon (transparent cyan beam area)
@@ -97,33 +103,33 @@ func _draw_ranger_spear_indicator() -> void:
 
 	# Direction arrow at mouse position
 	var m_local: Vector2 = to_local(mouse_world)
-	var arrow_size: float = 24.0
-	var left_wing: Vector2 = m_local - aim_dir * arrow_size + perp * (arrow_size * 0.6)
-	var right_wing: Vector2 = m_local - aim_dir * arrow_size - perp * (arrow_size * 0.6)
-	draw_line(left_wing, m_local, Color(0.6, 1.0, 1.0, 0.95), 3.0)
-	draw_line(right_wing, m_local, Color(0.6, 1.0, 1.0, 0.95), 3.0)
-	draw_circle(m_local, 5.0, Color(1.0, 1.0, 0.5, 0.9))
+	var arrow_size: float = 20.0
+	var left_wing: Vector2 = m_local - aim_dir * arrow_size + perp * (arrow_size * 0.5)
+	var right_wing: Vector2 = m_local - aim_dir * arrow_size - perp * (arrow_size * 0.5)
+	draw_line(left_wing, m_local, Color(0.6, 1.0, 1.0, 0.95), 2.5)
+	draw_line(right_wing, m_local, Color(0.6, 1.0, 1.0, 0.95), 2.5)
+	draw_circle(m_local, 4.0, Color(1.0, 1.0, 0.5, 0.9))
 
 
 func _draw_wizard_siphon_indicator() -> void:
-	var radius: float = 180.0
-	var pulse: float = sin(_pulse_timer) * 2.0
+	var radius: float = 120.0 # Compact 120px radius
+	var pulse: float = sin(_pulse_timer) * 1.5
 	var cur_rad: float = radius + pulse
 
-	# Translucent blood-crimson filled area (inside zone that will be drained)
+	# Translucent blood-crimson filled area (strictly inside zone)
 	draw_circle(Vector2.ZERO, cur_rad, Color(0.75, 0.08, 0.22, 0.22))
 
-	# Bright glowing crimson perimeter ring
-	draw_arc(Vector2.ZERO, cur_rad, 0, TAU, 64, Color(1.0, 0.2, 0.38, 0.95), 3.0)
+	# Glowing crimson perimeter ring
+	draw_arc(Vector2.ZERO, cur_rad, 0, TAU, 56, Color(1.0, 0.2, 0.38, 0.95), 2.5)
 
 	# Inner ritual circle
-	draw_arc(Vector2.ZERO, cur_rad * 0.55, 0, TAU, 48, Color(0.9, 0.15, 0.3, 0.4), 1.5)
+	draw_arc(Vector2.ZERO, cur_rad * 0.55, 0, TAU, 40, Color(0.9, 0.15, 0.3, 0.4), 1.5)
 
 	# 8 radial rune ticks on perimeter
 	var tick_count: int = 8
 	for i: int in range(tick_count):
 		var ang: float = float(i) * TAU / float(tick_count)
 		var tick_dir: Vector2 = Vector2(cos(ang), sin(ang))
-		var p_in: Vector2 = tick_dir * (cur_rad - 10.0)
-		var p_out: Vector2 = tick_dir * (cur_rad + 10.0)
-		draw_line(p_in, p_out, Color(1.0, 0.4, 0.5, 0.95), 2.5)
+		var p_in: Vector2 = tick_dir * (cur_rad - 8.0)
+		var p_out: Vector2 = tick_dir * (cur_rad + 8.0)
+		draw_line(p_in, p_out, Color(1.0, 0.4, 0.5, 0.95), 2.0)

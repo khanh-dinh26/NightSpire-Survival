@@ -33,6 +33,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("10_border")
 draw_center = false
 patch_margin_left = 14
@@ -46,6 +47,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
@@ -53,6 +55,7 @@ theme_override_constants/margin_bottom = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=973904901]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 4
 
 [node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=196566127]
@@ -183,10 +186,12 @@ vertical_alignment = 1
 [node name="BottomSpacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1263998820]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1466198048]
 layout_mode = 2
-alignment = 0
+mouse_filter = 2
+alignment = 1
 
 [node name="InventoryBar" parent="MarginContainer/VBoxContainer/BottomBar" unique_id=1625563208 instance=ExtResource("2_invbar")]
 layout_mode = 2

@@ -6,7 +6,7 @@
 [node name="InventoryBar" type="GridContainer"]
 theme_override_constants/h_separation = 3
 theme_override_constants/v_separation = 3
-columns = 5
+columns = 10
 script = ExtResource("1_bar")
 
 [node name="Slot0" parent="." instance=ExtResource("2_slot")]
