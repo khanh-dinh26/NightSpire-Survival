@@ -385,7 +385,7 @@ theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
 text = "Chiến binh cận chiến kiên cường.
-[color=#ffaa33][b]Tuyệt kỹ [E / Q / Click]:[/b][/color] Oanh Kích Bộc Phá (Chọn vị trí trong 200px, nhảy tới bổ kiếm nổ Magic Cocktail 450 sát thương)"
+[color=#ffaa33][b]Tuyệt kỹ [E / Click]:[/b][/color] Oanh Kích Bộc Phá (Chọn vị trí trong 200px, nhảy tới bổ kiếm nổ diện rộng 220 sát thương, nhấn lại E để hủy)"
 
 [node name="Class1" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
 layout_mode = 2
@@ -461,7 +461,7 @@ theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
 text = "Xạ thủ bách phát bách trúng nhạy bén.
-[color=#ffaa33][b]Tuyệt kỹ [E / Q / Click]:[/b][/color] Xuyên Phá Thần Tiễn (Ngắm bắn ngọn giáo năng lượng kéo dài xuyên thấu 550 sát thương)"
+[color=#ffaa33][b]Tuyệt kỹ [E / Click]:[/b][/color] Xuyên Phá Thần Tiễn (Ngắm bắn ngọn giáo năng lượng xuyên thấu quái vật 260 sát thương, nhấn lại E để hủy)"
 
 [node name="Class2" type="Button" parent="Margin/VBox/ClassStep/ClassCards"]
 layout_mode = 2
@@ -537,7 +537,7 @@ theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/bold_font_size = 11
 text = "Bậc thầy cổ thuật ma pháp nguyên tố.
-[color=#ffaa33][b]Tuyệt kỹ [E / Q / Click]:[/b][/color] Huyết Ngục Đoạt Hồn (Mở vòng phong ấn 120px, hút máu toàn bộ quái vật bên trong gây 320 sát thương)"
+[color=#ffaa33][b]Tuyệt kỹ [E / Click]:[/b][/color] Huyết Ngục Đoạt Hồn (Mở vòng phong ấn 120px, hút máu quái vật bên trong gây 160 sát thương, nhấn lại E để hủy)"
 
 [node name="NavFooter" type="HBoxContainer" parent="Margin/VBox/ClassStep"]
 layout_mode = 2

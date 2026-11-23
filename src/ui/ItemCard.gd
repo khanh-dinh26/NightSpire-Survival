@@ -21,8 +21,11 @@ var _items_tex: Texture2D = preload("res://assets/sprites/items.png")
 
 var _spell_icons: Dictionary = {
 	"fireball": preload("res://assets/effects/magic_effects/Icons/tile000.png"),
+	"meteor_rock": preload("res://assets/effects/magic_effects/Icons/tile001.png"),
+	"void_portal": preload("res://assets/effects/magic_effects/Icons/tile004.png"),
 	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile006.png"),
 	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile007.png"),
+	"water_geyser": preload("res://assets/effects/magic_effects/Icons/tile008.png"),
 	"tornado": preload("res://assets/effects/magic_effects/Icons/tile009.png"),
 }
 
@@ -118,7 +121,7 @@ func _refresh_display() -> void:
 			extra_effect = "\n[Đặc tính: %s]" % ItemData.get_special_effect_name(item_data.special_effect)
 		if not item_data.embedded_spell.is_empty():
 			extra_effect += "\n[Khảm Phép: %s Lv.%d]" % [
-				item_data.embedded_spell.capitalize(), item_data.embedded_spell_level
+				_get_spell_display_name(item_data.embedded_spell), item_data.embedded_spell_level
 			]
 		desc_label.text = "Sát thương: %d  |  Tốc đánh: %.1f/s%s\n%s" % [
 			item_data.base_damage,
@@ -193,3 +196,15 @@ func _get_rarity_color(rarity: ItemData.Rarity) -> Color:
 		ItemData.Rarity.LEGENDARY:
 			return Color(1.0, 0.8, 0.2)
 	return Color.WHITE
+
+
+func _get_spell_display_name(s_id: String) -> String:
+	match s_id:
+		"fireball": return "Hỏa Cầu"
+		"meteor_rock": return "Mưa Thiên Thạch"
+		"void_portal": return "Hố Đen Hư Không"
+		"molten_spear": return "Ngọn Giáo Nóng Chảy"
+		"earth_spike": return "Chông Gai Đất"
+		"water_geyser": return "Thủy Long Bộc Phá"
+		"tornado": return "Bão Tố Cuồng Phong"
+		_: return s_id.capitalize()

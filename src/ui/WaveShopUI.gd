@@ -15,6 +15,12 @@ extends CanvasLayer
 @onready var replace_slots_container: HBoxContainer = $ReplaceModal/Margin/VBox/SlotsContainer
 @onready var replace_cancel_btn: Button = $ReplaceModal/Margin/VBox/CancelButton
 
+# Inlay Modal
+@onready var inlay_modal: PanelContainer = $InlayModal
+@onready var inlay_title: Label = $InlayModal/Margin/VBox/TitleLabel
+@onready var inlay_slots_container: HBoxContainer = $InlayModal/Margin/VBox/SlotsContainer
+@onready var inlay_cancel_btn: Button = $InlayModal/Margin/VBox/CancelButton
+
 var _card_scene: PackedScene = preload("res://src/ui/ItemCard.tscn")
 var _inv_slot_scene: PackedScene = preload("res://src/ui/InventorySlot.tscn")
 var _all_items_pool: Array[ItemData] = []
@@ -33,6 +39,9 @@ func _ready() -> void:
 	if replace_modal != null:
 		replace_modal.visible = false
 		replace_cancel_btn.pressed.connect(_hide_replace_modal)
+	if inlay_modal != null:
+		inlay_modal.visible = false
+		inlay_cancel_btn.pressed.connect(_hide_inlay_modal)
 
 	reroll_btn.pressed.connect(_on_reroll_pressed)
 	continue_btn.pressed.connect(_on_continue_pressed)
@@ -65,9 +74,12 @@ func _load_all_items() -> void:
 	# Spells
 	var spell_files: Array[String] = [
 		"res://src/data/items/spells/spell_fireball.tres",
+		"res://src/data/items/spells/spell_meteor_rock.tres",
+		"res://src/data/items/spells/spell_void_portal.tres",
 		"res://src/data/items/spells/spell_molten_spear.tres",
-		"res://src/data/items/spells/spell_tornado.tres",
 		"res://src/data/items/spells/spell_earth_spike.tres",
+		"res://src/data/items/spells/spell_water_geyser.tres",
+		"res://src/data/items/spells/spell_tornado.tres",
 	]
 	for path: String in spell_files:
 		if ResourceLoader.exists(path):
@@ -98,6 +110,7 @@ func open_shop(items: Array[ItemData]) -> void:
 		return
 	_rerolled_in_current_shop = false
 	_hide_replace_modal()
+	_hide_inlay_modal()
 	_rerolls_remaining = MAX_REROLLS
 	get_tree().paused = true
 	title_label.text = "TẦNG %d HOÀN THÀNH — CỬA HÀNG VŨ KHÍ" % GameManager.current_floor_index
@@ -160,6 +173,13 @@ func _on_card_selected(card: ItemCard, item: ItemData) -> void:
 		_show_replace_modal(item)
 		return
 
+	# If item is SPELL and player has equipped weapons, prompt to choose weapon to inlay!
+	if item.type == ItemData.ItemType.SPELL and not GameManager.equipped_weapons.is_empty():
+		_pending_item = item
+		_pending_card = card
+		_show_inlay_modal(item)
+		return
+
 	# Standard purchase
 	if GameManager.spend_gold(cost):
 		GameManager.add_item(item)
@@ -201,7 +221,58 @@ func _on_replace_confirmed(slot_idx: int) -> void:
 
 
 func _hide_replace_modal() -> void:
-	replace_modal.visible = false
+	if replace_modal != null:
+		replace_modal.visible = false
+	_pending_item = null
+	_pending_card = null
+
+
+# ── Inlay Modal Logic ───────────────────────────────────────────────────
+func _show_inlay_modal(spell_item: ItemData) -> void:
+	if inlay_modal == null:
+		return
+	inlay_title.text = "KHẢM PHÉP [%s] — CHỌN VŨ KHÍ:" % spell_item.item_name
+	for child: Node in inlay_slots_container.get_children():
+		child.queue_free()
+
+	var s_id: String = spell_item.spell_id if not spell_item.spell_id.is_empty() else spell_item.item_id
+
+	for i: int in range(GameManager.equipped_weapons.size()):
+		var eq: ItemData = GameManager.equipped_weapons[i]
+		var btn: Button = Button.new()
+		btn.custom_minimum_size = Vector2(90, 56)
+		var status_str: String = ""
+		if eq.embedded_spell.is_empty():
+			status_str = "[Chưa Khảm]\n+ Khảm Mới"
+		elif eq.embedded_spell == s_id:
+			status_str = "[Đang Khảm Lv.%d]\n+ Nâng Cấp Lv.%d" % [eq.embedded_spell_level, eq.embedded_spell_level + 1]
+		else:
+			status_str = "[Đang Khảm: %s]\nThay Thế!" % eq.embedded_spell.capitalize()
+
+		btn.text = "%s (Lv.%d)\n%s" % [eq.item_name, eq.level, status_str]
+		btn.add_theme_font_size_override(&"font_size", 9)
+		btn.pressed.connect(func(): _on_inlay_confirmed(i))
+		inlay_slots_container.add_child(btn)
+
+	inlay_modal.visible = true
+
+
+func _on_inlay_confirmed(slot_idx: int) -> void:
+	if _pending_item == null or _pending_card == null:
+		return
+	var cost: int = _pending_card.get_effective_price()
+	if GameManager.spend_gold(cost):
+		GameManager.inlay_spell_into_weapon(slot_idx, _pending_item)
+		_pending_card.mark_as_bought()
+		EventBus.item_bought.emit(_pending_item.item_id)
+		_refresh_gold()
+		_update_all_cards()
+	_hide_inlay_modal()
+
+
+func _hide_inlay_modal() -> void:
+	if inlay_modal != null:
+		inlay_modal.visible = false
 	_pending_item = null
 	_pending_card = null
 
@@ -224,6 +295,7 @@ func _on_continue_pressed() -> void:
 	if not _rerolled_in_current_shop and not GameManager.has_used_reroll_ever:
 		GameManager.shops_without_reroll_count += 1
 	_hide_replace_modal()
+	_hide_inlay_modal()
 	visible = false
 	get_tree().paused = false
 	EventBus.shop_closed.emit()

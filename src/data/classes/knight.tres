@@ -12,13 +12,13 @@ max_hp = 130
 speed = 115.0
 defense = 2
 starter_weapon = ExtResource("2_weap")
-description = "Chiến binh cận chiến kiên cường. Sở hữu Tuyệt Kỹ Oanh Kích Bộc Phá: chọn vị trí (tối đa 200px), phóng mình nhảy tới bổ kiếm tạo vụ nổ Magic Cocktail 450 sát thương."
+description = "Chiến binh cận chiến kiên cường. Sở hữu Tuyệt Kỹ Oanh Kích Bộc Phá: chọn vị trí (tối đa 200px), phóng mình nhảy tới bổ kiếm tạo vụ nổ Magic Cocktail 220 sát thương."
 skill_id = "knight_leap"
 skill_name = "Oanh Kích Bộc Phá"
-skill_desc = "Nhấn E / Q / Click mở tâm ngắm (tối đa 200px), Chuột Trái phóng mình nhảy tới bổ kiếm nổ diện rộng 450 sát thương."
+skill_desc = "Nhấn E mở tâm ngắm (tối đa 200px), Chuột Trái phóng mình nhảy tới bổ kiếm nổ diện rộng 220 sát thương (nhấn lại E để hủy)."
 skill_cooldown = 0.0
 ultimate_id = "knight_leap"
 ultimate_name = "Oanh Kích Bộc Phá"
-ultimate_desc = "Nhấn E / Q / Click mở tâm ngắm (tối đa 200px), Chuột Trái phóng mình nhảy tới bổ kiếm nổ Magic Cocktail diện rộng gây 450 sát thương và hất văng quái."
-ultimate_required_damage = 700
+ultimate_desc = "Nhấn E mở tâm ngắm (tối đa 200px), Chuột Trái phóng mình nhảy tới bổ kiếm nổ Magic Cocktail diện rộng gây 220 sát thương và hất văng quái (nhấn lại E để hủy)."
+ultimate_required_damage = 1400
 

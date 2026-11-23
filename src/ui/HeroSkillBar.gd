@@ -35,14 +35,14 @@ func _setup_from_class(p_class: ClassData) -> void:
 
 	if _hero_class != null:
 		ult_name_lbl.text = _hero_class.ultimate_name.get_slice("(", 0).strip_edges()
-		ult_btn.tooltip_text = "%s\n%s\n[Yêu cầu: %d sát thương | Nhấn E / Q hoặc Click để ngắm, Chuột Trái để dùng]" % [
+		ult_btn.tooltip_text = "%s\n%s\n[Yêu cầu: %d sát thương | Nhấn E hoặc Click để ngắm, Chuột Trái để dùng (Nhấn lại E để hủy)]" % [
 			_hero_class.ultimate_name, _hero_class.ultimate_desc, _hero_class.ultimate_required_damage
 		]
 
 	ult_overlay.visible = true
 	ult_glow.visible = false
 	ult_charge_lbl.text = "0%"
-	key_lbl.text = "[E / Q | Click]"
+	key_lbl.text = "[E | Click]"
 
 
 func _on_ult_pressed() -> void:
@@ -51,7 +51,7 @@ func _on_ult_pressed() -> void:
 		var p: Player = players[0] as Player
 		if p != null:
 			if _is_aiming:
-				p.execute_ultimate_ability()
+				p.cancel_ability_aiming()
 			else:
 				p.cast_ultimate_ability()
 
@@ -65,7 +65,7 @@ func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
 			ult_charge_lbl.text = "SẴN SÀNG!"
 			ult_charge_lbl.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
 			ult_name_lbl.add_theme_color_override(&"font_color", Color(1.0, 1.0, 1.0, 1.0))
-			key_lbl.text = "[E / Q | Click]"
+			key_lbl.text = "[E | Click]"
 		_start_ult_glow()
 	else:
 		_is_ult_ready = false
@@ -73,7 +73,7 @@ func _on_ult_charge_updated(current_dmg: int, max_dmg: int) -> void:
 		ult_charge_lbl.text = "%d%%" % roundi(pct * 100.0)
 		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.75, 0.35, 1.0))
 		ult_name_lbl.add_theme_color_override(&"font_color", Color(0.9, 0.9, 0.9, 1.0))
-		key_lbl.text = "[E / Q | Click]"
+		key_lbl.text = "[E | Click]"
 		_stop_ult_glow()
 
 
@@ -81,17 +81,17 @@ func _on_aiming_changed(is_aiming: bool) -> void:
 	_is_aiming = is_aiming
 	if is_aiming:
 		key_lbl.text = "[CHUỘT TRÁI]"
-		ult_charge_lbl.text = "PHÓNG CHIÊU!"
+		ult_charge_lbl.text = "BẮN (E: HỦY)"
 		ult_charge_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.3, 1.0))
 		ult_btn.modulate = Color(1.3, 1.3, 0.4, 1.0)
 	else:
 		ult_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
 		if _is_ult_ready:
-			key_lbl.text = "[E / Q | Click]"
+			key_lbl.text = "[E | Click]"
 			ult_charge_lbl.text = "SẴN SÀNG!"
 			ult_charge_lbl.add_theme_color_override(&"font_color", Color(0.35, 1.0, 0.45, 1.0))
 		else:
-			key_lbl.text = "[E / Q | Click]"
+			key_lbl.text = "[E | Click]"
 
 
 func _start_ult_glow() -> void:

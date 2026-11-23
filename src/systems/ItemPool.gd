@@ -45,6 +45,31 @@ static func get_random_items(count: int, all_items: Array[ItemData], exclude_ids
 	return selected
 
 
+static func get_boss_buff_rewards(count: int, all_items: Array[ItemData]) -> Array[ItemData]:
+	var rare_buffs: Array[ItemData] = []
+	var other_buffs: Array[ItemData] = []
+	for item: ItemData in all_items:
+		if item == null:
+			continue
+		if item.type == ItemData.ItemType.PASSIVE_BUFF:
+			if item.rarity >= ItemData.Rarity.RARE:
+				rare_buffs.append(item)
+			else:
+				other_buffs.append(item)
+
+	rare_buffs.shuffle()
+	other_buffs.shuffle()
+
+	var selected: Array[ItemData] = []
+	for b: ItemData in rare_buffs:
+		if selected.size() < count and not selected.has(b):
+			selected.append(b)
+	for b: ItemData in other_buffs:
+		if selected.size() < count and not selected.has(b):
+			selected.append(b)
+	return selected
+
+
 static func get_boss_draft_items(count: int, all_items: Array[ItemData]) -> Array[ItemData]:
 	var candidates: Array[ItemData] = all_items.duplicate()
 	if candidates.is_empty():

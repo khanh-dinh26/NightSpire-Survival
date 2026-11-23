@@ -12,13 +12,13 @@ max_hp = 95
 speed = 145.0
 defense = 0
 starter_weapon = ExtResource("2_weap")
-description = "Xạ thủ bách phát bách trúng nhạy bén. Sở hữu Tuyệt Kỹ Xuyên Phá Thần Tiễn: ngắm bắn ngọn giáo năng lượng kéo dài xuyên thấu quái vật, gây 550 sát thương."
+description = "Xạ thủ bách phát bách trúng nhạy bén. Sở hữu Tuyệt Kỹ Xuyên Phá Thần Tiễn: ngắm bắn ngọn giáo năng lượng kéo dài xuyên thấu quái vật, gây 260 sát thương."
 skill_id = "ranger_piercing_spear"
 skill_name = "Xuyên Phá Thần Tiễn"
-skill_desc = "Nhấn E / Q / Click mở đường ngắm, Chuột Trái bắn ngọn giáo năng lượng kéo dài xuyên thấu toàn bộ quái vật 550 sát thương."
+skill_desc = "Nhấn E mở đường ngắm, Chuột Trái bắn ngọn giáo năng lượng kéo dài xuyên thấu quái vật 260 sát thương (nhấn lại E để hủy)."
 skill_cooldown = 0.0
 ultimate_id = "ranger_piercing_spear"
 ultimate_name = "Xuyên Phá Thần Tiễn"
-ultimate_desc = "Nhấn E / Q / Click mở đường ngắm, Chuột Trái bắn ngọn giáo năng lượng kéo dài xuyên thấu toàn bộ quái vật gây 550 sát thương."
-ultimate_required_damage = 650
+ultimate_desc = "Nhấn E mở đường ngắm, Chuột Trái bắn ngọn giáo năng lượng kéo dài xuyên thấu quái vật gây 260 sát thương (nhấn lại E để hủy)."
+ultimate_required_damage = 1300
 

@@ -50,9 +50,12 @@ func _load_items_pool() -> void:
 		"res://src/data/items/weapons/golden_repeater.tres",
 		"res://src/data/items/weapons/berserker_axe.tres",
 		"res://src/data/items/spells/spell_fireball.tres",
+		"res://src/data/items/spells/spell_meteor_rock.tres",
+		"res://src/data/items/spells/spell_void_portal.tres",
 		"res://src/data/items/spells/spell_molten_spear.tres",
-		"res://src/data/items/spells/spell_tornado.tres",
 		"res://src/data/items/spells/spell_earth_spike.tres",
+		"res://src/data/items/spells/spell_water_geyser.tres",
+		"res://src/data/items/spells/spell_tornado.tres",
 		"res://src/data/items/buffs/ruby_ring.tres",
 		"res://src/data/items/buffs/leather_boots.tres",
 		"res://src/data/items/buffs/crystal_pendant.tres",
@@ -349,12 +352,15 @@ func _create_item_card(item: ItemData) -> void:
 
 	btn.pressed.connect(func():
 		if GameManager.gold >= cost:
-			GameManager.spend_gold(cost)
-			GameManager.add_item(item)
-			AudioManager.play_sfx("buy")
-			btn.disabled = true
-			btn.text = "ĐÃ MUA"
-			btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
+			if item.type == ItemData.ItemType.SPELL and not GameManager.equipped_weapons.is_empty():
+				_show_inlay_popup(item, cost, btn)
+			else:
+				GameManager.spend_gold(cost)
+				GameManager.add_item(item)
+				AudioManager.play_sfx("buy")
+				btn.disabled = true
+				btn.text = "ĐÃ MUA"
+				btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
 		else:
 			btn.text = "Không đủ Vàng!"
 			var tw: Tween = create_tween()
@@ -363,6 +369,44 @@ func _create_item_card(item: ItemData) -> void:
 	)
 
 	cards_container.add_child(panel)
+
+
+func _show_inlay_popup(item: ItemData, cost: int, buy_btn: Button) -> void:
+	var popup: ConfirmationDialog = ConfirmationDialog.new()
+	popup.title = "Khảm Phép: %s" % item.item_name
+	popup.ok_button_text = "Đóng"
+	popup.get_cancel_button().visible = false
+
+	var vbox: VBoxContainer = VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 6)
+	var lbl: Label = Label.new()
+	lbl.text = "Chọn vũ khí để khảm phép [%s]:" % item.item_name
+	vbox.add_child(lbl)
+
+	var s_id: String = item.spell_id if not item.spell_id.is_empty() else item.item_id
+	for i: int in range(GameManager.equipped_weapons.size()):
+		var eq: ItemData = GameManager.equipped_weapons[i]
+		var w_btn: Button = Button.new()
+		var st: String = "[Chưa Khảm]"
+		if eq.embedded_spell == s_id:
+			st = "[Đang khảm Lv.%d -> Nâng Lv.%d]" % [eq.embedded_spell_level, eq.embedded_spell_level + 1]
+		elif not eq.embedded_spell.is_empty():
+			st = "[Đang khảm: %s -> Thay thế]" % eq.embedded_spell.capitalize()
+		w_btn.text = "%s (Lv.%d) %s" % [eq.item_name, eq.level, st]
+		w_btn.pressed.connect(func():
+			if GameManager.spend_gold(cost):
+				GameManager.inlay_spell_into_weapon(i, item)
+				AudioManager.play_sfx("buy")
+				buy_btn.disabled = true
+				buy_btn.text = "ĐÃ MUA"
+				buy_btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
+			popup.queue_free()
+		)
+		vbox.add_child(w_btn)
+
+	popup.add_child(vbox)
+	add_child(popup)
+	popup.popup_centered()
 
 
 func _get_player() -> Player:

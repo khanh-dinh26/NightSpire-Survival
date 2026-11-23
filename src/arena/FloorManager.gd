@@ -238,11 +238,11 @@ func _on_floor_cleared(floor_index: int) -> void:
 
 	var cfg: FloorConfig = GameManager.get_current_floor_config()
 	if cfg != null and cfg.floor_type == FloorConfig.FloorType.MINIBOSS:
-		# Open boss draft (pick 2 of 5 for free) after 3s (giảm từ 10s xuống 3s để nhặt đồ nhanh)
+		# Open boss draft (pick 2 of 3 rare buffs for free) after 3s
 		var tw: Tween = create_tween()
 		tw.tween_interval(3.0)
 		tw.tween_callback(func():
-			var draft_items: Array[ItemData] = ItemPool.get_boss_draft_items(5, all_items_pool)
+			var draft_items: Array[ItemData] = ItemPool.get_boss_buff_rewards(3, all_items_pool)
 			if boss_draft_ui != null:
 				boss_draft_ui.open_draft(draft_items)
 			EventBus.draft_opened.emit(draft_items)

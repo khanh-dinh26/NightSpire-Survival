@@ -10,6 +10,7 @@ signal slot_clicked(slot_index: int, item: ItemData)
 @onready var icon_rect: TextureRect = $IconRect
 @onready var click_btn: Button = $ClickButton
 @onready var level_label: Label = $LevelLabel
+@onready var emblem_bg: ColorRect = get_node_or_null("EmblemBG")
 @onready var emblem_rect: TextureRect = $EmblemRect
 @onready var emblem_level_label: Label = $EmblemLevelLabel
 
@@ -19,8 +20,11 @@ var _items_tex: Texture2D = preload("res://assets/sprites/items.png")
 
 var _spell_icons: Dictionary = {
 	"fireball": preload("res://assets/effects/magic_effects/Icons/tile000.png"),
+	"meteor_rock": preload("res://assets/effects/magic_effects/Icons/tile001.png"),
+	"void_portal": preload("res://assets/effects/magic_effects/Icons/tile004.png"),
 	"molten_spear": preload("res://assets/effects/magic_effects/Icons/tile006.png"),
 	"earth_spike": preload("res://assets/effects/magic_effects/Icons/tile007.png"),
+	"water_geyser": preload("res://assets/effects/magic_effects/Icons/tile008.png"),
 	"tornado": preload("res://assets/effects/magic_effects/Icons/tile009.png"),
 }
 
@@ -62,22 +66,38 @@ func set_item(item: ItemData, idx: int) -> void:
 			if not item.embedded_spell.is_empty() and _spell_icons.has(item.embedded_spell):
 				emblem_rect.texture = _spell_icons[item.embedded_spell]
 				emblem_rect.visible = true
+				if emblem_bg != null:
+					emblem_bg.visible = true
 				if emblem_level_label != null:
 					emblem_level_label.text = "L%d" % item.embedded_spell_level
 					emblem_level_label.visible = true
 				effect_text += "\n[Khảm Phép: %s Lv.%d (Tự Động Bắn)]" % [
-					item.embedded_spell.capitalize(), item.embedded_spell_level
+					_get_spell_display_name(item.embedded_spell), item.embedded_spell_level
 				]
 			else:
 				emblem_rect.visible = false
+				if emblem_bg != null:
+					emblem_bg.visible = false
 				if emblem_level_label != null:
 					emblem_level_label.visible = false
 
-		click_btn.tooltip_text = "%s (Lv.%d | Damage: %d)%s\nClick to DROP" % [
+		click_btn.tooltip_text = "%s (Lv.%d | Sát thương: %d)%s\n[Click để bỏ vũ khí]" % [
 			item.item_name, item.level, item.base_damage, effect_text
 		]
 	else:
 		clear_slot()
+
+
+func _get_spell_display_name(s_id: String) -> String:
+	match s_id:
+		"fireball": return "Hỏa Cầu"
+		"meteor_rock": return "Mưa Thiên Thạch"
+		"void_portal": return "Hố Đen Hư Không"
+		"molten_spear": return "Ngọn Giáo Nóng Chảy"
+		"earth_spike": return "Chông Gai Đất"
+		"water_geyser": return "Thủy Long Bộc Phá"
+		"tornado": return "Bão Tố Cuồng Phong"
+		_: return s_id.capitalize()
 
 
 func clear_slot() -> void:
@@ -88,9 +108,11 @@ func clear_slot() -> void:
 		level_label.visible = false
 	if emblem_rect != null:
 		emblem_rect.visible = false
+	if emblem_bg != null:
+		emblem_bg.visible = false
 	if emblem_level_label != null:
 		emblem_level_label.visible = false
-	click_btn.tooltip_text = "Empty Slot"
+	click_btn.tooltip_text = "Ô Trống"
 
 
 func _on_click_pressed() -> void:

@@ -166,6 +166,32 @@ func add_item(item: ItemData) -> void:
 			p.apply_item(item)
 
 
+func inlay_spell_into_weapon(slot_idx: int, spell_item: ItemData) -> void:
+	if slot_idx < 0 or slot_idx >= equipped_weapons.size():
+		return
+	var s_id: String = spell_item.spell_id if not spell_item.spell_id.is_empty() else spell_item.item_id
+	if learned_spells.has(s_id):
+		learned_spells[s_id] += 1
+	else:
+		learned_spells[s_id] = 1
+
+	var target_w: ItemData = equipped_weapons[slot_idx]
+	if target_w.embedded_spell == s_id:
+		target_w.embedded_spell_level += 1
+	else:
+		target_w.embedded_spell = s_id
+		target_w.embedded_spell_level = 1
+
+	var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
+	if players.size() > 0:
+		var p: Player = players[0] as Player
+		if p != null and p.weapon_orbit != null:
+			p.weapon_orbit.sync_weapons(equipped_weapons)
+
+	EventBus.spell_learned.emit(s_id, learned_spells[s_id])
+	EventBus.weapons_changed.emit()
+
+
 func remove_weapon(index: int) -> void:
 	if index < 0 or index >= equipped_weapons.size():
 		return

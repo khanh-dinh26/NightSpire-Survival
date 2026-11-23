@@ -41,7 +41,7 @@ func open_draft(items: Array[ItemData]) -> void:
 	_hide_replace_modal()
 	get_tree().paused = true
 	_picks_left = MAX_PICKS
-	title_label.text = "CHIẾN THẮNG TRÙM — CHIẾN LỢI PHẨM"
+	title_label.text = "CHIẾN THẮNG TRÙM — CHỌN 2 BUFF HIẾM"
 	_update_picks_label()
 	_populate_cards(items)
 	visible = true
@@ -52,16 +52,14 @@ func _populate_cards(items: Array[ItemData]) -> void:
 		child.queue_free()
 	for child: Node in row_bottom.get_children():
 		child.queue_free()
+	row_bottom.visible = false
 	_cards.clear()
 
 	for i: int in range(items.size()):
 		var item: ItemData = items[i]
 		var card: ItemCard = _card_scene.instantiate() as ItemCard
-		card.custom_minimum_size = Vector2(165, 115)
-		if i < 3:
-			row_top.add_child(card)
-		else:
-			row_bottom.add_child(card)
+		card.custom_minimum_size = Vector2(175, 145)
+		row_top.add_child(card)
 		card.setup(item, true)
 		card.item_selected.connect(_on_card_selected)
 		_cards.append(card)
@@ -146,7 +144,7 @@ func _hide_replace_modal() -> void:
 
 
 func _update_picks_label() -> void:
-	picks_label.text = "Chọn: %d / %d phần thưởng" % [_picks_left, MAX_PICKS]
+	picks_label.text = "Chọn: %d / %d Buff Hiếm (Miễn phí)" % [_picks_left, MAX_PICKS]
 	if _picks_left <= 0:
 		picks_label.text = "Đã nhận hết phần thưởng!"
 

@@ -95,8 +95,11 @@ func _input(event: InputEvent) -> void:
 	if is_dead:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_E or event.keycode == KEY_Q or event.keycode == KEY_SPACE:
-			cast_ultimate_ability()
+		if event.keycode == KEY_E:
+			if is_aiming_ability:
+				cancel_ability_aiming()
+			else:
+				cast_ultimate_ability()
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and is_aiming_ability:
 			cancel_ability_aiming()
@@ -517,8 +520,9 @@ func cast_ultimate_ability() -> bool:
 		EventBus.hero_skill_aiming_changed.emit(true)
 		return true
 	else:
-		# 2nd press confirms and executes!
-		return execute_ultimate_ability()
+		# 2nd press of E cancels aiming without consuming charge!
+		cancel_ability_aiming()
+		return false
 
 
 func execute_ultimate_ability() -> bool:
@@ -641,7 +645,7 @@ func _execute_knight_leap(target_pos: Vector2) -> void:
 		tw_ring.tween_property(ring, ^"width", 0.0, 0.28)
 		tw_ring.tween_callback(ring.queue_free)
 
-		# 4. Balanced 450 damage and knockback to enemies within 100px
+		# 4. Balanced 220 damage and knockback to enemies within 100px
 		var enemies: Array[Node] = get_tree().get_nodes_in_group(&"enemies")
 		for e_node: Node in enemies:
 			var enemy: CharacterBody2D = e_node as CharacterBody2D
@@ -654,7 +658,7 @@ func _execute_knight_leap(target_pos: Vector2) -> void:
 					push = Vector2.UP * 180.0
 				if "apply_knockback" in enemy:
 					enemy.apply_knockback(push)
-				enemy.take_damage(450)
+				enemy.take_damage(220)
 	)
 
 
@@ -716,7 +720,7 @@ func _execute_ranger_piercing_spear(aim_dir: Vector2) -> void:
 				hit_fx.play(&"play")
 				hit_fx.animation_finished.connect(hit_fx.queue_free)
 
-				enemy.take_damage(550)
+				enemy.take_damage(260)
 
 
 # ── Ultimate 3: Pháp Sư (Wizard Radius Blood Siphon) ───────────────────
@@ -785,12 +789,12 @@ func _execute_wizard_blood_siphon() -> void:
 			tw_soul.tween_property(soul_line, ^"width", 0.0, 0.08)
 			tw_soul.tween_callback(soul_line.queue_free)
 
-			enemy.take_damage(320)
+			enemy.take_damage(160)
 		# NOTE: enemies outside siphon_radius are completely untouched!
 
 	# Heal player for enemies siphoned
 	if hit_count > 0:
-		var heal_amount: int = mini(hit_count * 8, 32)
+		var heal_amount: int = mini(hit_count * 6, 24)
 		get_tree().create_timer(0.18).timeout.connect(func():
 			heal(heal_amount)
 			AudioManager.play_sfx("heal")
