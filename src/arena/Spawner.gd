@@ -430,43 +430,24 @@ func _spawn_boss_instance(boss_data: EnemyData, is_second_boss: bool = false) ->
 
 	boss.setup(boss_data, hp_scale, dmg_scale, spd_scale)
 
-	# Position boss safely away from player (minimum 250px-320px distance)
+	# Position boss near player (120-160px away) so combat starts quickly
 	var spawn_pos: Vector2 = Vector2(288, 80)
 	if arena != null:
 		var bounds: Rect2 = arena.get_spawn_bounds()
-		var center: Vector2 = arena.get_center_position()
-		var player_pos: Vector2 = center
+		var player_pos: Vector2 = arena.get_center_position()
 		var players: Array[Node] = get_tree().get_nodes_in_group(&"player")
 		if not players.is_empty():
 			var pl: Node2D = players[0] as Node2D
 			if pl != null and is_instance_valid(pl):
 				player_pos = pl.global_position
 
-		# Vector pointing away from player towards arena center/opposite wall
-		var away_dir: Vector2 = (center - player_pos).normalized()
-		if away_dir.length_squared() < 0.05:
-			away_dir = Vector2.UP
-
-		# Target position at least 280px away from player
-		spawn_pos = player_pos + away_dir * 280.0
+		# Pick a random direction and spawn 120-160px away
+		var rand_angle: float = randf() * TAU
+		var spawn_dist: float = randf_range(120.0, 160.0)
+		spawn_pos = player_pos + Vector2.RIGHT.rotated(rand_angle) * spawn_dist
 		# Clamp inside arena bounds with 32px margin from walls
 		spawn_pos.x = clampf(spawn_pos.x, bounds.position.x + 32.0, bounds.end.x - 32.0)
 		spawn_pos.y = clampf(spawn_pos.y, bounds.position.y + 32.0, bounds.end.y - 32.0)
-
-		# If clamped position ended up too close (< 220px), pick furthest arena corner
-		if spawn_pos.distance_to(player_pos) < 220.0:
-			var corners: Array[Vector2] = [
-				bounds.position + Vector2(40.0, 40.0),
-				Vector2(bounds.end.x - 40.0, bounds.position.y + 40.0),
-				Vector2(bounds.position.x + 40.0, bounds.end.y - 40.0),
-				bounds.end - Vector2(40.0, 40.0)
-			]
-			var max_dist: float = 0.0
-			for c: Vector2 in corners:
-				var d: float = c.distance_to(player_pos)
-				if d > max_dist:
-					max_dist = d
-					spawn_pos = c
 
 	boss.global_position = spawn_pos
 

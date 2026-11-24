@@ -89,8 +89,8 @@ func _ready() -> void:
 	_start_walk_animation()
 
 	# Cooldowns staggered initially
-	_fireball_cooldown = randf_range(3.5, 6.5)
-	_pounce_cooldown = randf_range(3.0, 5.5)
+	_fireball_cooldown = randf_range(2.0, 4.0)
+	_pounce_cooldown = randf_range(2.0, 4.0)
 
 
 func _start_elite_aura() -> void:
@@ -138,9 +138,9 @@ func _physics_process(delta: float) -> void:
 			if _action_timer <= 0.0:
 				_execute_pounce()
 		ActionState.POUNCING:
-			velocity = _pounce_direction * 260.0 + _knockback_velocity
+			velocity = _pounce_direction * 320.0 + _knockback_velocity
 			if not _pounce_hit_player and is_instance_valid(player):
-				if global_position.distance_to(player.global_position) <= 30.0:
+				if global_position.distance_to(player.global_position) <= 38.0:
 					_pounce_hit_player = true
 					var bite_dmg: int = roundi(data.damage * 1.25 * dmg_mult)
 					player.take_damage(bite_dmg)
@@ -170,14 +170,14 @@ func _process_normal_movement(_delta: float, player: Player) -> void:
 	var dist: float = global_position.distance_to(player.global_position)
 
 	# 1. Pounce check for beast / fast creeps (spiders, hounds, bats)
-	var is_beast: bool = data != null and data.enemy_id in ["spider", "bone_rat", "bat", "vampire_bat", "lava_mite", "abyssal_crawler"]
-	if is_beast and _pounce_cooldown <= 0.0 and dist >= 65.0 and dist <= 140.0:
+	var is_beast: bool = data != null and data.enemy_id in ["spider", "bone_rat", "bat", "vampire_bat", "lava_mite", "abyssal_crawler", "snake"]
+	if is_beast and _pounce_cooldown <= 0.0 and dist >= 50.0 and dist <= 180.0:
 		_start_pounce_telegraph(player)
 		return
 
 	# 2. Fireball check for rare / elite creeps or magic creeps
-	var can_shoot_fireball: bool = (is_elite or (data != null and data.enemy_id in ["dark_cultist", "fire_imp", "shadow_demon", "shadow_wisp"]))
-	if can_shoot_fireball and _fireball_cooldown <= 0.0 and dist >= 95.0 and dist <= 220.0:
+	var can_shoot_fireball: bool = (is_elite or (data != null and data.enemy_id in ["dark_cultist", "fire_imp", "shadow_demon", "shadow_wisp", "ghost", "skeleton_warrior"]))
+	if can_shoot_fireball and _fireball_cooldown <= 0.0 and dist >= 70.0 and dist <= 260.0:
 		_start_fireball_telegraph(player)
 		return
 
@@ -185,7 +185,7 @@ func _process_normal_movement(_delta: float, player: Player) -> void:
 func _start_fireball_telegraph(_player: Player) -> void:
 	_action_state = ActionState.TELEGRAPH_FIREBALL
 	_action_timer = 0.45
-	_fireball_cooldown = randf_range(6.5, 9.5)
+	_fireball_cooldown = randf_range(4.5, 7.0)
 
 	# Telegraph amber glow
 	var tw: Tween = create_tween()
@@ -211,7 +211,7 @@ func _cast_fireball(player: Player) -> void:
 func _start_pounce_telegraph(player: Player) -> void:
 	_action_state = ActionState.TELEGRAPH_POUNCE
 	_action_timer = 0.35
-	_pounce_cooldown = randf_range(5.0, 7.5)
+	_pounce_cooldown = randf_range(3.5, 5.5)
 	_pounce_direction = global_position.direction_to(player.global_position)
 	_pounce_hit_player = false
 
@@ -224,7 +224,7 @@ func _start_pounce_telegraph(player: Player) -> void:
 
 func _execute_pounce() -> void:
 	_action_state = ActionState.POUNCING
-	_action_timer = 0.28
+	_action_timer = 0.38
 	AudioManager.play_sfx("slash")
 
 
@@ -265,6 +265,9 @@ func _on_damage_cooldown_timeout() -> void:
 # ── Take Damage ───────────────────────────────────────────────────────
 func take_damage(amount: int) -> void:
 	if _is_dying:
+		return
+	# Invulnerable during pounce (beast is leaping — can't be killed mid-flight)
+	if _action_state == ActionState.TELEGRAPH_POUNCE or _action_state == ActionState.POUNCING:
 		return
 	if has_meta("marked"):
 		amount = roundi(float(amount) * 1.6)

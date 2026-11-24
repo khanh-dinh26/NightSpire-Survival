@@ -91,7 +91,7 @@ func _ready() -> void:
 	breath_tw.tween_property(sprite, ^"scale", Vector2(0.97, 1.03), 0.55).set_trans(Tween.TRANS_SINE)
 
 	hitbox.body_entered.connect(_on_hitbox_body_entered)
-	_attack_cooldown_timer = 2.0
+	_attack_cooldown_timer = 1.0
 
 
 func _is_pure_caster() -> bool:
